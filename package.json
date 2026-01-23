@@ -1,0 +1,12 @@
+{
+  "name": "qr-memory-frame",
+  "version": "1.0.0",
+  "description": "QR Memory Frame - Static Site",
+  "scripts": {
+    "build:css": "tailwindcss -i ./styles.css -o ./output.css --watch",
+    "dev": "bun run build:css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

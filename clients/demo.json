@@ -1,0 +1,23 @@
+{
+    "slug": "demo",
+    "title": "Riu & Babai",
+    "subtitle": "A Sacred Beginning",
+    "eventType": "Wedding",
+    "heroImage": "https://images.unsplash.com/photo-1605218427360-179329c0a69a?q=80&w=1920&auto=format&fit=crop",
+    "gallery": [
+        "https://images.unsplash.com/photo-1583939003579-7306391f2f89?q=80&w=1920&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1545659858-a5c9f59828df?q=80&w=1920&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1920&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1511285560982-1351c4f6170b?q=80&w=1920&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=1920&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1520854221256-17451cc330e7?q=80&w=1920&auto=format&fit=crop"
+    ],
+    "videos": [
+        {
+            "type": "youtube",
+            "url": "https://www.youtube.com/embed/jfKfPfyJRdk?si=D-lD6gLd2c9-Fk1-"
+        }
+    ],
+    "dedication": "Two souls, one journey. May your life together be full of love and laughter.",
+    "footerQuote": "Made with love"
+}
