@@ -8,7 +8,8 @@ export function initPetals() {
 
 export function startPetalRain() {
     const container = document.getElementById('petal-container') || initPetals();
-    const petalCount = 50;
+    const isMobile = window.innerWidth < 768;
+    const petalCount = isMobile ? 20 : 50;
 
     // SVG Petal Shapes (Realism)
     const petalPaths = [
@@ -32,6 +33,9 @@ export function startPetalRain() {
         const isGold = Math.random() > 0.6; // More burgundy than gold for realism
         const color = isGold ? '#C5A059' : '#8B0000';
 
+        // Performance: No shadow on mobile
+        const filter = isMobile ? 'none' : 'drop-shadow(0px 2px 2px rgba(0,0,0,0.2))';
+
         // Render SVG
         petal.innerHTML = `
             <svg viewBox="0 0 30 40" width="${size}" height="${size}" style="overflow:visible">
@@ -41,7 +45,7 @@ export function startPetalRain() {
                         <stop offset="100%" style="stop-color:${color}; stop-opacity:0.8" />
                     </radialGradient>
                 </defs>
-                <path d="${path}" fill="url(#grad${i})" filter="drop-shadow(0px 2px 2px rgba(0,0,0,0.2))" />
+                <path d="${path}" fill="url(#grad${i})" filter="${filter}" />
             </svg>
         `;
 

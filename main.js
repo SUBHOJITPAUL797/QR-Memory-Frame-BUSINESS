@@ -235,6 +235,11 @@ function runCinematicSequence() {
                 ease: "power4.out", // "Thud" effect
                 onStart: () => {
                     // Preloaded images are already in cache, just ensure visibility
+                },
+                onComplete: () => {
+                    // Start breathing only after landing
+                    const polaroid = item.querySelector('.polaroid');
+                    if (polaroid) polaroid.classList.add('breathing-active');
                 }
             }
         );
@@ -331,6 +336,9 @@ init().then(() => {
  * Adds a physical presence feel when hovering
  */
 function setup3DTilt() {
+    // Performance: Disable on touch devices
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
     const cards = document.querySelectorAll('.gallery-item');
 
     cards.forEach(card => {

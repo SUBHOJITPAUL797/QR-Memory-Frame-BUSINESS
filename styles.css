@@ -156,7 +156,7 @@ h6 {
     animation: none;
 }
 
-.gallery-item .polaroid {
+.gallery-item .polaroid.breathing-active {
     /* Randomize delay for organic feel */
     animation: float-breath 6s ease-in-out infinite;
     animation-delay: calc(var(--index, 0) * 0.5s);

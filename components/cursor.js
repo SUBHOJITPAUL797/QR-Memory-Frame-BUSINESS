@@ -1,4 +1,7 @@
 export function initCursor() {
+    // Performance: Disable on touch devices
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
     const canvas = document.createElement('canvas');
     canvas.id = 'gold-dust';
     canvas.style.position = 'fixed';
