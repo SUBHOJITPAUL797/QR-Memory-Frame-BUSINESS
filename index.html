@@ -13,7 +13,32 @@
         rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="./output.css">
+    <!-- Development only: Use Tailwind CDN since npx is unavailable locally -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            500: '#C5A059',
+                            600: '#B08D55',
+                        },
+                        warm: {
+                            50: '#FDFBF7',
+                            900: '#2C241B',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        script: ['Great Vibes', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="./styles.css">
 
     <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
