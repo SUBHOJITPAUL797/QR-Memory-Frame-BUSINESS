@@ -4,6 +4,7 @@
   "description": "QR Memory Frame - Static Site",
   "scripts": {
     "build:css": "tailwindcss -i ./styles.css -o ./output.css --watch",
+    "build": "tailwindcss -i ./styles.css -o ./output.css --minify",
     "dev": "bun run build:css"
   },
   "devDependencies": {
