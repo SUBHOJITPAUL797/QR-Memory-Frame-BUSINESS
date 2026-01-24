@@ -241,22 +241,22 @@ function runCinematicSequence() {
                 ease: "power2.inOut"
             });
 
-            // "Deal" Animation: "Bounce & Place"
-            // Restoring the bounce effect as requested, but keeping opacity smooth.
+            // "Deal" Animation: "Gentle & Smooth" (User requested: "Gently smoothly then show perfectly")
+            // Removed "Back/Bounce" easing which caused the "Zoom/Stabilize" effect.
             tl.fromTo(item,
                 {
                     opacity: 0,
-                    scale: 0.8,  // Start smaller (Card in hand)
-                    rotate: 0,   // Start straight
-                    y: -50       // Start slightly above (dropping down)
+                    scale: 0.95, // Almost full size, just a tiny "breath"
+                    rotate: 0,
+                    y: 30        // Gentle slide up
                 },
                 {
                     opacity: 1,
-                    scale: 1,    // Snap to full size
+                    scale: 1,
                     y: 0,
-                    rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''), // Settle into rotation
-                    duration: 1.2,
-                    ease: "back.out(1.7)", // The "Bounce" effect
+                    rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''),
+                    duration: 1.4, // Lovely slow pace
+                    ease: "power2.out", // The smoothest, most natural ease. No bouncing.
                     onComplete: () => {
                         const polaroid = item.querySelector('.polaroid');
                         if (polaroid) polaroid.classList.add('breathing-active');
