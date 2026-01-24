@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "QR Memory Frame - Static Site",
   "scripts": {
-    "build:css": "tailwindcss -i ./styles.css -o ./output.css --watch",
-    "build": "tailwindcss -i ./styles.css -o ./output.css --minify",
-    "dev": "bun run build:css"
+    "build:css": "bunx tailwindcss -i ./styles.css -o ./output.css --watch",
+    "build": "bunx tailwindcss -i ./styles.css -o ./output.css --minify",
+    "dev": "bunx concurrently \"bun run build:css\" \"bunx http-server . -p 3000 -c-1\""
   },
   "devDependencies": {
     "tailwindcss": "^3.4.1"
