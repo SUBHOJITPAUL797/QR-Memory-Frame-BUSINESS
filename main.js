@@ -234,31 +234,34 @@ function runCinematicSequence() {
                 tl.to(prevItem, { opacity: 0, duration: 0.5 }, "-=1.0");
             }
 
-            // Scroll to specific item
+            // Scroll to specific item FIRST (No overlap) to prevent jitter
             tl.to(window, {
-                duration: 1.2, // Smooth scroll to photo
+                duration: 1.0,
                 scrollTo: { y: item, offsetY: (viewportHeight / 2) - (itemHeight / 2) },
                 ease: "power2.inOut"
             });
 
-            // "Deal" Animation: Scale down onto the table
+            // "Deal" Animation: "Pop" in center then settle
+            // We start larger (1.1) to give the "Center Focus" feel requested
             tl.fromTo(item,
                 {
                     opacity: 0,
-                    scale: 1.5,
-                    rotate: (Math.random() * 10 - 5) // Slight random rotation variance
+                    scale: 1.15, // Start slightly larger ("Center" feel)
+                    rotate: 0,   // Start straight
+                    y: 20
                 },
                 {
                     opacity: 1,
                     scale: 1,
-                    rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''), // Return to CSS defined rotation
+                    y: 0,
+                    rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''), // Settle into random rotation
                     duration: 1.2,
-                    ease: "power4.out", // "Thud" effect
+                    ease: "elastic.out(1, 0.9)", // Nice "Settle" bounce
                     onComplete: () => {
                         const polaroid = item.querySelector('.polaroid');
                         if (polaroid) polaroid.classList.add('breathing-active');
                     }
-                }
+                } // Removed the "-=0.8" overlap here. Use sequential timing.
             );
 
             // STOP HERE: Wait for user to click to see the next photo
