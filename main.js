@@ -212,8 +212,6 @@ function runCinematicSequence() {
     // 3. "Deal" Photos One by One - DYNAMICALLY
     // We convert the NodeList to an Array to ensure proper iteration
     if (galleryItems.length > 0) {
-        // Calculate a "pace" based on total items. 
-        // Use user config if provided, otherwise dynamic speed
         // Global Click Listener for Slideshow Mode
         // If the timeline is paused, clicking anywhere resumes it.
         document.addEventListener('click', () => {
@@ -227,22 +225,20 @@ function runCinematicSequence() {
             const viewportHeight = window.innerHeight;
             const itemHeight = item.offsetHeight || viewportHeight * 0.5;
 
-            // spotlight logic: Fade out the previous item to clear the screen
-            if (index > 0) {
-                const prevItem = galleryItems[index - 1];
-                // Sync fade out with scroll duration (1.2s) to prevent "Blink" (empty screen)
-                tl.to(prevItem, { opacity: 0, duration: 1.2 }, "-=1.2");
-            }
+            // spotlight logic REMOVED: User wants photos to stay visible
+            // if (index > 0) {
+            //    const prevItem = galleryItems[index - 1];
+            //    tl.to(prevItem, { opacity: 0, duration: 1.2 }, "-=1.2");
+            // }
 
             // Scroll to specific item FIRST (No overlap) to prevent jitter
             tl.to(window, {
-                duration: 1.2,
+                duration: 0.8, // Much faster scroll (was 2.0)
                 scrollTo: { y: item, offsetY: (viewportHeight / 2) - (itemHeight / 2) },
                 ease: "power2.inOut"
             });
 
-            // "Deal" Animation: "Gentle & Smooth" (User requested: "Gently smoothly then show perfectly")
-            // Removed "Back/Bounce" easing which caused the "Zoom/Stabilize" effect.
+            // "Deal" Animation: "Gentle & Smooth"
             tl.fromTo(item,
                 {
                     opacity: 0,
@@ -255,8 +251,8 @@ function runCinematicSequence() {
                     scale: 1,
                     y: 0,
                     rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''),
-                    duration: 1.4, // Lovely slow pace
-                    ease: "power2.out", // The smoothest, most natural ease. No bouncing.
+                    duration: 0.5, // "Instant" reveal (was 3.0)
+                    ease: "power2.out",
                     onComplete: () => {
                         const polaroid = item.querySelector('.polaroid');
                         if (polaroid) polaroid.classList.add('breathing-active');
@@ -269,7 +265,6 @@ function runCinematicSequence() {
         });
 
         // RESTORE: Bring all photos back to full visibility after the sequence ends
-        // so the user can scroll back up and see them normally.
         tl.to(galleryItems, { opacity: 1, duration: 1.0 });
     }
 
