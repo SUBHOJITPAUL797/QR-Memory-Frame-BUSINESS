@@ -241,27 +241,27 @@ function runCinematicSequence() {
                 ease: "power2.inOut"
             });
 
-            // "Deal" Animation: "Pop" in center then settle
-            // We start larger (1.1) to give the "Center Focus" feel requested
+            // "Deal" Animation: "Gentle & Smooth"
+            // No bouncing, no big zooming. Just a soft fade and slide into place.
             tl.fromTo(item,
                 {
                     opacity: 0,
-                    scale: 1.15, // Start slightly larger ("Center" feel)
-                    rotate: 0,   // Start straight
-                    y: 20
+                    scale: 0.95, // Start slightly smaller for a subtle "bloom"
+                    rotate: 0,   // Start straight for clarity
+                    y: 30        // Start slightly below
                 },
                 {
                     opacity: 1,
-                    scale: 1,
+                    scale: 1,    // Gently settle to normal size
                     y: 0,
-                    rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''), // Settle into random rotation
-                    duration: 1.2,
-                    ease: "elastic.out(1, 0.9)", // Nice "Settle" bounce
+                    rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''), // Settle into rotation
+                    duration: 1.5, // Slower, more elegant
+                    ease: "power3.out", // Smooth deceleration, NO bounce
                     onComplete: () => {
                         const polaroid = item.querySelector('.polaroid');
                         if (polaroid) polaroid.classList.add('breathing-active');
                     }
-                } // Removed the "-=0.8" overlap here. Use sequential timing.
+                }
             );
 
             // STOP HERE: Wait for user to click to see the next photo
