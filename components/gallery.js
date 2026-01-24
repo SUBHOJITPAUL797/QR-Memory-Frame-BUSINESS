@@ -1,7 +1,10 @@
 export function renderGallery(client) {
-  const caption = client.captions[index + 1] || "";
+  const imagesHtml = client.gallery.map((imgUrl, index) => {
+    // Randomize rotation slightly for that "thrown on table" look
+    const rotation = (index % 2 === 0 ? 2 : -2) + (Math.random() * 2 - 1);
+    const caption = client.captions[index + 1] || "";
 
-  return `
+    return `
       <div 
         class="gallery-item opacity-0 will-change-transform flex flex-col items-center" 
         data-index="${index}"
@@ -24,7 +27,7 @@ export function renderGallery(client) {
       </div>
     `}).join('');
 
-return `
+  return `
       <section id="gallery-container" class="pt-20 pb-40 px-4 relative min-h-screen">
         <div class="max-w-4xl mx-auto relative z-10">
           <div class="text-center mb-24 gallery-header opacity-0">
