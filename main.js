@@ -84,6 +84,7 @@ function buildClientFromConfig() {
         footerQuote: config.footerQuote,
         heroImage: config.heroImage,
         gallery: galleryImages,
+        captions: config.captions || {}, // Pass captions, default to empty object for safety
         videos: [{ type: 'youtube', url: videoUrl + '&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&playsinline=1&enablejsapi=1' }]
     };
 }
