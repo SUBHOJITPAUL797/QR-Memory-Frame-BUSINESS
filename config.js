@@ -16,6 +16,24 @@ export const config = {
     heroImage: "./assets/photos/hero.jpg",
     photoCount: 13, // How many photos do you have in the folder?
 
+    // 4. Photo Captions (Optional)
+    // Add a short message for each photo number.
+    captions: {
+        1: "The Mehndi Ceremony",
+        2: "Candid Laughter",
+        3: "Details of Love",
+        4: "Golden Hour Glow",
+        5: "Haldi Vibes",
+        6: "Under the Mandap",
+        7: "Reception Night",
+        8: "Intricate Henna",
+        9: "Sunset Silhouette",
+        10: "Family Blessings",
+        11: "Dancing the Night Away",
+        12: "The Promise Ring",
+        13: "Varmala Moment"
+    },
+
     // 3. Video
     // Paste the full YouTube URL here (e.g. https://www.youtube.com/watch?v=...)
     youtubeLink: "https://www.youtube.com/embed/jfKfPfyJRdk?si=D-lD6gLd2c9-Fk1-",

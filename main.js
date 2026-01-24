@@ -223,7 +223,8 @@ function runCinematicSequence() {
             // spotlight logic: Fade out the previous item to clear the screen
             if (index > 0) {
                 const prevItem = galleryItems[index - 1];
-                tl.to(prevItem, { opacity: 0.05, duration: 1.0 }, "-=1.0"); // Fade out while new one arrives
+                // Faster fade out (0.5s) and full transparency (0) to prevent ghosting on mobile
+                tl.to(prevItem, { opacity: 0, duration: 0.5 }, "-=1.0");
             }
 
             // Scroll to specific item
