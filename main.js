@@ -213,8 +213,8 @@ function runCinematicSequence() {
     // We convert the NodeList to an Array to ensure proper iteration
     if (galleryItems.length > 0) {
         // Calculate a "pace" based on total items. 
-        // If many photos, speed up slightly. If few, linger longer.
-        const focusDuration = galleryItems.length > 8 ? 2.5 : 3.5;
+        // Use user config if provided, otherwise dynamic speed
+        const focusDuration = config.photoDuration || (galleryItems.length > 8 ? 2.5 : 3.5);
 
         galleryItems.forEach((item, index) => {
             // Calculate dynamic offset to center this specific photo
