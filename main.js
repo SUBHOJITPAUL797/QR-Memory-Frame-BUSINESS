@@ -230,33 +230,33 @@ function runCinematicSequence() {
             // spotlight logic: Fade out the previous item to clear the screen
             if (index > 0) {
                 const prevItem = galleryItems[index - 1];
-                // Faster fade out (0.5s) and full transparency (0) to prevent ghosting on mobile
-                tl.to(prevItem, { opacity: 0, duration: 0.5 }, "-=1.0");
+                // Sync fade out with scroll duration (1.2s) to prevent "Blink" (empty screen)
+                tl.to(prevItem, { opacity: 0, duration: 1.2 }, "-=1.2");
             }
 
             // Scroll to specific item FIRST (No overlap) to prevent jitter
             tl.to(window, {
-                duration: 1.0,
+                duration: 1.2,
                 scrollTo: { y: item, offsetY: (viewportHeight / 2) - (itemHeight / 2) },
                 ease: "power2.inOut"
             });
 
-            // "Deal" Animation: "Gentle & Smooth"
-            // No bouncing, no big zooming. Just a soft fade and slide into place.
+            // "Deal" Animation: "Bounce & Place"
+            // Restoring the bounce effect as requested, but keeping opacity smooth.
             tl.fromTo(item,
                 {
                     opacity: 0,
-                    scale: 0.95, // Start slightly smaller for a subtle "bloom"
-                    rotate: 0,   // Start straight for clarity
-                    y: 30        // Start slightly below
+                    scale: 0.8,  // Start smaller (Card in hand)
+                    rotate: 0,   // Start straight
+                    y: -50       // Start slightly above (dropping down)
                 },
                 {
                     opacity: 1,
-                    scale: 1,    // Gently settle to normal size
+                    scale: 1,    // Snap to full size
                     y: 0,
                     rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''), // Settle into rotation
-                    duration: 1.5, // Slower, more elegant
-                    ease: "power3.out", // Smooth deceleration, NO bounce
+                    duration: 1.2,
+                    ease: "back.out(1.7)", // The "Bounce" effect
                     onComplete: () => {
                         const polaroid = item.querySelector('.polaroid');
                         if (polaroid) polaroid.classList.add('breathing-active');
