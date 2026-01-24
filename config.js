@@ -15,7 +15,7 @@ export const config = {
     // Rename them to 1.jpg, 2.jpg, 3.jpg, etc.
     heroImage: "./assets/photos/hero.jpg",
     photoCount: 13, // How many photos do you have in the folder?
-    photoDuration: 4, // Seconds to show each photo (Default: 4)
+    photoDuration: 5, // Seconds to show each photo (Default: 4)
 
     // 4. Photo Captions (Optional)
     // Add a short message for each photo number.
