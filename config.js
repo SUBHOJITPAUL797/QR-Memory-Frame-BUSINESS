@@ -4,7 +4,7 @@
  */
 export const config = {
     // 1. Text Details
-    title: "Riu & Babai",
+    title: "Papri & Dol",
     subtitle: "A Sacred Beginning",
     eventType: "Wedding",
     dedication: "Two souls, one journey. May your life together be full of love and laughter.",
