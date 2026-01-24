@@ -214,8 +214,13 @@ function runCinematicSequence() {
     if (galleryItems.length > 0) {
         // Calculate a "pace" based on total items. 
         // Use user config if provided, otherwise dynamic speed
-        const focusDuration = config.photoDuration || (galleryItems.length > 8 ? 2.5 : 3.5);
-        console.log("📸 Each photo will show for:", focusDuration, "seconds");
+        // Global Click Listener for Slideshow Mode
+        // If the timeline is paused, clicking anywhere resumes it.
+        document.addEventListener('click', () => {
+            if (tl.paused()) {
+                tl.play();
+            }
+        });
 
         galleryItems.forEach((item, index) => {
             // Calculate dynamic offset to center this specific photo
@@ -231,7 +236,7 @@ function runCinematicSequence() {
 
             // Scroll to specific item
             tl.to(window, {
-                duration: 1.2, // Slightly slower smooth scroll
+                duration: 1.2, // Smooth scroll to photo
                 scrollTo: { y: item, offsetY: (viewportHeight / 2) - (itemHeight / 2) },
                 ease: "power2.inOut"
             });
@@ -256,17 +261,8 @@ function runCinematicSequence() {
                 }
             );
 
-            // Admire the photo
-            const innerImg = item.querySelector('img');
-            if (innerImg) {
-                tl.to(innerImg, {
-                    scale: 1.1,
-                    duration: focusDuration, // Dynamic duration
-                    ease: "none",
-                }, "-=0.8"); // Overlap slightly with land
-            } else {
-                tl.to({}, { duration: focusDuration });
-            }
+            // STOP HERE: Wait for user to click to see the next photo
+            tl.addPause();
         });
 
         // RESTORE: Bring all photos back to full visibility after the sequence ends
