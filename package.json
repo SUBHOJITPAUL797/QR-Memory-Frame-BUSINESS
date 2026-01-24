@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "QR Memory Frame - Static Site",
   "scripts": {
-    "dev": "bunx serve . -p 3000"
+    "dev": "bunx serve . -p 3000",
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "eslint": "^9.0.0"
   }
 }

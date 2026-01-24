@@ -24,6 +24,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Safety Checks (Lint)
+        run: npm run lint
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
