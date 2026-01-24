@@ -14,7 +14,7 @@ export const config = {
     // Put your photos in the 'assets/photos' folder.
     // Rename them to 1.jpg, 2.jpg, 3.jpg, etc.
     heroImage: "./assets/photos/hero.jpg",
-    photoCount: 3, // How many photos do you have in the folder?
+    photoCount: 13, // How many photos do you have in the folder?
 
     // 3. Video
     // Paste the full YouTube URL here (e.g. https://www.youtube.com/watch?v=...)

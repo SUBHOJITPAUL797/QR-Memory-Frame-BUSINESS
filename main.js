@@ -207,59 +207,71 @@ function runCinematicSequence() {
     tl.to('.gallery-header', { opacity: 1, y: 0, duration: 1.5 });
     tl.to('.grow-line', { height: '3rem', duration: 1.5 }, "-=1");
 
-    // 3. "Deal" Photos One by One
-    galleryItems.forEach((item, index) => {
-        // Calculate offset to center the photo mostly
-        // Use a dynamic offset calculation to account for viewport size changes on mobile addresses bars
-        const viewportHeight = window.innerHeight;
-        const itemHeight = item.offsetHeight || viewportHeight * 0.5; // Fallback
+    // 3. "Deal" Photos One by One - DYNAMICALLY
+    // We convert the NodeList to an Array to ensure proper iteration
+    if (galleryItems.length > 0) {
+        // Calculate a "pace" based on total items. 
+        // If many photos, speed up slightly. If few, linger longer.
+        const focusDuration = galleryItems.length > 8 ? 2.5 : 3.5;
 
-        tl.to(window, {
-            duration: 1.2,
-            scrollTo: { y: item, offsetY: (viewportHeight / 2) - (itemHeight / 2) },
-            ease: "power2.inOut"
+        galleryItems.forEach((item, index) => {
+            // Calculate dynamic offset to center this specific photo
+            const viewportHeight = window.innerHeight;
+            const itemHeight = item.offsetHeight || viewportHeight * 0.5;
+
+            // spotlight logic: Fade out the previous item to clear the screen
+            if (index > 0) {
+                const prevItem = galleryItems[index - 1];
+                tl.to(prevItem, { opacity: 0.05, duration: 1.0 }, "-=1.0"); // Fade out while new one arrives
+            }
+
+            // Scroll to specific item
+            tl.to(window, {
+                duration: 1.2, // Slightly slower smooth scroll
+                scrollTo: { y: item, offsetY: (viewportHeight / 2) - (itemHeight / 2) },
+                ease: "power2.inOut"
+            });
+
+            // "Deal" Animation: Scale down onto the table
+            tl.fromTo(item,
+                {
+                    opacity: 0,
+                    scale: 1.5,
+                    rotate: (Math.random() * 10 - 5) // Slight random rotation variance
+                },
+                {
+                    opacity: 1,
+                    scale: 1,
+                    rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''), // Return to CSS defined rotation
+                    duration: 1.2,
+                    ease: "power4.out", // "Thud" effect
+                    onComplete: () => {
+                        const polaroid = item.querySelector('.polaroid');
+                        if (polaroid) polaroid.classList.add('breathing-active');
+                    }
+                }
+            );
+
+            // Admire the photo
+            const innerImg = item.querySelector('img');
+            if (innerImg) {
+                tl.to(innerImg, {
+                    scale: 1.1,
+                    duration: focusDuration, // Dynamic duration
+                    ease: "none",
+                }, "-=0.8"); // Overlap slightly with land
+            } else {
+                tl.to({}, { duration: focusDuration });
+            }
         });
 
-        // "Deal" Animation: Scale down onto the table
-        tl.fromTo(item,
-            {
-                opacity: 0,
-                scale: 1.5,
-                rotate: (Math.random() * 10 - 5) // Slight random rotation variance during drop
-            },
-            {
-                opacity: 1,
-                scale: 1,
-                rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''), // Return to CSS defined rotation
-                duration: 1.2,
-                ease: "power4.out", // "Thud" effect
-                onStart: () => {
-                    // Preloaded images are already in cache, just ensure visibility
-                },
-                onComplete: () => {
-                    // Start breathing only after landing
-                    const polaroid = item.querySelector('.polaroid');
-                    if (polaroid) polaroid.classList.add('breathing-active');
-                }
-            }
-        );
+        // RESTORE: Bring all photos back to full visibility after the sequence ends
+        // so the user can scroll back up and see them normally.
+        tl.to(galleryItems, { opacity: 1, duration: 1.0 });
+    }
 
-        // Pause to admire the photo (User asked for "Amazing look")
-        // We'll add a subtle " Ken Burns" to the IMAGE inside the polaroid, not the frame
-        const innerImg = item.querySelector('img');
-        if (innerImg) {
-            tl.to(innerImg, {
-                scale: 1.1,
-                duration: 3.5,
-                ease: "none",
-                grayscale: 0 // Slowly reveal Color from B&W if we want? Let's just do scale for now.
-            }, "-=1"); // Overlap with the deal
-        } else {
-            tl.to({}, { duration: 3 });
-        }
-    });
-
-    // 4. Message Section (New Requirement)
+    // 4. Message Section (Triggers only after ALL photos are shown)
+    // The previous loop ensures we are quite far down the page now.
     tl.to(window, {
         duration: 2.5,
         scrollTo: { y: messageSection, offsetY: 100 },
