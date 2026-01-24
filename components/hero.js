@@ -23,6 +23,13 @@ export function renderHero(client) {
             <p class="font-sans text-sm md:text-lg tracking-[0.3em] uppercase text-gray-100 font-light">
                 ${client.subtitle}
             </p>
+            
+            <!-- Beautiful Quote Insertion -->
+            <div class="mt-12 opacity-0 animate-[fade-in-up_1s_ease-out_1s_forwards]">
+                <p class="font-script text-3xl md:text-5xl text-gold-400/90 text-center leading-relaxed drop-shadow-lg">
+                    "Every love story is beautiful,<br/>but ours is my favorite."
+                </p>
+            </div>
           </div>
         </div>
         

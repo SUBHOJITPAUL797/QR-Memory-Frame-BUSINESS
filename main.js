@@ -99,17 +99,17 @@ function renderApp(client) {
         <!-- Suspense Overlay (Warm Royal Theme) -->
         <div id="suspense-overlay" class="fixed inset-0 z-50 bg-[#FDFBF7] flex flex-col items-center justify-center transition-opacity duration-[2000ms] overflow-hidden">
             <!-- Ambient Background Effects -->
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,215,0,0.1)_0%,_transparent_70%)]"></div>
-            <div class="absolute inset-0 bg-pattern-mandala opacity-[0.05]"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,215,0,0.15)_0%,_transparent_70%)]"></div>
+            <div class="absolute inset-0 bg-pattern-mandala opacity-[0.08]"></div>
             
             <!-- Central Animated Emblem -->
             <div class="mb-12 relative scale-125">
                 <!-- Outer Rotating Rings -->
-                <div class="absolute inset-[-30px] border border-[#C5A059]/20 rounded-full animate-[spin_15s_linear_infinite]"></div>
-                <div class="absolute inset-[-15px] border border-[#C5A059]/40 rounded-full animate-[spin_10s_linear_infinite_reverse]"></div>
+                <div class="absolute inset-[-40px] border border-[#C5A059]/20 rounded-full animate-[spin_20s_linear_infinite]"></div>
+                <div class="absolute inset-[-20px] border border-[#C5A059]/40 rounded-full animate-[spin_12s_linear_infinite_reverse]"></div>
                 
                 <!-- Inner Emblem -->
-                <div class="w-24 h-24 border-2 border-[#C5A059] rounded-full flex items-center justify-center relative bg-white shadow-xl overflow-hidden">
+                <div class="w-28 h-28 border-2 border-[#C5A059] rounded-full flex items-center justify-center relative bg-white shadow-2xl overflow-hidden ring-4 ring-[#C5A059]/10">
                     <img src="${client.heroImage}" alt="Couple" class="w-full h-full object-cover opacity-90 hover:scale-110 transition-transform duration-700" />
                 </div>
             </div>
@@ -125,12 +125,13 @@ function renderApp(client) {
                 <div class="h-[1px] w-12 bg-[#C5A059]"></div>
             </div>
             
-            <!-- Premium Button (Solid Gold) -->
-            <button id="play-btn" class="group relative px-12 py-5 bg-[#C5A059] shadow-[0_10px_20px_rgba(197,160,89,0.3)] rounded-sm hover:translate-y-[-2px] hover:shadow-[0_15px_30px_rgba(197,160,89,0.4)] transition-all duration-500">
-                <span class="relative z-10 font-sans text-white tracking-[0.3em] uppercase text-xs font-bold">Open Memory Frame</span>
+            <!-- Premium Button (Solid Gold with Shimmer) -->
+            <button id="play-btn" class="group relative px-12 py-5 bg-[#C5A059] shadow-[0_10px_20px_rgba(197,160,89,0.3)] rounded-sm hover:translate-y-[-2px] hover:shadow-[0_15px_30px_rgba(197,160,89,0.4)] transition-all duration-500 overflow-hidden">
+                <div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-0"></div>
+                <span class="relative z-10 font-sans text-white tracking-[0.3em] uppercase text-xs font-bold group-hover:text-white/90">Open Memory Frame</span>
             </button>
             
-            <p class="mt-12 font-sans text-[#C5A059] text-[9px] tracking-[0.3em] uppercase opacity-70">Audio Experience</p>
+            <p class="mt-12 font-sans text-[#C5A059] text-[9px] tracking-[0.3em] uppercase opacity-70">Multimedia Experience</p>
         </div>
 
         ${renderHero(client)}
