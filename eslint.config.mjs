@@ -10,7 +10,10 @@ export default [
             globals: {
                 ...globals.browser,
                 gsap: "readonly",
-                ScrollToPlugin: "readonly"
+                ScrollToPlugin: "readonly",
+                ScrollTrigger: "readonly",
+                Lenis: "readonly",
+                module: "readonly"
             }
         },
         rules: {
