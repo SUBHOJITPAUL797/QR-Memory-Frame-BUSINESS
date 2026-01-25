@@ -6,185 +6,348 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memory Frame Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .sidebar-link.active {
+            background-color: rgb(37 99 235 / 0.1);
+            color: rgb(37 99 235);
+            border-right: 3px solid rgb(37 99 235);
+        }
+
+        /* Hide scrollbar for chrome/safari/opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
         }
     </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen p-8">
+<body class="bg-slate-50 h-screen flex overflow-hidden">
 
-    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl overflow-hidden">
-        <div class="bg-blue-600 p-6 flex justify-between items-center text-white">
-            <h1 class="text-2xl font-bold">Memory Frame Admin</h1>
-            <a href="/" target="_blank"
-                class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition">View Live Site</a>
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col z-20 shadow-xl">
+        <div class="h-16 flex items-center px-8 border-b border-slate-100">
+            <div class="w-2 h-2 rounded-full bg-blue-600 mr-2"></div>
+            <h1 class="text-xl font-bold text-slate-800 tracking-tight">Admin<span class="text-blue-600">Panel</span>
+            </h1>
         </div>
 
-        <form id="configForm" class="p-8 space-y-8">
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1">
+            <a href="#section-main"
+                class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all text-sm font-medium active">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Main Details
+            </a>
+            <a href="#section-start"
+                class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all text-sm font-medium">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+                Start Page
+            </a>
+            <a href="#section-message"
+                class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all text-sm font-medium">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Message Card
+            </a>
+            <a href="#section-media"
+                class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all text-sm font-medium">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Media & Photos
+            </a>
+            <a href="#section-captions"
+                class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all text-sm font-medium">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                </svg>
+                Captions
+            </a>
+            <a href="#section-visuals"
+                class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all text-sm font-medium">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+                Visuals & Effects
+            </a>
+        </nav>
+
+        <div class="p-6 border-t border-slate-100">
+            <a href="/" target="_blank"
+                class="flex items-center justify-center w-full px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors">
+                Live Preview
+                <svg class="w-3 h-3 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto relative no-scrollbar scroll-smooth">
+        <form id="configForm" class="max-w-4xl mx-auto py-12 px-8 space-y-16">
+
+            <!-- Sticky Save Header -->
+            <div class="fixed top-0 right-0 left-64 bg-white/80 backdrop-blur-md border-b border-slate-200 z-10 px-8 py-4 flex justify-between items-center transition-all duration-300"
+                id="top-bar">
+                <div>
+                    <h2 class="text-sm font-semibold text-slate-800" id="current-section-title">Main Details</h2>
+                    <p class="text-xs text-slate-400">Configuration Editor</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button type="button" id="resetBtn"
+                        class="px-4 py-2 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors">Discard</button>
+                    <button type="submit" id="saveBtn"
+                        class="flex items-center px-6 py-2 bg-slate-900 hover:bg-black text-white rounded-full text-xs font-bold uppercase tracking-widest shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+                        <span>Save Changes</span>
+                        <svg id="saveIcon" class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="h-4"></div> <!-- Spacer for Sticky Header -->
 
             <!-- Section 1: Main Details -->
-            <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">1. Main Details</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Client Title (Names)</label>
+            <section id="section-main" class="pt-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">1. Client Details</h2>
+                    <p class="text-slate-400 text-sm">Basic information used throughout the website.</p>
+                </div>
+                <div
+                    class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Client
+                            Names</label>
                         <input type="text" name="title"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300"
                             placeholder="e.g. John & Jane">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Subtitle</label>
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Subtitle</label>
                         <input type="text" name="subtitle"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300"
                             placeholder="e.g. A Sacred Beginning">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Event Type</label>
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Event
+                            Type</label>
                         <input type="text" name="eventType"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300"
                             placeholder="e.g. Wedding">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Footer Quote</label>
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Footer
+                            Quote</label>
                         <input type="text" name="footerQuote"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300">
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- Section 2: Start Page -->
-            <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">2. Start Page (Loading Screen)</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Loading Title</label>
+            <section id="section-start" class="pt-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">2. Start Screen</h2>
+                    <p class="text-slate-400 text-sm">The first thing guests see while loading.</p>
+                </div>
+                <div
+                    class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Loading
+                            Title</label>
                         <input type="text" name="loadingTitle"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Loading Subtitle</label>
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Loading
+                            Subtitle</label>
                         <input type="text" name="loadingSubtitle"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Button Text</label>
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Button
+                            Label</label>
                         <input type="text" name="enterButtonText"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all">
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- Section 3: Message Section -->
-            <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">3. Message Card</h2>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Dedication (Top Quote)</label>
-                    <textarea name="dedication" rows="2"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"></textarea>
+            <section id="section-message" class="pt-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">3. Love Letter</h2>
+                    <p class="text-slate-400 text-sm">The heartfelt message at the end of the scroll.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Message Title</label>
-                        <input type="text" name="messageTitle"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 space-y-8">
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Top
+                            Quote (Dedication)</label>
+                        <textarea name="dedication" rows="2"
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all resize-none"></textarea>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Message Sign-Off</label>
-                        <input type="text" name="messageSignOff"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="group">
+                            <label
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Section
+                                Title</label>
+                            <input type="text" name="messageTitle"
+                                class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all">
+                        </div>
+                        <div class="group">
+                            <label
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Sign-Off</label>
+                            <input type="text" name="messageSignOff"
+                                class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all">
+                        </div>
+                    </div>
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Main
+                            Body Message</label>
+                        <textarea name="messageBody" rows="5"
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all"></textarea>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Message Body</label>
-                    <textarea name="messageBody" rows="4"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"></textarea>
-                </div>
-            </div>
+            </section>
 
             <!-- Section 4: Media -->
-            <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">4. Media Settings</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Hero Image Path</label>
-                        <input type="text" name="heroImage"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">Place file in assets/photos/ first.</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Photo Count</label>
-                        <input type="number" name="photoCount" id="photoCountInput"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">YouTube Embed Link</label>
+            <section id="section-media" class="pt-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">4. Media Assets</h2>
+                    <p class="text-slate-400 text-sm">Paths to your images and video links.</p>
+                </div>
+                <div
+                    class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="group md:col-span-2">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">YouTube
+                            Embed URL</label>
                         <input type="text" name="youtubeLink"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all">
+                    </div>
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Hero
+                            Image Path</label>
+                        <input type="text" name="heroImage"
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all">
+                    </div>
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Photo
+                            Count</label>
+                        <input type="number" name="photoCount" id="photoCountInput"
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all">
+                        <p class="text-[10px] text-slate-400 mt-2">Changing this adds more caption fields below.</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Section 5: Photo Captions -->
-            <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">5. Photo Messages</h2>
-                <p class="text-xs text-gray-500">Add a short caption for each photo in the sequence.</p>
-                <div id="captionsContainer"
-                    class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto p-2 border rounded-md">
-                    <!-- Dynamic Inputs will appear here -->
+            <!-- Section 5: Captions -->
+            <section id="section-captions" class="pt-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">5. Photo Captions</h2>
+                    <p class="text-slate-400 text-sm">One line stories for each memory.</p>
                 </div>
-            </div>
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+                    <div id="captionsContainer"
+                        class="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[500px] overflow-y-auto pr-2 custom-scroll">
+                        <!-- Dynamic Inputs -->
+                    </div>
+                </div>
+            </section>
 
-            <!-- Section 6: Visuals & Effects -->
-            <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">6. Visuals & Effects</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Section 6: Visuals -->
+            <section id="section-visuals" class="pt-8 pb-32">
+                <div class="mb-6 flex items-center">
+                    <div class="p-2 bg-gradient-to-tr from-purple-500 to-blue-500 rounded-lg mr-4 text-white shadow-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                    </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Interaction Mode</label>
+                        <h2 class="text-2xl font-bold text-slate-800">6. Visual FX Engine</h2>
+                        <p class="text-slate-400 text-sm">Control the magic.</p>
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-2xl p-8 shadow-md border border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-8 ring-1 ring-blue-500/5">
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Interaction
+                            Mode</label>
                         <select name="visuals_interactionMode"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 bg-white">
-                            <option value="click">User Click (Manual)</option>
-                            <option value="auto">Auto Play (Automatic)</option>
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer">
+                            <option value="click">User Click (Classic)</option>
+                            <option value="auto">Auto Play (Hands Free)</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Photo Duration (Seconds)</label>
-                        <input type="number" name="visuals_photoDuration"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">Only used in Auto Play mode.</p>
+                    <div class="group">
+                        <div class="group" id="photoDurationContainer">
+                            <label
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Photo
+                                Duration (Seconds)</label>
+                            <input type="number" name="visuals_photoDuration"
+                                class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all">
+                        </div>
                     </div>
-                    <div class="col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Transition Effect</label>
+                    <div class="group md:col-span-2">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Transition
+                            Effect</label>
                         <select name="visuals_transitionEffect"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 bg-white">
-                            <option value="zoom">Gentle Zoom</option>
-                            <option value="fade">Simple Fade</option>
-                            <option value="slideUp">Slide Up</option>
+                            class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer">
+                            <option value="zoom">Gentle Zoom (Classy)</option>
+                            <option value="fade">Simple Fade (Minimal)</option>
+                            <option value="slideUp">Slide Up (Modern)</option>
                             <option value="slideSide">Slide From Side</option>
-                            <option value="rotate">Rotate In</option>
-                            <option value="blur">Blur Reveal</option>
-                            <option value="polaroid">Falling Polaroid</option>
-                            <option value="flip">3D Flip</option>
-                            <option value="elastic">Elastic Pop</option>
-                            <option value="dramatic">Dramatic Burst</option>
+                            <option value="rotate">Rotate In (Playful)</option>
+                            <option value="blur">Blur Reveal (Dreamy)</option>
+                            <option value="polaroid">Falling Polaroid (Bouncy)</option>
+                            <option value="flip">3D Flip (Digital)</option>
+                            <option value="elastic">Elastic Pop (Fun)</option>
+                            <option value="dramatic">Dramatic Burst (Energy)</option>
                         </select>
                     </div>
                 </div>
-            </div>
-
-            <!-- Save Action -->
-            <div class="pt-6 sticky bottom-0 bg-white border-t mt-8 flex justify-end gap-4">
-                <button type="button" id="resetBtn"
-                    class="px-6 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition font-medium">Reset
-                    form</button>
-                <button type="submit"
-                    class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition font-bold"
-                    id="saveBtn">Save Configuration</button>
-            </div>
+            </section>
         </form>
-    </div>
+    </main>
 
     <!-- Logic -->
     <script type="module">
@@ -193,18 +356,169 @@
         const form = document.getElementById('configForm');
         const captionsContainer = document.getElementById('captionsContainer');
         const photoCountInput = document.getElementById('photoCountInput');
+        const saveBtn = document.getElementById('saveBtn');
+        const saveIcon = document.getElementById('saveIcon');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const sectionTitle = document.getElementById('current-section-title');
+
+        // Navigation Highlight
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                sidebarLinks.forEach(l => l.classList.remove('active', 'border-r-4', 'border-blue-600', 'bg-slate-50', 'text-blue-600'));
+                link.classList.add('active', 'border-r-4', 'border-blue-600', 'bg-slate-50', 'text-blue-600');
+
+                // Update header title based on text
+                sectionTitle.textContent = link.innerText.trim();
+            });
+        });
 
         // Helper: Generate Caption Inputs
         function renderCaptionInputs(count) {
             captionsContainer.innerHTML = '';
             for (let i = 1; i <= count; i++) {
                 const div = document.createElement('div');
+                div.className = "group";
                 div.innerHTML = `
-                    <label class="block text-xs font-medium text-gray-500">Photo ${i}</label>
-                    <input type="text" name="caption_${i}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border text-sm" placeholder="Caption for photo ${i}">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Photo ${i}</label>
+                    <input type="text" name="caption_${i}" class="w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300" placeholder="Memory details...">
                 `;
                 captionsContainer.appendChild(div);
             }
+        }
+
+        // --- CUSTOM DROPDOWN LOGIC ---
+        function setupCustomDropdowns() {
+            const selects = document.querySelectorAll('select');
+
+            selects.forEach(select => {
+                // Hide original
+                select.style.display = 'none';
+
+                // Create Custom Wrapper
+                const wrapper = document.createElement('div');
+                wrapper.className = 'relative w-full';
+
+                // Custom Button (The "Box")
+                const button = document.createElement('div');
+                button.className = 'w-full bg-slate-50 border-none rounded-lg py-3 px-4 text-slate-700 font-medium cursor-pointer flex justify-between items-center transition-all hover:bg-slate-100 border-2 border-transparent';
+
+                // Selected Text span
+                const selectedText = document.createElement('span');
+                selectedText.innerText = select.options[select.selectedIndex].text;
+                button.appendChild(selectedText);
+
+                // Arrow Icon
+                const arrow = document.createElement('div');
+                arrow.innerHTML = `<svg class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>`;
+                button.appendChild(arrow);
+
+                // Options List container
+                const list = document.createElement('div');
+                list.className = 'absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl overflow-hidden hidden opacity-0 translate-y-2 transition-all duration-200 border border-slate-100 ring-1 ring-black/5 divide-y divide-slate-50 max-h-64 overflow-y-auto custom-scroll';
+
+                // Generate Options
+                Array.from(select.options).forEach(option => {
+                    const item = document.createElement('div');
+                    item.className = `px-4 py-3 cursor-pointer hover:bg-blue-50 transition-colors flex items-center justify-between group ${option.selected ? 'bg-blue-50 text-blue-600' : 'text-slate-600'}`;
+
+                    // Option Text & Checkmark
+                    item.innerHTML = `
+                        <span class="font-medium group-hover:text-blue-700">${option.text}</span>
+                        ${option.selected ? '<svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>' : ''}
+                    `;
+
+                    item.addEventListener('click', () => {
+                        // Update real select
+                        select.value = option.value;
+                        select.dispatchEvent(new Event('change')); // Trigger change event
+
+                        // Update UI text
+                        selectedText.innerText = option.text;
+
+                        // Close dropdown
+                        toggleDropdown(false);
+
+                        // Re-render options to update active state/checkmark
+                        updateOptionsUI();
+                    });
+
+                    list.appendChild(item);
+                });
+
+                function updateOptionsUI() {
+                    Array.from(list.children).forEach((child, index) => {
+                        const isSelected = select.options[index].value === select.value;
+                        child.className = `px-4 py-3 cursor-pointer hover:bg-blue-50 transition-colors flex items-center justify-between group ${isSelected ? 'bg-blue-50 text-blue-600' : 'text-slate-600'}`;
+                        child.innerHTML = `
+                            <span class="font-medium group-hover:text-blue-700">${select.options[index].text}</span>
+                            ${isSelected ? '<svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>' : ''}
+                        `;
+                    });
+                }
+
+                function toggleDropdown(show) {
+                    if (show) {
+                        list.classList.remove('hidden');
+                        // Small delay to allow display:block to apply before opacity transition
+                        requestAnimationFrame(() => {
+                            list.classList.remove('opacity-0', 'translate-y-2');
+                            list.classList.add('opacity-100', 'translate-y-0');
+                        });
+                        button.classList.add('ring-2', 'ring-blue-100', 'bg-white');
+                        arrow.firstElementChild.classList.add('rotate-180');
+                    } else {
+                        list.classList.remove('opacity-100', 'translate-y-0');
+                        list.classList.add('opacity-0', 'translate-y-2');
+                        setTimeout(() => list.classList.add('hidden'), 200);
+                        button.classList.remove('ring-2', 'ring-blue-100', 'bg-white');
+                        arrow.firstElementChild.classList.remove('rotate-180');
+                    }
+                }
+
+                // Toggle logic
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isHidden = list.classList.contains('hidden');
+                    // Close others
+                    document.querySelectorAll('.custom-select-list').forEach(el => el !== list && el.classList.add('hidden'));
+
+                    toggleDropdown(isHidden);
+                });
+
+                // Add to DOM
+                list.classList.add('custom-select-list'); // Marker class
+                wrapper.appendChild(button);
+                wrapper.appendChild(list);
+                select.parentNode.insertBefore(wrapper, select);
+
+                // Listen to external value changes on the real select (e.g. from populateForm)
+                const observer = new MutationObserver(() => {
+                    selectedText.innerText = select.options[select.selectedIndex].text;
+                    updateOptionsUI();
+                });
+                // We actually just need to hook into when we programmatically change it.
+                // We'll expose a refresh method on the select element itself for convenience.
+                select.refreshCustomUI = () => {
+                    selectedText.innerText = select.options[select.selectedIndex].text;
+                    updateOptionsUI();
+                }
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', (e) => {
+                document.querySelectorAll('.custom-select-list').forEach(list => {
+                    if (!list.classList.contains('hidden')) {
+                        list.classList.remove('opacity-100', 'translate-y-0');
+                        list.classList.add('opacity-0', 'translate-y-2');
+                        setTimeout(() => list.classList.add('hidden'), 200);
+                        // Reset arrows
+                        const wrapper = list.parentElement;
+                        const arrow = wrapper.querySelector('svg');
+                        if (arrow) arrow.classList.remove('rotate-180');
+                        wrapper.firstElementChild.classList.remove('ring-2', 'ring-blue-100', 'bg-white');
+                    }
+                });
+            });
         }
 
         // 1. Populate Form
@@ -239,13 +553,33 @@
                     if (input) input.value = captionValue;
                 }
             }
+
+            // --- INITIALIZE CUSTOM DROPDOWN AFTER POPULATION ---
+            setupCustomDropdowns();
+
+            // Toggle Duration Field Logic
+            const modeSelect = form.elements['visuals_interactionMode'];
+            const durationContainer = document.getElementById('photoDurationContainer');
+
+            function toggleDurationField() {
+                if (modeSelect.value === 'click') {
+                    durationContainer.style.display = 'none';
+                } else {
+                    durationContainer.style.display = 'block';
+                }
+            }
+
+            // Listen for changes
+            modeSelect.addEventListener('change', toggleDurationField);
+
+            // Initial check
+            toggleDurationField();
         }
 
-        // Listen for photo count changes to update inputs
+        // Listen for photo count changes
         photoCountInput.addEventListener('change', (e) => {
             const count = Number(e.target.value);
             renderCaptionInputs(count);
-            // Re-populate existing values if they exist in config
             if (config.captions) {
                 for (let i = 1; i <= count; i++) {
                     const captionValue = config.captions[String(i)] || "";
@@ -260,23 +594,22 @@
         // 2. Handle Save
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('saveBtn');
-            const originalText = btn.textContent;
-            btn.textContent = "Saving...";
-            btn.disabled = true;
+            const originalBtnHtml = saveBtn.innerHTML;
+
+            // Loading State
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = `<span>Saving...</span> <svg class="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
 
             // Collect Data
             const formData = new FormData(form);
             const newConfig = { ...config };
             const newCaptions = {};
-            const newVisuals = { ...config.visuals }; // Start with existing visuals
+            const newVisuals = { ...config.visuals };
 
             for (const [key, value] of formData.entries()) {
-                // Convert numbers
                 if (key === 'photoCount') {
                     newConfig[key] = Number(value);
                 }
-                // Handle Visuals
                 else if (key.startsWith('visuals_')) {
                     const visualKey = key.replace('visuals_', '');
                     if (visualKey === 'photoDuration') {
@@ -285,23 +618,20 @@
                         newVisuals[visualKey] = value;
                     }
                 }
-                // Handle Captions
                 else if (key.startsWith('caption_')) {
                     const index = key.split('_')[1];
                     if (value.trim()) {
                         newCaptions[index] = value.trim();
                     }
                 }
-                // Handle Standard Strings
-                else if (key !== 'photoDuration') { // removed legacy photoDuration logic
+                else if (key !== 'photoDuration') {
                     newConfig[key] = value;
                 }
             }
 
             newConfig.captions = newCaptions;
             newConfig.visuals = newVisuals;
-            // Clean up legacy root props if they exist (optional, but good for hygiene)
-            delete newConfig.photoDuration;
+            delete newConfig.photoDuration; // Scrub legacy
 
             try {
                 const response = await fetch('/api/save-config', {
@@ -311,17 +641,25 @@
                 });
 
                 if (response.ok) {
-                    alert('Configuration Saved Successfully! The site will now update.');
-                    btn.textContent = "Saved!";
-                    // Force refresh to reload config module
-                    setTimeout(() => location.reload(), 1000);
+                    // Success State
+                    saveBtn.classList.remove('bg-slate-900', 'hover:bg-black');
+                    saveBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                    saveBtn.innerHTML = `<span>Saved!</span> <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+
+                    setTimeout(() => {
+                        saveBtn.innerHTML = originalBtnHtml;
+                        saveBtn.disabled = false;
+                        saveBtn.classList.add('bg-slate-900', 'hover:bg-black');
+                        saveBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                        location.reload();
+                    }, 1500);
                 } else {
                     throw new Error('Server returned error');
                 }
             } catch (err) {
                 alert('Failed to save: ' + err.message);
-                btn.textContent = originalText;
-                btn.disabled = false;
+                saveBtn.innerHTML = originalBtnHtml;
+                saveBtn.disabled = false;
             }
         });
 
