@@ -113,17 +113,22 @@ function preloadImages(urls, onProgress) {
  * Transform config.js into the client data format
  */
 function buildClientFromConfig() {
+    //d- creating an empty array
     const galleryImages = [];
+    //d- iterating based on number of photos in photocount variable in config.js
     for (let i = 1; i <= config.photoCount; i++) {
+        //d- pushing the imagepaths 
         galleryImages.push(`./assets/photos/${i}.jpg`);
     }
-
+    
+    // d- Copying YouTube Video URL From config.js
     let videoUrl = config.youtubeLink;
 
     // Robust YouTube ID extraction
     // Supports: youtu.be, youtube.com/watch?v=, youtube.com/embed/
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = videoUrl.match(regExp);
+    
 
     if (match && match[2].length === 11) {
         // It's a valid ID, convert to embed
