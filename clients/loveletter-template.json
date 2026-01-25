@@ -22,6 +22,7 @@
         "photoDuration": 6,
         "themeColor": "#E11D48",
         "frameStyle": "rose",
-        "bgPattern": "hearts"
+        "bgPattern": "hearts",
+        "fontTheme": "romantic"
     }
 }

@@ -25,6 +25,7 @@
         "photoDuration": 4,
         "themeColor": "#9333EA",
         "frameStyle": "modern",
-        "bgPattern": "dots"
+        "bgPattern": "dots",
+        "fontTheme": "playful"
     }
 }
