@@ -122,30 +122,16 @@ function buildClientFromConfig() {
         //d- pushing the imagepaths 
         galleryImages.push(`./assets/photos/${i}.jpg`);
     }
-<<<<<<< HEAD
-    //---------------------- Image section ------------------------------
 
-
-    
-    //---------------------- URL section ------------------------------
-=======
-
->>>>>>> 14cddb4605af7b36056f05e5bcfab0f47736566d
     // d- Copying YouTube Video URL From config.js
     let videoUrl = config.youtubeLink;
-    
+
     // Robust YouTube ID extraction
     // Supports: youtu.be, youtube.com/watch?v=, youtube.com/embed/
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = videoUrl.match(regExp);
-<<<<<<< HEAD
-    
-    
+
     let videoId = "";
-=======
-
-
->>>>>>> 14cddb4605af7b36056f05e5bcfab0f47736566d
     if (match && match[2].length === 11) {
         // Extract Video ID for the Player API
         videoId = match[2];
@@ -154,8 +140,8 @@ function buildClientFromConfig() {
     }
     // If no match, we assume it's already a valid direct link or let it fail gracefully
     //
-   
-    
+
+
     // Parse Background Music URL
     let musicUrl = config.music || "";
     let musicEmbedUrl = "";
@@ -172,7 +158,7 @@ function buildClientFromConfig() {
     // If valid ID extraction worked, videoUrl is `https://www.youtube.com/embed/ID`
     // We must append params with `?` first.
 
-    
+
 
     return {
         title: config.title,
