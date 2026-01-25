@@ -122,11 +122,15 @@ function buildClientFromConfig() {
         //d- pushing the imagepaths 
         galleryImages.push(`./assets/photos/${i}.jpg`);
     }
+<<<<<<< HEAD
     //---------------------- Image section ------------------------------
 
 
     
     //---------------------- URL section ------------------------------
+=======
+
+>>>>>>> 14cddb4605af7b36056f05e5bcfab0f47736566d
     // d- Copying YouTube Video URL From config.js
     let videoUrl = config.youtubeLink;
     
@@ -134,9 +138,14 @@ function buildClientFromConfig() {
     // Supports: youtu.be, youtube.com/watch?v=, youtube.com/embed/
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = videoUrl.match(regExp);
+<<<<<<< HEAD
     
     
     let videoId = "";
+=======
+
+
+>>>>>>> 14cddb4605af7b36056f05e5bcfab0f47736566d
     if (match && match[2].length === 11) {
         // Extract Video ID for the Player API
         videoId = match[2];
@@ -205,7 +214,7 @@ function renderApp(client) {
                  <img src="${client.heroImage}" class="w-full h-full object-cover opacity-60" alt="Background" />
                  <!-- Dark Gradient Overlay for Text Pop -->
                  <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80"></div>
-                 <div class="absolute inset-0 bg-pattern-mandala opacity-[0.1]"></div>
+                 <div class="absolute inset-0 bg-pattern-${client.visuals?.bgPattern || 'mandala'} opacity-[0.1]"></div>
             </div>
 
             <!-- Content Container -->
@@ -394,17 +403,15 @@ function runCinematicSequence() {
             const itemHeight = item.offsetHeight || viewportHeight * 0.5;
 
             // Scroll to specific item FIRST (No overlap) to prevent jitter
-            // Mobile Optimization: Smart Centering
-            // we calculate the geometric center: (Viewport - Item) / 2
-            // BUT we ensure it never starts higher than 12% from the top (Safety Margin)
-            // This satisfies formatting for both small items (centered) and tall items (top-aligned safe)
+            // Mobile Optimization: Ensure top text is not cut off
+            const isMobile = window.innerWidth < 768;
+            let finalOffsetY = (viewportHeight / 2) - (itemHeight / 2);
 
-            const idealOffsetY = (viewportHeight / 2) - (itemHeight / 2);
-            const safeTopMargin = viewportHeight * 0.12; // 12% safety zone for header/notch
-
-            // On mobile, force at least the safety margin. 
-            // On desktop, we trust the centering more, but clamp it too.
-            let finalOffsetY = Math.max(idealOffsetY, safeTopMargin);
+            // If item is too tall (taking up > 60% of screen) or explicitly on mobile
+            // We prioritize the TOP padding (25% from top) to ensure caption is clearly visible
+            if (isMobile || itemHeight > viewportHeight * 0.6) {
+                finalOffsetY = viewportHeight * 0.25; // Force it to start 25% down from top (Safe Zone)
+            }
 
             tl.to(window, {
                 duration: 0.8,

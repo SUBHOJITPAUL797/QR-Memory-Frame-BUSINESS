@@ -148,6 +148,8 @@
 
     <!-- Main Content -->
     <main class="flex-1 overflow-y-auto relative no-scrollbar scroll-smooth">
+
+
         <form id="configForm" class="max-w-4xl mx-auto py-12 px-8 space-y-16">
 
             <!-- Sticky Save Header -->
@@ -183,6 +185,33 @@
             </div>
 
             <div class="h-4"></div> <!-- Spacer for Sticky Header -->
+
+            <!-- Template Manager Section -->
+            <div id="section-templates"
+                class="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-slate-200 dark:border-zinc-800 p-8 ring-1 ring-slate-900/5 dark:ring-white/10 relative z-0">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-white">Template Library</h2>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Select a preset to instantly
+                            configure your site.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-4 w-full md:w-auto">
+                        <select id="template-select"
+                            class="flex-1 md:flex-none bg-slate-50 dark:bg-zinc-800 border-none rounded-lg px-4 py-2 text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="" disabled selected>Choose a category...</option>
+                            <!-- Options loaded dynamically -->
+                        </select>
+                        <button type="button" onclick="loadSelectedTemplate()"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
+                            Load
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <!-- Section 1: Main Details -->
             <section id="section-main" class="pt-8">
@@ -340,6 +369,44 @@
                     class="bg-white dark:bg-black rounded-2xl p-8 shadow-sm border border-slate-100 dark:border-zinc-800 ring-1 ring-slate-900/5 dark:ring-white/10">
                     <div id="captionsContainer"
                         class="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[500px] overflow-y-auto pr-2 no-scrollbar">
+                        <!-- Theme Color -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Theme
+                                Color</label>
+                            <div class="flex gap-4 items-center">
+                                <input type="color" name="visuals.themeColor" id="themeColor" value="#C5A059"
+                                    class="h-10 w-20 rounded cursor-pointer border-none bg-transparent">
+                                <span class="text-sm text-slate-500 dark:text-slate-400">Pick a primary accent
+                                    color</span>
+                            </div>
+                        </div>
+
+                        <!-- BACKGROUND PATTERN -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Background
+                                Pattern</label>
+                            <select name="visuals.bgPattern"
+                                class="w-full bg-slate-50 dark:bg-zinc-900 border-none rounded-lg py-3 px-4 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all">
+                                <option value="mandala">Mandala (Elegant)</option>
+                                <option value="dots">Polka Dots (Fun)</option>
+                                <option value="hearts">Hearts (Romantic)</option>
+                                <option value="grid">Grid (Technical)</option>
+                            </select>
+                        </div>
+
+                        <!-- FRAME STYLE -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Photo Frame
+                                Style</label>
+                            <select name="visuals.frameStyle"
+                                class="w-full bg-slate-50 dark:bg-zinc-900 border-none rounded-lg py-3 px-4 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all">
+                                <option value="polaroid">Polaroid (Classic)</option>
+                                <option value="classic">Sharps Border (Formal)</option>
+                                <option value="modern">Rounded Shadow (Modern)</option>
+                                <option value="rose">Ornate Border (Decorative)</option>
+                            </select>
+                        </div>
+
                         <!-- Dynamic Inputs -->
                     </div>
                 </div>
@@ -777,6 +844,99 @@
 
         document.getElementById('resetBtn').addEventListener('click', () => location.reload());
 
+    </script>
+    <script>
+        // --- Template Manager Logic ---
+
+        // STATIC LIST: Since GitHub Pages cannot scan directories, we hardcode the list.
+        const KNOWN_TEMPLATES = [
+            "wedding-template.json",
+            "birthday-template.json",
+            "bhujono-template.json",
+            "birthday-wish-template.json",
+            "loveletter-template.json",
+            "proposal-template.json",
+            "marriage-template.json",
+            "achievement-template.json",
+            "festival-template.json",
+            "party-template.json",
+            "portfolio-template.json",
+            "custom-template.json",
+            "anniversary-template.json"
+        ];
+
+        async function fetchTemplates() {
+            const select = document.getElementById('template-select');
+
+            // Clear loading state
+            if (select.options[0].text === "Loading...") select.innerHTML = '<option value="" disabled selected>Select a Template...</option>';
+
+            KNOWN_TEMPLATES.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t;
+                // Format name: "wedding-template.json" -> "Wedding"
+                // Remove "-template.json" and capitalization
+                const label = t.replace('-template.json', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                opt.textContent = label;
+                select.appendChild(opt);
+            });
+        }
+
+        async function loadSelectedTemplate() {
+            const name = document.getElementById('template-select').value;
+            if (!name) { alert("Please select a template first."); return; }
+
+            if (!confirm("Are you sure? This will overwrite your current settings.")) return;
+
+            try {
+                // DIRECT FILE FETCH: Works on GitHub Pages (Static) AND Localhost
+                const res = await fetch(`clients/${name}`);
+                if (!res.ok) throw new Error(`Failed to load ${name}`);
+                const data = await res.json();
+
+                // Populate Form
+                populateFormFromTemplate(data); // Reuse existing function
+
+                // Alert with "Save" Reminder
+                alert(`Loaded "${name}"!\n\nthemeColor: ${data.visuals?.themeColor || 'Default'}\n\nReview the settings and click 'Save Changes' to apply.`);
+
+            } catch (e) {
+                alert("Error loading template: " + e.message);
+                console.error(e);
+            }
+        }
+
+        // Helper: Recursively populate form fields from template data
+        function populateFormFromTemplate(data) {
+            const form = document.getElementById('configForm');
+            // Find all inputs with a 'name' attribute
+            const inputs = form.querySelectorAll('[name]');
+
+            inputs.forEach(input => {
+                const path = input.name.split('.');
+                let current = data;
+
+                // Traverse JSON path (e.g. visuals.themeColor)
+                for (let i = 0; i < path.length; i++) {
+                    if (current && current[path[i]] !== undefined) {
+                        current = current[path[i]];
+                    } else {
+                        current = null;
+                        break;
+                    }
+                }
+
+                // Set value if found
+                if (current !== null) {
+                    input.value = current;
+                    // Trigger visual update (if any listeners exist)
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
+        }
+
+        // Initialize
+        fetchTemplates();
     </script>
 </body>
 

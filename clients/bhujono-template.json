@@ -1,0 +1,28 @@
+{
+    "title": "Subho Annaprashan",
+    "subtitle": "The First Rice Ceremony",
+    "eventType": "Mukhe Bhat",
+    "dedication": "Blessings for the little one.",
+    "footerQuote": "A tasty beginning to life",
+    "loadingTitle": "Preparing the Feast",
+    "loadingSubtitle": "Cultural Celebration",
+    "enterButtonText": "Bless the Child",
+    "messageTitle": "A Lifetime of Blessings",
+    "messageBody": "May the first taste of rice bring health, prosperity, and wisdom. Showering our little star with love on this auspicious day.",
+    "messageSignOff": "With Blessings,",
+    "heroImage": "https://images.unsplash.com/photo-1621815809703-e69d955fa272?auto=format&fit=crop&q=80",
+    "photoCount": 10,
+    "captions": {
+        "1": "Morning Rituals",
+        "2": "The Sacred Fire",
+        "3": "First Taste of Payesh",
+        "4": "Maternal Uncle's Blessings",
+        "5": "Family Love"
+    },
+    "visuals": {
+        "interactionMode": "click",
+        "transitionEffect": "polaroid",
+        "photoDuration": 6,
+        "themeColor": "#BE123C"
+    }
+}

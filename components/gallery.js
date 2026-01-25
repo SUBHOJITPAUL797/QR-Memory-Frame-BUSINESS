@@ -15,12 +15,12 @@ export function renderGallery(client) {
             ${caption}
         </p>
 
-        <div class="polaroid">
+        <div class="frame-${client.visuals?.frameStyle || 'polaroid'}">
             <div class="aspect-[3/4] overflow-hidden bg-gray-100">
                 <img 
-                  src="${imgUrl}" 
-                  class="w-full h-full object-cover grayscale-[20%]"
-                  alt="Memory ${index + 1}"
+                    src="${imgUrl}" 
+                    class="w-full h-full object-cover grayscale-[20%]"
+                    alt="Memory ${index + 1}"
                 />
             </div>
         </div>
@@ -35,8 +35,7 @@ export function renderGallery(client) {
             <div class="w-1 bg-gold-500 mx-auto h-0 grow-line"></div>
           </div>
           
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-[50vh] md:gap-8 px-4 md:px-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-64 md:gap-8 px-4 md:px-8">
             ${imagesHtml}
           </div>
         </div>

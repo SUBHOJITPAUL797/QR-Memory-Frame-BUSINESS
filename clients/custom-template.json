@@ -1,0 +1,22 @@
+{
+    "title": "Your Custom Event",
+    "subtitle": "Subtitle Here",
+    "eventType": "Custom",
+    "dedication": "Dedication Here",
+    "footerQuote": "Your Quote Here",
+    "loadingTitle": "Loading...",
+    "loadingSubtitle": "Please Wait",
+    "enterButtonText": "Enter",
+    "messageTitle": "Message Title",
+    "messageBody": "Your custom message body goes here.",
+    "messageSignOff": "Signoff,",
+    "heroImage": "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&q=80",
+    "photoCount": 5,
+    "captions": {},
+    "visuals": {
+        "interactionMode": "click",
+        "transitionEffect": "fade",
+        "photoDuration": 5,
+        "themeColor": "#64748B"
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "title": "Happily Ever After",
+    "subtitle": "The Beginning of Forever",
+    "eventType": "Wedding",
+    "dedication": "Two souls, one heart.",
+    "footerQuote": "Together is a beautiful place to be",
+    "loadingTitle": "Our Love Story",
+    "loadingSubtitle": "Capturing Moments",
+    "enterButtonText": "Join the Celebration",
+    "messageTitle": "Vows & Promises",
+    "messageBody": "From this day forward, you shall not walk alone. My heart will be your shelter, and my arms will be your home.",
+    "messageSignOff": "Forever Yours,",
+    "heroImage": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80",
+    "photoCount": 15,
+    "captions": {
+        "1": "The First Look",
+        "2": "Walking Down the Aisle",
+        "3": "The Vows",
+        "4": "First Kiss",
+        "5": "Newlyweds"
+    },
+    "visuals": {
+        "interactionMode": "click",
+        "transitionEffect": "fade",
+        "photoDuration": 5,
+        "themeColor": "#C5A059",
+        "frameStyle": "classic",
+        "bgPattern": "mandala"
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "title": "Festive Vibes",
+    "subtitle": "Colors of Joy",
+    "eventType": "Festival",
+    "dedication": "Prosperity & Happiness",
+    "footerQuote": "Celebrate Life",
+    "loadingTitle": "Lighting Lamps...",
+    "loadingSubtitle": "Prepare for Joy",
+    "enterButtonText": "Start Celebration",
+    "messageTitle": "Greetings",
+    "messageBody": "May this festival bring light, joy, and prosperity to your life and home.",
+    "messageSignOff": "Happy Holidays,",
+    "heroImage": "https://images.unsplash.com/photo-1514525253440-b393452e8d26?auto=format&fit=crop&q=80",
+    "photoCount": 15,
+    "captions": {
+        "1": "Lights",
+        "2": "Family & Food"
+    },
+    "visuals": {
+        "interactionMode": "auto",
+        "transitionEffect": "zoom",
+        "photoDuration": 4,
+        "themeColor": "#EA580C"
+    }
+}

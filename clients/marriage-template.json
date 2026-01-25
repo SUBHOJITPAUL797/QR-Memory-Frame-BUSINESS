@@ -1,0 +1,25 @@
+{
+    "title": "The Wedding",
+    "subtitle": "A Celebration of Love",
+    "eventType": "Marriage",
+    "dedication": "Bound by Love",
+    "footerQuote": "Happily Ever After",
+    "loadingTitle": "Wedding Bells",
+    "loadingSubtitle": "The Big Day",
+    "enterButtonText": "Enter Wedding Hall",
+    "messageTitle": "Our Vows",
+    "messageBody": "Two souls became one today. Thank you for being part of our journey.",
+    "messageSignOff": "With Love,",
+    "heroImage": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80",
+    "photoCount": 20,
+    "captions": {
+        "1": "Ceremony",
+        "2": "Reception"
+    },
+    "visuals": {
+        "interactionMode": "click",
+        "transitionEffect": "fade",
+        "photoDuration": 5,
+        "themeColor": "#CA8A04"
+    }
+}

@@ -3,19 +3,19 @@
  * Just edit this file to update the website content.
  */
 export const config = {
-    "title": "Pocha & Pochi...",
-    "subtitle": "A Sacred Beginning",
-    "eventType": "Wedding",
-    "loadingTitle": "Your Story Begins",
-    "loadingSubtitle": "Multimedia Experience",
-    "enterButtonText": "Enter Memory Frame",
-    "dedication": "Two souls, one journey. May your life together be full of love and laughter.",
-    "footerQuote": "Made with love",
-    "messageTitle": "To My Love",
-    "messageBody": "From the moment I met you, I knew this journey would be special. You are my best friend, my soulmate, and my greatest adventure. Here's to forever and always.",
-    "messageSignOff": "With Love,",
-    "heroImage": "./assets/photos/hero.jpg",
-    "photoCount": 13,
+    "title": "Will You...",
+    "subtitle": "A Question of a Lifetime",
+    "eventType": "Proposal",
+    "loadingTitle": "A Special Moment",
+    "loadingSubtitle": "Holding Breath...",
+    "enterButtonText": "Open My Heart",
+    "dedication": "To my soulmate.",
+    "footerQuote": "Say Yes",
+    "messageTitle": "My Promise",
+    "messageBody": "I promise to stand by your side, to love you unconditionally, and to build a life full of joy with you.",
+    "messageSignOff": "Marry Me?",
+    "heroImage": "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80",
+    "photoCount": 12,
     "captions": {
         "1": "The Mehndi Ceremony",
         "2": "Candid Laughter",
@@ -26,10 +26,7 @@ export const config = {
         "7": "Reception Night",
         "8": "Intricate Henna",
         "9": "Sunset Silhouette",
-        "10": "Family Blessings",
-        "11": "Dancing the Night Away",
-        "12": "The Promise Ring",
-        "13": "Varmala Moment"
+        "10": "Family Blessings"
     },
     "youtubeLink": "https://youtu.be/8_k2H-CpDPI?si=Vx44B_mCb5tN1MzE",
     "visuals": {
