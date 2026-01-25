@@ -140,9 +140,11 @@ function buildClientFromConfig() {
     // If valid ID extraction worked, videoUrl is `https://www.youtube.com/embed/ID`
     // We must append params with `?` first.
 
-    const params = 'controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&playsinline=1&enablejsapi=1&origin=' + window.location.origin;
-
-    const finalVideoUrl = videoUrl.includes('?') ? `${videoUrl}&${params}` : `${videoUrl}?${params}`;
+    // Extract Video ID for the Player API
+    let videoId = "";
+    if (match && match[2].length === 11) {
+        videoId = match[2];
+    }
 
     return {
         title: config.title,
@@ -165,7 +167,7 @@ function buildClientFromConfig() {
         gallery: galleryImages,
         captions: config.captions || {},
         musicEmbedUrl: musicEmbedUrl, // Pass music URL
-        videos: [{ type: 'youtube', url: finalVideoUrl }]
+        videos: [{ type: 'youtube', videoId: videoId }] // Pass ID only
     };
 }
 
@@ -296,6 +298,14 @@ function runCinematicSequence() {
     const galleryItems = document.querySelectorAll('#gallery-container .gallery-item');
     const messageSection = document.getElementById('message-section');
     const videoSection = document.getElementById('video-section');
+
+    // Initialize Player logic immediately if ID exists
+    const clientData = buildClientFromConfig(); // Re-fetch to get ID safely
+    if (clientData.videos && clientData.videos[0] && clientData.videos[0].videoId) {
+        // Initialize API Player
+        // We use a small timeout to ensure the DOM element #youtube-player from renderApp is in the tree
+        setTimeout(() => initVideoPlayer(clientData.videos[0].videoId), 100);
+    }
 
     // Master Timeline
     const tl = gsap.timeline();
@@ -455,13 +465,179 @@ function runCinematicSequence() {
     });
 }
 
-function playVideo() {
-    const iframe = document.getElementById('youtube-player');
-    const cover = document.getElementById('video-cover');
+// --- YouTube API Integration ---
+let player;
+let isPlayerReady = false;
 
-    if (iframe) {
-        if (cover) cover.classList.add('opacity-0');
-        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+// Inject API Script
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+const firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+window.onYouTubeIframeAPIReady = function () {
+    // We wait until the specific video ID is known from client data
+    // The player will be initialized inside runCinematicSequence > initVideoPlayer
+};
+
+function initVideoPlayer(videoId) {
+    if (!videoId) return;
+
+    player = new YT.Player('youtube-player', {
+        height: '100%',
+        width: '100%',
+        videoId: videoId,
+        playerVars: {
+            'playsinline': 1,
+            'controls': 0, // Hide native controls
+            'modestbranding': 1,
+            'rel': 0, // Limit related
+            'showinfo': 0,
+            'iv_load_policy': 3
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
+    });
+}
+
+function onPlayerReady(event) {
+    isPlayerReady = true;
+    setupCustomControls();
+
+    // Set duration for seekbar once ready
+    const duration = player.getDuration();
+    const seekbar = document.getElementById('video-progress');
+    if (seekbar) seekbar.max = duration;
+}
+
+let progressInterval;
+
+function onPlayerStateChange(event) {
+    const playIcon = document.getElementById('icon-play');
+    const pauseIcon = document.getElementById('icon-pause');
+    const cover = document.getElementById('video-cover');
+    const bigPlayBtn = document.getElementById('btn-big-play');
+
+    if (event.data == YT.PlayerState.PLAYING) {
+        // STATE: PLAYING
+        // 1. Hide Cover (Show Video)
+        if (cover) cover.classList.add('opacity-0', 'pointer-events-none');
+
+        // 2. Update Icons
+        if (playIcon) playIcon.classList.add('hidden');
+        if (pauseIcon) pauseIcon.classList.remove('hidden');
+
+        // 3. Start Seekbar Loop
+        startProgressLoop();
+
+    } else {
+        // STATE: PAUSED or ENDED or BUFFERING
+
+        // 1. Show Cover (Hide Video/Ads) - Only if Paused or Ended (not buffering)
+        if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.ENDED) {
+            if (cover) cover.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        // 2. Update Icons
+        if (playIcon) playIcon.classList.remove('hidden');
+        if (pauseIcon) pauseIcon.classList.add('hidden');
+
+        // 3. Stop Seekbar Loop
+        stopProgressLoop();
+    }
+
+    // Reset on End
+    if (event.data == YT.PlayerState.ENDED) {
+        player.seekTo(0);
+        player.pauseVideo();
+        if (cover) {
+            cover.classList.remove('opacity-0', 'pointer-events-none');
+            // Update text to say "Replay"
+            const text = cover.querySelector('.uppercase');
+            if (text) text.textContent = "Replay Memory";
+        }
+    }
+}
+
+function startProgressLoop() {
+    stopProgressLoop();
+    progressInterval = setInterval(() => {
+        if (player && player.getCurrentTime) {
+            const current = player.getCurrentTime();
+            const duration = player.getDuration();
+            const seekbar = document.getElementById('video-progress');
+            if (seekbar) {
+                seekbar.value = current;
+                seekbar.max = duration;
+                // Update track color gradient
+                const percent = (current / duration) * 100;
+                seekbar.style.background = `linear-gradient(to right, #d4af37 ${percent}%, rgba(255,255,255,0.2) ${percent}%)`;
+            }
+        }
+    }, 500);
+}
+
+function stopProgressLoop() {
+    if (progressInterval) clearInterval(progressInterval);
+}
+
+function setupCustomControls() {
+    const btnToggle = document.getElementById('btn-toggle');
+    const btnRewind = document.getElementById('btn-rewind');
+    const btnForward = document.getElementById('btn-forward');
+    const seekbar = document.getElementById('video-progress');
+    const btnBigPlay = document.getElementById('btn-big-play');
+
+    // Controls on the Overlay Cover
+    if (btnBigPlay) {
+        btnBigPlay.addEventListener('click', () => {
+            player.playVideo();
+        });
+    }
+
+    if (btnToggle) {
+        btnToggle.addEventListener('click', () => {
+            const state = player.getPlayerState();
+            if (state === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
+        });
+    }
+
+    if (btnRewind) {
+        btnRewind.addEventListener('click', () => {
+            const current = player.getCurrentTime();
+            player.seekTo(Math.max(0, current - 10));
+        });
+    }
+
+    if (btnForward) {
+        btnForward.addEventListener('click', () => {
+            const current = player.getCurrentTime();
+            player.seekTo(current + 10);
+        });
+    }
+
+    if (seekbar) {
+        // user clicked or dragged
+        seekbar.addEventListener('input', (e) => {
+            const time = parseFloat(e.target.value);
+            player.seekTo(time);
+        });
+    }
+}
+
+function playVideo() {
+    // This is called by the cinematic sequence
+    if (player && isPlayerReady) {
+        player.playVideo();
+    } else {
+        // Retry if API wasn't ready yet (rare)
+        setTimeout(playVideo, 500);
     }
 }
 
