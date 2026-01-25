@@ -821,41 +821,62 @@
     </script>
     <script>
         // --- Template Manager Logic ---
+
+        // STATIC LIST: Since GitHub Pages cannot scan directories, we hardcode the list.
+        const KNOWN_TEMPLATES = [
+            "wedding-template.json",
+            "birthday-template.json",
+            "bhujono-template.json",
+            "birthday-wish-template.json",
+            "loveletter-template.json",
+            "proposal-template.json",
+            "marriage-template.json",
+            "achievement-template.json",
+            "festival-template.json",
+            "party-template.json",
+            "portfolio-template.json",
+            "custom-template.json",
+            "anniversary-template.json"
+        ];
+
         async function fetchTemplates() {
-            try {
-                const res = await fetch('/api/templates');
-                const templates = await res.json();
-                const select = document.getElementById('template-select');
-                if (templates && templates.length > 0) {
-                    templates.forEach(t => {
-                        const opt = document.createElement('option');
-                        opt.value = t;
-                        // Format name: "wedding-template.json" -> "Wedding Template"
-                        opt.textContent = t.replace('-template.json', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                        select.appendChild(opt);
-                    });
-                }
-            } catch (e) { console.error("Failed to load templates", e); }
+            const select = document.getElementById('template-select');
+
+            // Clear loading state
+            if (select.options[0].text === "Loading...") select.innerHTML = '<option value="" disabled selected>Select a Template...</option>';
+
+            KNOWN_TEMPLATES.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t;
+                // Format name: "wedding-template.json" -> "Wedding"
+                // Remove "-template.json" and capitalization
+                const label = t.replace('-template.json', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                opt.textContent = label;
+                select.appendChild(opt);
+            });
         }
 
         async function loadSelectedTemplate() {
             const name = document.getElementById('template-select').value;
             if (!name) { alert("Please select a template first."); return; }
 
-            if (!confirm("Are you sure? This will overwrite your current form data (but not save until you click 'Save Changes').")) return;
+            if (!confirm("Are you sure? This will overwrite your current settings.")) return;
 
             try {
-                const res = await fetch(`/api/template?name=${name}`);
-                if (!res.ok) throw new Error("Failed to fetch");
+                // DIRECT FILE FETCH: Works on GitHub Pages (Static) AND Localhost
+                const res = await fetch(`clients/${name}`);
+                if (!res.ok) throw new Error(`Failed to load ${name}`);
                 const data = await res.json();
 
                 // Populate Form
                 populateForm(data); // Reuse existing function
 
-                alert("Template loaded! Review the settings and click 'Save Changes' to apply.");
+                // Alert with "Save" Reminder
+                alert(`Loaded "${name}"!\n\nthemeColor: ${data.visuals?.themeColor || 'Default'}\n\nReview the settings and click 'Save Changes' to apply.`);
 
             } catch (e) {
                 alert("Error loading template: " + e.message);
+                console.error(e);
             }
         }
 
