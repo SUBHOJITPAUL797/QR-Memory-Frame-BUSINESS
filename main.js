@@ -21,6 +21,13 @@ async function init() {
     // Render immediately so overlay is visible
     renderApp(clientData);
 
+    // Initialize Video Player IMMEDIATELY (Hidden)
+    // We need it ready for the "Warmup" trick on Enter click
+    if (clientData.videos && clientData.videos[0] && clientData.videos[0].videoId) {
+        // We use a small timeout to ensure DOM is ready
+        setTimeout(() => initVideoPlayer(clientData.videos[0].videoId), 100);
+    }
+
     // Elements
     const playBtn = document.getElementById('play-btn');
     const loadingContainer = document.getElementById('loading-container');
@@ -262,6 +269,9 @@ function renderApp(client) {
             musicFrame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
         }
 
+        // WARM UP MAIN VIDEO (The Loophole)
+        warmupVideoPlayer();
+
         // Force scroll to top immediately to ensure clean start
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
@@ -372,9 +382,19 @@ function runCinematicSequence() {
             const itemHeight = item.offsetHeight || viewportHeight * 0.5;
 
             // Scroll to specific item FIRST (No overlap) to prevent jitter
+            // Mobile Optimization: Ensure top text is not cut off
+            const isMobile = window.innerWidth < 768;
+            let finalOffsetY = (viewportHeight / 2) - (itemHeight / 2);
+
+            // If item is too tall (taking up > 60% of screen) or explicitly on mobile
+            // We prioritize the TOP padding (25% from top) to ensure caption is clearly visible
+            if (isMobile || itemHeight > viewportHeight * 0.6) {
+                finalOffsetY = viewportHeight * 0.25; // Force it to start 25% down from top (Safe Zone)
+            }
+
             tl.to(window, {
                 duration: 0.8,
-                scrollTo: { y: item, offsetY: (viewportHeight / 2) - (itemHeight / 2) },
+                scrollTo: { y: item, offsetY: finalOffsetY, autoKill: false },
                 ease: "power2.inOut"
             });
 
@@ -514,11 +534,31 @@ function onPlayerReady(event) {
 
 let progressInterval;
 
+// Auto-Hide Timer
+let controlsTimeout;
+
+function resetControlsTimer() {
+    const controls = document.getElementById('custom-controls');
+    if (!controls) return;
+
+    // Only auto-hide if playing
+    if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+        // Show
+        controls.classList.remove('opacity-0', 'pointer-events-none');
+
+        // Reset Hide Timer
+        clearTimeout(controlsTimeout);
+        controlsTimeout = setTimeout(() => {
+            controls.classList.add('opacity-0', 'pointer-events-none');
+        }, 2500); // 2.5s for better UX (2s is a bit fast)
+    }
+}
+
 function onPlayerStateChange(event) {
     const playIcon = document.getElementById('icon-play');
     const pauseIcon = document.getElementById('icon-pause');
     const cover = document.getElementById('video-cover');
-    const bigPlayBtn = document.getElementById('btn-big-play');
+    const controls = document.getElementById('custom-controls');
 
     if (event.data == YT.PlayerState.PLAYING) {
         // STATE: PLAYING
@@ -532,12 +572,20 @@ function onPlayerStateChange(event) {
         // 3. Start Seekbar Loop
         startProgressLoop();
 
-    } else {
-        // STATE: PAUSED or ENDED or BUFFERING
+        // 4. Start Auto-Hide Logic
+        resetControlsTimer();
 
-        // 1. Show Cover (Hide Video/Ads) - Only if Paused or Ended (not buffering)
+    } else {
+        // STATE: PAUSED or ENDED
+        clearTimeout(controlsTimeout); // Stop auto-hiding
+
+        // 1. Show Cover (Hide Video/Ads)
+        // Only if Paused or Ended (not buffering)
         if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.ENDED) {
             if (cover) cover.classList.remove('opacity-0', 'pointer-events-none');
+
+            // HIDE Controls when paused (Cover takes over)
+            if (controls) controls.classList.add('opacity-0', 'pointer-events-none');
         }
 
         // 2. Update Icons
@@ -589,11 +637,61 @@ function setupCustomControls() {
     const btnForward = document.getElementById('btn-forward');
     const seekbar = document.getElementById('video-progress');
     const btnBigPlay = document.getElementById('btn-big-play');
+    const btnVolume = document.getElementById('btn-volume');
+
+    // Define elements for Auto-Hide
+    const wrapper = document.getElementById('youtube-player')?.parentElement;
+    const controls = document.getElementById('custom-controls');
+
+    // --- AUTO-HIDE CONTROLS LOGIC ---
+    // Listen for activity on the wrapper to keep controls visible
+    if (wrapper && controls) {
+        const resetTimer = () => resetControlsTimer();
+
+        wrapper.addEventListener('mousemove', resetTimer);
+        wrapper.addEventListener('click', resetTimer);
+        wrapper.addEventListener('touchstart', resetTimer);
+        wrapper.addEventListener('touchmove', resetTimer);
+    }
 
     // Controls on the Overlay Cover
     if (btnBigPlay) {
         btnBigPlay.addEventListener('click', () => {
+            // If user explicitly clicks the Big Play button, they expect sound
+            if (player && player.unMute) player.unMute();
+
+            // Update Icon
+            const iconMuted = document.getElementById('icon-muted');
+            const iconUnmuted = document.getElementById('icon-unmuted');
+            if (iconMuted) iconMuted.classList.add('hidden');
+            if (iconUnmuted) iconUnmuted.classList.remove('hidden');
+
             player.playVideo();
+        });
+    }
+
+    // --- AUTO-HIDE CONTROLS LOGIC ---
+    // Listen for activity on the wrapper to keep controls visible
+    if (wrapper && controls) {
+        const resetTimer = () => resetControlsTimer();
+
+        wrapper.addEventListener('mousemove', resetTimer);
+        wrapper.addEventListener('click', resetTimer);
+        wrapper.addEventListener('touchstart', resetTimer);
+        wrapper.addEventListener('touchmove', resetTimer);
+    }
+
+    if (btnVolume) {
+        btnVolume.addEventListener('click', () => {
+            if (player.isMuted()) {
+                player.unMute();
+                document.getElementById('icon-muted').classList.add('hidden');
+                document.getElementById('icon-unmuted').classList.remove('hidden');
+            } else {
+                player.mute();
+                document.getElementById('icon-muted').classList.remove('hidden');
+                document.getElementById('icon-unmuted').classList.add('hidden');
+            }
         });
     }
 
@@ -629,11 +727,89 @@ function setupCustomControls() {
             player.seekTo(time);
         });
     }
+
+    // --- NEW: Interaction Layer for Double Tap & Click ---
+    // We create this dynamically to ensure it covers everything
+    const wrapper = document.getElementById('youtube-player').parentElement;
+    let clickLayer = document.getElementById('video-click-layer');
+
+    if (!clickLayer && wrapper) {
+        clickLayer = document.createElement('div');
+        clickLayer.id = 'video-click-layer';
+        clickLayer.className = 'absolute inset-0 z-10 cursor-pointer'; // z-10 is below cover (z-20) and controls (z-30) but above iframe (z-0)
+        // Insert before cover
+        const cover = document.getElementById('video-cover');
+        if (cover) wrapper.insertBefore(clickLayer, cover);
+    }
+
+    if (clickLayer) {
+        let lastTap = 0;
+        clickLayer.addEventListener('click', (e) => {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+
+            if (tapLength < 500 && tapLength > 0) {
+                // DOUBLE TAP DETECTED
+                toggleFullscreen(wrapper);
+                e.preventDefault();
+            } else {
+                // SINGLE TAP (Toggle Play/Pause)
+                // We assume single tap if no second tap follows quickly, 
+                // but for responsiveness we trigger play/pause immediately. 
+                // (Double tap will just toggle fullscreen, leaving play state usually as is or toggled twice fast)
+                const state = player.getPlayerState();
+                if (state === YT.PlayerState.PLAYING) {
+                    player.pauseVideo();
+                    // UI handled by onPlayerStateChange
+                } else {
+                    player.playVideo();
+                }
+            }
+            lastTap = currentTime;
+        });
+    }
+}
+
+function toggleFullscreen(element) {
+    if (!document.fullscreenElement) {
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.webkitRequestFullscreen) { /* Safari */
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) { /* IE11 */
+            element.msRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
+        }
+    }
+}
+
+// THE LOOPHOLE: "Warm Up" the player on the very first user interaction (Enter Button)
+// This authorizes the video to play programmatically later.
+function warmupVideoPlayer() {
+    if (player && isPlayerReady) {
+        player.mute();
+        player.playVideo();
+        // Pause immediately after start to keeping it ready but hidden
+        setTimeout(() => {
+            player.pauseVideo();
+        }, 100);
+    }
 }
 
 function playVideo() {
     // This is called by the cinematic sequence
     if (player && isPlayerReady) {
+        // We still ensure it's muted just in case, but since we warmed it up, 
+        // it should respect the previous state.
+        // If user wants sound, they can toggle it.
+        player.mute();
         player.playVideo();
     } else {
         // Retry if API wasn't ready yet (rare)
