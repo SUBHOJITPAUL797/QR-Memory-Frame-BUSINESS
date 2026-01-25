@@ -274,49 +274,69 @@ function runCinematicSequence() {
     tl.to('.grow-line', { height: '3rem', duration: 1.5 }, "-=1");
 
     // 3. "Deal" Photos One by One - DYNAMICALLY
-    // We convert the NodeList to an Array to ensure proper iteration
     if (galleryItems.length > 0) {
-        // Global Click Listener for Slideshow Mode
-        // If the timeline is paused, clicking anywhere resumes it.
-        document.addEventListener('click', () => {
-            if (tl.paused()) {
-                tl.play();
+
+        // INTERACTION MODE: Click vs Auto
+        const mode = config.visuals?.interactionMode || 'click';
+        const photoDuration = config.visuals?.photoDuration || 5;
+        const effectName = config.visuals?.transitionEffect || 'zoom';
+
+        // Helper: Get GSAP vars for specific effects
+        const getTransitionConfig = (effect, item) => {
+            const defaults = { opacity: 0, scale: 0.9, rotate: 0, x: 0, y: 30, filter: 'blur(0px)', rotateX: 0, rotateY: 0 };
+
+            switch (effect) {
+                case 'fade': return { ...defaults, scale: 1, y: 0 };
+                case 'slideUp': return { ...defaults, scale: 1, y: 100 };
+                case 'slideSide': return { ...defaults, scale: 1, y: 0, x: 100 };
+                case 'rotate': return { ...defaults, scale: 0.5, rotate: -15 };
+                case 'blur': return { ...defaults, scale: 1.1, filter: 'blur(20px)', opacity: 0 };
+                case 'polaroid': return { ...defaults, scale: 1.2, y: -500, rotate: (Math.random() - 0.5) * 20 }; // Drop from sky
+                case 'flip': return { ...defaults, scale: 0.8, rotateX: 90 };
+                case 'elastic': return { ...defaults, scale: 0.3 };
+                case 'dramatic': return { ...defaults, scale: 3, opacity: 0, filter: 'contrast(2)' };
+                case 'zoom': default: return { ...defaults, scale: 0.95 }; // Gentle zoom default
             }
-        });
+        };
+
+        if (mode === 'click') {
+            // Global Click Listener for Slideshow Mode
+            document.addEventListener('click', () => {
+                if (tl.paused()) {
+                    tl.play();
+                }
+            });
+        }
 
         galleryItems.forEach((item, index) => {
             // Calculate dynamic offset to center this specific photo
             const viewportHeight = window.innerHeight;
             const itemHeight = item.offsetHeight || viewportHeight * 0.5;
 
-            // spotlight logic REMOVED: User wants photos to stay visible
-            // if (index > 0) {
-            //    const prevItem = galleryItems[index - 1];
-            //    tl.to(prevItem, { opacity: 0, duration: 1.2 }, "-=1.2");
-            // }
-
             // Scroll to specific item FIRST (No overlap) to prevent jitter
             tl.to(window, {
-                duration: 0.8, // Much faster scroll (was 2.0)
+                duration: 0.8,
                 scrollTo: { y: item, offsetY: (viewportHeight / 2) - (itemHeight / 2) },
                 ease: "power2.inOut"
             });
 
-            // "Deal" Animation: "Gentle & Smooth"
+            // Get selected effect configuration
+            const fromVars = getTransitionConfig(effectName, item);
+
+            // "Deal" Animation: Dynamic based on config
             tl.fromTo(item,
-                {
-                    opacity: 0,
-                    scale: 0.95, // Almost full size, just a tiny "breath"
-                    rotate: 0,
-                    y: 30        // Gentle slide up
-                },
+                fromVars,
                 {
                     opacity: 1,
                     scale: 1,
+                    x: 0,
                     y: 0,
-                    rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''),
-                    duration: 0.5, // "Instant" reveal (was 3.0)
-                    ease: "power2.out",
+                    rotate: item.style.transform.replace('rotate(', '').replace('deg)', ''), // Restore original tilt
+                    filter: 'blur(0px) contrast(1)',
+                    rotateX: 0,
+                    rotateY: 0,
+                    duration: (effectName === 'polaroid' || effectName === 'elastic') ? 1.5 : 0.8, // Slower for complex effects
+                    ease: (effectName === 'polaroid') ? "bounce.out" : (effectName === 'elastic' ? "elastic.out(1, 0.5)" : "power2.out"),
                     onComplete: () => {
                         const polaroid = item.querySelector('.polaroid');
                         if (polaroid) polaroid.classList.add('breathing-active');
@@ -324,8 +344,12 @@ function runCinematicSequence() {
                 }
             );
 
-            // STOP HERE: Wait for user to click to see the next photo
-            tl.addPause();
+            // PAUSE or WAIT based on mode
+            if (mode === 'click') {
+                tl.addPause(); // Wait for user click
+            } else {
+                tl.to({}, { duration: photoDuration }); // Auto wait then continue
+            }
         });
 
         // RESTORE: Bring all photos back to full visibility after the sequence ends

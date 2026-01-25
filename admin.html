@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Frame Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-8">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl overflow-hidden">
+        <div class="bg-blue-600 p-6 flex justify-between items-center text-white">
+            <h1 class="text-2xl font-bold">Memory Frame Admin</h1>
+            <a href="/" target="_blank"
+                class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition">View Live Site</a>
+        </div>
+
+        <form id="configForm" class="p-8 space-y-8">
+
+            <!-- Section 1: Main Details -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">1. Main Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Client Title (Names)</label>
+                        <input type="text" name="title"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="e.g. John & Jane">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Subtitle</label>
+                        <input type="text" name="subtitle"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="e.g. A Sacred Beginning">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Event Type</label>
+                        <input type="text" name="eventType"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="e.g. Wedding">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Footer Quote</label>
+                        <input type="text" name="footerQuote"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Start Page -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">2. Start Page (Loading Screen)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Loading Title</label>
+                        <input type="text" name="loadingTitle"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Loading Subtitle</label>
+                        <input type="text" name="loadingSubtitle"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Button Text</label>
+                        <input type="text" name="enterButtonText"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Message Section -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">3. Message Card</h2>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Dedication (Top Quote)</label>
+                    <textarea name="dedication" rows="2"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Message Title</label>
+                        <input type="text" name="messageTitle"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Message Sign-Off</label>
+                        <input type="text" name="messageSignOff"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Message Body</label>
+                    <textarea name="messageBody" rows="4"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+            </div>
+
+            <!-- Section 4: Media -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">4. Media Settings</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Hero Image Path</label>
+                        <input type="text" name="heroImage"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                        <p class="text-xs text-gray-500 mt-1">Place file in assets/photos/ first.</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Photo Count</label>
+                        <input type="number" name="photoCount" id="photoCountInput"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">YouTube Embed Link</label>
+                        <input type="text" name="youtubeLink"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Photo Captions -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">5. Photo Messages</h2>
+                <p class="text-xs text-gray-500">Add a short caption for each photo in the sequence.</p>
+                <div id="captionsContainer"
+                    class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto p-2 border rounded-md">
+                    <!-- Dynamic Inputs will appear here -->
+                </div>
+            </div>
+
+            <!-- Section 6: Visuals & Effects -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">6. Visuals & Effects</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Interaction Mode</label>
+                        <select name="visuals_interactionMode"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 bg-white">
+                            <option value="click">User Click (Manual)</option>
+                            <option value="auto">Auto Play (Automatic)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Photo Duration (Seconds)</label>
+                        <input type="number" name="visuals_photoDuration"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500">
+                        <p class="text-xs text-gray-500 mt-1">Only used in Auto Play mode.</p>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Transition Effect</label>
+                        <select name="visuals_transitionEffect"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 bg-white">
+                            <option value="zoom">Gentle Zoom</option>
+                            <option value="fade">Simple Fade</option>
+                            <option value="slideUp">Slide Up</option>
+                            <option value="slideSide">Slide From Side</option>
+                            <option value="rotate">Rotate In</option>
+                            <option value="blur">Blur Reveal</option>
+                            <option value="polaroid">Falling Polaroid</option>
+                            <option value="flip">3D Flip</option>
+                            <option value="elastic">Elastic Pop</option>
+                            <option value="dramatic">Dramatic Burst</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Action -->
+            <div class="pt-6 sticky bottom-0 bg-white border-t mt-8 flex justify-end gap-4">
+                <button type="button" id="resetBtn"
+                    class="px-6 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition font-medium">Reset
+                    form</button>
+                <button type="submit"
+                    class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition font-bold"
+                    id="saveBtn">Save Configuration</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Logic -->
+    <script type="module">
+        import { config } from './config.js';
+
+        const form = document.getElementById('configForm');
+        const captionsContainer = document.getElementById('captionsContainer');
+        const photoCountInput = document.getElementById('photoCountInput');
+
+        // Helper: Generate Caption Inputs
+        function renderCaptionInputs(count) {
+            captionsContainer.innerHTML = '';
+            for (let i = 1; i <= count; i++) {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <label class="block text-xs font-medium text-gray-500">Photo ${i}</label>
+                    <input type="text" name="caption_${i}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border text-sm" placeholder="Caption for photo ${i}">
+                `;
+                captionsContainer.appendChild(div);
+            }
+        }
+
+        // 1. Populate Form
+        function populateForm() {
+            // Fill standard fields
+            for (const [key, value] of Object.entries(config)) {
+                if (key === 'captions') continue;
+                if (key === 'visuals') {
+                    // Handle Visuals Object
+                    const visuals = value;
+                    if (form.elements['visuals_interactionMode']) form.elements['visuals_interactionMode'].value = visuals.interactionMode;
+                    if (form.elements['visuals_photoDuration']) form.elements['visuals_photoDuration'].value = visuals.photoDuration;
+                    if (form.elements['visuals_transitionEffect']) form.elements['visuals_transitionEffect'].value = visuals.transitionEffect || 'zoom';
+                    continue;
+                }
+
+                const input = form.elements[key];
+                if (input) {
+                    input.value = value;
+                }
+            }
+
+            // Setup Captions
+            const count = Number(config.photoCount) || 0;
+            renderCaptionInputs(count);
+
+            // Fill Captions
+            if (config.captions) {
+                for (let i = 1; i <= count; i++) {
+                    const captionValue = config.captions[String(i)] || "";
+                    const input = form.elements[`caption_${i}`];
+                    if (input) input.value = captionValue;
+                }
+            }
+        }
+
+        // Listen for photo count changes to update inputs
+        photoCountInput.addEventListener('change', (e) => {
+            const count = Number(e.target.value);
+            renderCaptionInputs(count);
+            // Re-populate existing values if they exist in config
+            if (config.captions) {
+                for (let i = 1; i <= count; i++) {
+                    const captionValue = config.captions[String(i)] || "";
+                    const input = form.elements[`caption_${i}`];
+                    if (input) input.value = captionValue;
+                }
+            }
+        });
+
+        populateForm();
+
+        // 2. Handle Save
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('saveBtn');
+            const originalText = btn.textContent;
+            btn.textContent = "Saving...";
+            btn.disabled = true;
+
+            // Collect Data
+            const formData = new FormData(form);
+            const newConfig = { ...config };
+            const newCaptions = {};
+            const newVisuals = { ...config.visuals }; // Start with existing visuals
+
+            for (const [key, value] of formData.entries()) {
+                // Convert numbers
+                if (key === 'photoCount') {
+                    newConfig[key] = Number(value);
+                }
+                // Handle Visuals
+                else if (key.startsWith('visuals_')) {
+                    const visualKey = key.replace('visuals_', '');
+                    if (visualKey === 'photoDuration') {
+                        newVisuals[visualKey] = Number(value);
+                    } else {
+                        newVisuals[visualKey] = value;
+                    }
+                }
+                // Handle Captions
+                else if (key.startsWith('caption_')) {
+                    const index = key.split('_')[1];
+                    if (value.trim()) {
+                        newCaptions[index] = value.trim();
+                    }
+                }
+                // Handle Standard Strings
+                else if (key !== 'photoDuration') { // removed legacy photoDuration logic
+                    newConfig[key] = value;
+                }
+            }
+
+            newConfig.captions = newCaptions;
+            newConfig.visuals = newVisuals;
+            // Clean up legacy root props if they exist (optional, but good for hygiene)
+            delete newConfig.photoDuration;
+
+            try {
+                const response = await fetch('/api/save-config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newConfig)
+                });
+
+                if (response.ok) {
+                    alert('Configuration Saved Successfully! The site will now update.');
+                    btn.textContent = "Saved!";
+                    // Force refresh to reload config module
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    throw new Error('Server returned error');
+                }
+            } catch (err) {
+                alert('Failed to save: ' + err.message);
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+
+    </script>
+</body>
+
+</html>

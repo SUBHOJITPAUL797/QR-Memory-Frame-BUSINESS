@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "QR Memory Frame - Static Site",
   "scripts": {
-    "dev": "bunx serve . -p 3000",
+    "dev": "bun run server.js",
     "lint": "eslint ."
   },
   "devDependencies": {
