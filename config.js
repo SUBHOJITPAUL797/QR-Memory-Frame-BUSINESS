@@ -3,7 +3,7 @@
  * Just edit this file to update the website content.
  */
 export const config = {
-    "title": "Papri & Dol...",
+    "title": "Pocha & Pochi...",
     "subtitle": "A Sacred Beginning",
     "eventType": "Wedding",
     "loadingTitle": "Your Story Begins",
@@ -15,7 +15,6 @@ export const config = {
     "messageBody": "From the moment I met you, I knew this journey would be special. You are my best friend, my soulmate, and my greatest adventure. Here's to forever and always.",
     "messageSignOff": "With Love,",
     "heroImage": "./assets/photos/hero.jpg",
-    "photoCount": 13,
     "photoCount": 13,
     "captions": {
         "1": "The Mehndi Ceremony",
