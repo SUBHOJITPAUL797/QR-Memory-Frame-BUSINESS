@@ -1,0 +1,28 @@
+{
+    "title": "Happy Birthday!",
+    "subtitle": "Another Amazing Year",
+    "eventType": "Birthday Celebration",
+    "dedication": "Cheers to you!",
+    "footerQuote": "Age is just a number",
+    "loadingTitle": "Party Loading...",
+    "loadingSubtitle": "Get Ready to Celebrate",
+    "enterButtonText": "Open the Gift",
+    "messageTitle": "A Special Wish",
+    "messageBody": "May your year be filled with success, laughter, and endless joy. You make the world brighter just by being in it.",
+    "messageSignOff": "Best Wishes,",
+    "heroImage": "https://images.unsplash.com/photo-1530103862676-de3c9a59af57?auto=format&fit=crop&q=80",
+    "photoCount": 12,
+    "captions": {
+        "1": "Baby Steps",
+        "2": "School Days",
+        "3": "Sweet 16",
+        "4": "Graduation",
+        "5": "Today's Party"
+    },
+    "visuals": {
+        "interactionMode": "auto",
+        "transitionEffect": "elastic",
+        "photoDuration": 4,
+        "themeColor": "#9333EA"
+    }
+}

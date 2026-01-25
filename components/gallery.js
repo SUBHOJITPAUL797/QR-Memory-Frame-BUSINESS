@@ -35,8 +35,7 @@ export function renderGallery(client) {
             <div class="w-1 bg-gold-500 mx-auto h-0 grow-line"></div>
           </div>
           
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-[50vh] md:gap-8 px-4 md:px-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-64 md:gap-8 px-4 md:px-8">
             ${imagesHtml}
           </div>
         </div>
