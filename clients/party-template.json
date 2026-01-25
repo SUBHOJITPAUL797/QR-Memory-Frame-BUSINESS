@@ -1,0 +1,25 @@
+{
+    "title": "Let's Party!",
+    "subtitle": "Night to Remember",
+    "eventType": "Party",
+    "dedication": "Eat, Drink, Dance",
+    "footerQuote": "Good Vibes Only",
+    "loadingTitle": "Mixing Drinks...",
+    "loadingSubtitle": "Dropping the Beat",
+    "enterButtonText": "Join the Floor",
+    "messageTitle": "Party Time",
+    "messageBody": "Thanks for making the night unforgettable. Let's do it again soon!",
+    "messageSignOff": "Cheers,",
+    "heroImage": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80",
+    "photoCount": 20,
+    "captions": {
+        "1": "Dance Floor",
+        "2": "Crew"
+    },
+    "visuals": {
+        "interactionMode": "auto",
+        "transitionEffect": "elastic",
+        "photoDuration": 3,
+        "themeColor": "#7C3AED"
+    }
+}

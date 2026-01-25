@@ -1,0 +1,25 @@
+{
+    "title": "Milestone Unlocked",
+    "subtitle": "Celebrating Success",
+    "eventType": "Achievement",
+    "dedication": "Hard work pays off.",
+    "footerQuote": "The sky is the limit",
+    "loadingTitle": "Generating Success",
+    "loadingSubtitle": "Loading Achievements...",
+    "enterButtonText": "View Journey",
+    "messageTitle": "Journey to Success",
+    "messageBody": "Every step was worth it. Grateful for the support and looking forward to new heights.",
+    "messageSignOff": "Sincerely,",
+    "heroImage": "https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&q=80",
+    "photoCount": 8,
+    "captions": {
+        "1": "The Beginning",
+        "2": "The Win"
+    },
+    "visuals": {
+        "interactionMode": "auto",
+        "transitionEffect": "slide",
+        "photoDuration": 4,
+        "themeColor": "#16A34A"
+    }
+}

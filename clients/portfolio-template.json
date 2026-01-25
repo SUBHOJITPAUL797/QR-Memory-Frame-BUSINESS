@@ -1,0 +1,25 @@
+{
+    "title": "My Portfolio",
+    "subtitle": "Selected Works",
+    "eventType": "Portfolio",
+    "dedication": "Art & Design",
+    "footerQuote": "Create everyday",
+    "loadingTitle": "Curating Gallery...",
+    "loadingSubtitle": "Showcase",
+    "enterButtonText": "View Work",
+    "messageTitle": "About Me",
+    "messageBody": "A collection of my recent projects, designs, and creative endeavors. Enjoy the visual journey.",
+    "messageSignOff": "Contact Me,",
+    "heroImage": "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80",
+    "photoCount": 12,
+    "captions": {
+        "1": "Project Alpha",
+        "2": "Photography"
+    },
+    "visuals": {
+        "interactionMode": "click",
+        "transitionEffect": "fade",
+        "photoDuration": 0,
+        "themeColor": "#111827"
+    }
+}

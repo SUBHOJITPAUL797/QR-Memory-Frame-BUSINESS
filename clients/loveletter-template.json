@@ -1,0 +1,25 @@
+{
+    "title": "My Dearest,",
+    "subtitle": "A Letter from the Heart",
+    "eventType": "Love Letter",
+    "dedication": "For you, always.",
+    "footerQuote": "P.S. I Love You",
+    "loadingTitle": "Opening Envelope...",
+    "loadingSubtitle": "Words of Love",
+    "enterButtonText": "Read Letter",
+    "messageTitle": "To My Love",
+    "messageBody": "Every moment with you is a treasure. You are my sun, my moon, and all my stars.",
+    "messageSignOff": "Forever,",
+    "heroImage": "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80",
+    "photoCount": 8,
+    "captions": {
+        "1": "Us",
+        "2": "Memories"
+    },
+    "visuals": {
+        "interactionMode": "click",
+        "transitionEffect": "fade",
+        "photoDuration": 6,
+        "themeColor": "#E11D48"
+    }
+}
