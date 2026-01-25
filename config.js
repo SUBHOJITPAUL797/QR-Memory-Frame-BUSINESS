@@ -32,11 +32,9 @@ export const config = {
         "13": "Varmala Moment"
     },
     "youtubeLink": "https://www.youtube.com/embed/jfKfPfyJRdk?si=D-lD6gLd2c9-Fk1-",
-
-    // 7. Visuals & Effects
     "visuals": {
-        "interactionMode": "click", // Options: 'click', 'auto'
-        "photoDuration": 5,         // Seconds (only used if interactionMode is 'auto')
-        "transitionEffect": "zoom"  // Options: 'zoom', 'fade', 'slideUp', 'slideSide', 'rotate', 'blur', 'polaroid', 'flip', 'elastic', 'dramatic'
+        "interactionMode": "click",
+        "photoDuration": 5,
+        "transitionEffect": "rotate"
     }
 };

@@ -233,6 +233,7 @@ function renderApp(client) {
             runCinematicSequence();
         }, 1000);
     });
+
 }
 
 // Initialize GSAP (Hero Parallax Only)
@@ -307,7 +308,15 @@ function runCinematicSequence() {
                 }
             });
         }
-
+        // if presed enter key the photos will appear
+        document.addEventListener('keydown', function (event) {
+            // Check if the "Enter" key was pressed
+            if (event.key === 'Enter') {
+                 if (tl.paused()) {
+                    tl.play();
+                }
+            }
+        })
         galleryItems.forEach((item, index) => {
             // Calculate dynamic offset to center this specific photo
             const viewportHeight = window.innerHeight;
