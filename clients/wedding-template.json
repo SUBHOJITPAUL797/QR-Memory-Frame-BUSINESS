@@ -23,6 +23,8 @@
         "interactionMode": "click",
         "transitionEffect": "fade",
         "photoDuration": 5,
-        "themeColor": "#C5A059"
+        "themeColor": "#C5A059",
+        "frameStyle": "classic",
+        "bgPattern": "mandala"
     }
 }

@@ -120,7 +120,7 @@ function buildClientFromConfig() {
         //d- pushing the imagepaths 
         galleryImages.push(`./assets/photos/${i}.jpg`);
     }
-    
+
     // d- Copying YouTube Video URL From config.js
     let videoUrl = config.youtubeLink;
 
@@ -128,7 +128,7 @@ function buildClientFromConfig() {
     // Supports: youtu.be, youtube.com/watch?v=, youtube.com/embed/
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = videoUrl.match(regExp);
-    
+
 
     if (match && match[2].length === 11) {
         // It's a valid ID, convert to embed
@@ -198,7 +198,7 @@ function renderApp(client) {
                  <img src="${client.heroImage}" class="w-full h-full object-cover opacity-60" alt="Background" />
                  <!-- Dark Gradient Overlay for Text Pop -->
                  <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80"></div>
-                 <div class="absolute inset-0 bg-pattern-mandala opacity-[0.1]"></div>
+                 <div class="absolute inset-0 bg-pattern-${client.visuals?.bgPattern || 'mandala'} opacity-[0.1]"></div>
             </div>
 
             <!-- Content Container -->

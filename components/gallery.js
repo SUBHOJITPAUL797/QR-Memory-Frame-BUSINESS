@@ -15,12 +15,12 @@ export function renderGallery(client) {
             ${caption}
         </p>
 
-        <div class="polaroid">
+        <div class="frame-${client.visuals?.frameStyle || 'polaroid'}">
             <div class="aspect-[3/4] overflow-hidden bg-gray-100">
                 <img 
-                  src="${imgUrl}" 
-                  class="w-full h-full object-cover grayscale-[20%]"
-                  alt="Memory ${index + 1}"
+                    src="${imgUrl}" 
+                    class="w-full h-full object-cover grayscale-[20%]"
+                    alt="Memory ${index + 1}"
                 />
             </div>
         </div>

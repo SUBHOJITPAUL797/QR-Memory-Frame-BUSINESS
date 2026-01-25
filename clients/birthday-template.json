@@ -23,6 +23,8 @@
         "interactionMode": "auto",
         "transitionEffect": "elastic",
         "photoDuration": 4,
-        "themeColor": "#9333EA"
+        "themeColor": "#9333EA",
+        "frameStyle": "modern",
+        "bgPattern": "dots"
     }
 }
