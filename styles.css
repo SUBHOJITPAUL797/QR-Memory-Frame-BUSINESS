@@ -5,12 +5,35 @@
 
 /* CSS Variables for Dynamic Theming */
 :root {
+    /* Default Fonts (Classic Theme) */
     --font-serif: 'Playfair Display', serif;
     --font-sans: 'Inter', sans-serif;
 
     /* Default Theme: Gold */
     --theme-color: #C5A059;
     --theme-rgb: 197, 160, 89;
+}
+
+/* Typography Themes */
+body.font-theme-modern {
+    --font-serif: 'Montserrat', sans-serif;
+    /* Modern headlines are sans-serif */
+    --font-sans: 'Inter', sans-serif;
+}
+
+body.font-theme-romantic {
+    --font-serif: 'Great Vibes', cursive;
+    --font-sans: 'Lato', sans-serif;
+}
+
+body.font-theme-playful {
+    --font-serif: 'Pacifico', cursive;
+    --font-sans: 'Quicksand', sans-serif;
+}
+
+body.font-theme-royal {
+    --font-serif: 'Cinzel', serif;
+    --font-sans: 'Lato', sans-serif;
 }
 
 body {

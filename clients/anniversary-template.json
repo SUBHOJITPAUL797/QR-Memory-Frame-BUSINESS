@@ -1,17 +1,29 @@
 {
-    "title": "Happy Anniversary",
-    "subtitle": "Celebrating 5 Years",
+    "title": "Golden Jubilee",
+    "subtitle": "50 Years of Togetherness",
     "eventType": "Anniversary",
-    "dedication": "To my better half...",
-    "footerQuote": "Forever & Always",
-    "heroImage": "./assets/hero.jpg",
-    "photoCount": 12,
+    "dedication": "Growing old together.",
+    "footerQuote": "True love lasts forever",
+    "loadingTitle": "Walking Down Memory Lane",
+    "loadingSubtitle": "Half a Century",
+    "enterButtonText": "Celebrate Love",
+    "messageTitle": "Thank You",
+    "messageBody": "For 50 years, you have been my rock, my joy, and my greatest adventure. Here is to 50 more.",
+    "messageSignOff": "Your Loving Partner,",
+    "heroImage": "https://images.unsplash.com/photo-1549417229-ea219717df3d?auto=format&fit=crop&q=80",
+    "photoCount": 15,
     "captions": {
-        "1": "Our first date",
-        "2": "The wedding day"
+        "1": "Day One",
+        "2": "Our Wedding",
+        "3": "First Home"
     },
     "visuals": {
         "interactionMode": "click",
-        "transitionEffect": "zoom"
+        "transitionEffect": "slideUp",
+        "photoDuration": 5,
+        "themeColor": "#D97706",
+        "frameStyle": "classic",
+        "bgPattern": "mandala",
+        "fontTheme": "royal"
     }
 }

@@ -775,6 +775,17 @@ function toggleFullscreen(element) {
         } else if (element.msRequestFullscreen) { /* IE11 */
             element.msRequestFullscreen();
         }
+        // --- NEW: Apply Dynamic Theme Color ---
+        if (client.visuals && client.visuals.themeColor) {
+            applyVisualTheme(client.visuals.themeColor);
+        }
+
+        // --- NEW: Apply Dynamic Font Theme ---
+        // Remove old themes first
+        document.body.classList.remove('font-theme-modern', 'font-theme-romantic', 'font-theme-playful', 'font-theme-royal');
+        if (client.visuals && client.visuals.fontTheme) {
+            document.body.classList.add(`font-theme-${client.visuals.fontTheme}`);
+        }
     } else {
         if (document.exitFullscreen) {
             document.exitFullscreen();
