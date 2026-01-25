@@ -8,7 +8,7 @@ export function renderVideo(client) {
             <iframe 
               id="youtube-player"
               class="w-full h-full" 
-              src="${video.url}&enablejsapi=1&autoplay=0&mute=0" 
+              src="${video.url}" 
               title="YouTube video player" 
               frameborder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 

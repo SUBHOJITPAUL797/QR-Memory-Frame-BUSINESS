@@ -1,0 +1,17 @@
+{
+    "title": "Happy Anniversary",
+    "subtitle": "Celebrating 5 Years",
+    "eventType": "Anniversary",
+    "dedication": "To my better half...",
+    "footerQuote": "Forever & Always",
+    "heroImage": "./assets/hero.jpg",
+    "photoCount": 12,
+    "captions": {
+        "1": "Our first date",
+        "2": "The wedding day"
+    },
+    "visuals": {
+        "interactionMode": "click",
+        "transitionEffect": "zoom"
+    }
+}

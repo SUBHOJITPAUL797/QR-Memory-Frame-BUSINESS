@@ -31,10 +31,11 @@ export const config = {
         "12": "The Promise Ring",
         "13": "Varmala Moment"
     },
-    "youtubeLink": "https://www.youtube.com/embed/jfKfPfyJRdk?si=D-lD6gLd2c9-Fk1-",
+    "youtubeLink": "https://youtu.be/8_k2H-CpDPI?si=Vx44B_mCb5tN1MzE",
     "visuals": {
         "interactionMode": "click",
         "photoDuration": 5,
         "transitionEffect": "rotate"
-    }
+    },
+    "music": "https://youtu.be/c4JD7rEtIj8?si=1ZYs0IsDXDeKZ3n2"
 };

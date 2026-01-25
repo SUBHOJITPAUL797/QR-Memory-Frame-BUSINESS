@@ -112,10 +112,37 @@ function buildClientFromConfig() {
     }
 
     let videoUrl = config.youtubeLink;
-    if (videoUrl.includes('watch?v=')) {
-        const videoId = videoUrl.split('v=')[1].split('&')[0];
-        videoUrl = `https://www.youtube.com/embed/${videoId}`;
+
+    // Robust YouTube ID extraction
+    // Supports: youtu.be, youtube.com/watch?v=, youtube.com/embed/
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = videoUrl.match(regExp);
+
+    if (match && match[2].length === 11) {
+        // It's a valid ID, convert to embed
+        videoUrl = `https://www.youtube.com/embed/${match[2]}`;
     }
+    // If no match, we assume it's already a valid direct link or let it fail gracefully
+
+
+    // Parse Background Music URL
+    let musicUrl = config.music || "";
+    let musicEmbedUrl = "";
+    if (musicUrl) {
+        const musicMatch = musicUrl.match(regExp);
+        if (musicMatch && musicMatch[2].length === 11) {
+            musicEmbedUrl = `https://www.youtube.com/embed/${musicMatch[2]}?enablejsapi=1&controls=0&loop=1&playlist=${musicMatch[2]}`;
+        }
+    }
+
+    // Construct Video URL with proper query params
+    // If invalid ID extraction failed, we fallback to whatever was there, assuming user knows what they did.
+    // If valid ID extraction worked, videoUrl is `https://www.youtube.com/embed/ID`
+    // We must append params with `?` first.
+
+    const params = 'controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&playsinline=1&enablejsapi=1&origin=' + window.location.origin;
+
+    const finalVideoUrl = videoUrl.includes('?') ? `${videoUrl}&${params}` : `${videoUrl}?${params}`;
 
     return {
         title: config.title,
@@ -136,8 +163,9 @@ function buildClientFromConfig() {
 
         heroImage: config.heroImage,
         gallery: galleryImages,
-        captions: config.captions || {}, // Pass captions, default to empty object for safety
-        videos: [{ type: 'youtube', url: videoUrl + '&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&playsinline=1&enablejsapi=1' }]
+        captions: config.captions || {},
+        musicEmbedUrl: musicEmbedUrl, // Pass music URL
+        videos: [{ type: 'youtube', url: finalVideoUrl }]
     };
 }
 
@@ -207,6 +235,11 @@ function renderApp(client) {
             ${renderVideo(client)}
         </div>
         
+        <!-- HIDDEN BACKGROUND MUSIC PLAYER -->
+        ${client.musicEmbedUrl ? `<div class="fixed top-0 left-0 w-1 h-1 opacity-0 pointer-events-none overflow-hidden z-[-1]">
+            <iframe id="bg-music-player" src="${client.musicEmbedUrl}" allow="autoplay" style="border:none;"></iframe>
+        </div>` : ''}
+
         <footer class="py-6 text-center text-xs text-gray-400 uppercase tracking-widest">
             QR Memory Frame
         </footer>
@@ -220,6 +253,12 @@ function renderApp(client) {
     playBtn.addEventListener('click', () => {
         // Unlock scroll when user enters
         document.body.style.overflow = '';
+
+        // PLAY MUSIC
+        const musicFrame = document.getElementById('bg-music-player');
+        if (musicFrame) {
+            musicFrame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        }
 
         // Force scroll to top immediately to ensure clean start
         if ('scrollRestoration' in history) {
@@ -312,7 +351,7 @@ function runCinematicSequence() {
         document.addEventListener('keydown', function (event) {
             // Check if the "Enter" key was pressed
             if (event.key === 'Enter') {
-                 if (tl.paused()) {
+                if (tl.paused()) {
                     tl.play();
                 }
             }
@@ -392,12 +431,22 @@ function runCinematicSequence() {
     // Read time
     tl.to({}, { duration: 5 });
 
+    // Stop Music Fade Out (Optional enhancement - user didn't ask but good practice)
+    // For now we leave it playing or pause it.
+    // Actually, usually users want background music to stop when the MAIN VIDEO starts.
+
     // 5. Finale: Video
     tl.to(window, {
         duration: 3,
         scrollTo: { y: videoSection, offsetY: 0 },
         ease: "power2.inOut",
         onStart: () => {
+            // STOP BACKGROUND MUSIC when reaching video section
+            const musicFrame = document.getElementById('bg-music-player');
+            if (musicFrame) {
+                musicFrame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            }
+
             import('./components/petals.js').then(module => {
                 module.stopPetalRain();
             });
