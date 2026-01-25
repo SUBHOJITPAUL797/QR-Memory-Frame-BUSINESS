@@ -123,6 +123,9 @@ function buildClientFromConfig() {
         galleryImages.push(`./assets/photos/${i}.jpg`);
     }
 
+    //---------------------- Image section ------------------------------
+    
+    //---------------------- URL section ------------------------------
     // d- Copying YouTube Video URL From config.js
     let videoUrl = config.youtubeLink;
 
