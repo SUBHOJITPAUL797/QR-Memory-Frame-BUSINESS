@@ -869,7 +869,7 @@
                 const data = await res.json();
 
                 // Populate Form
-                populateForm(data); // Reuse existing function
+                populateFormFromTemplate(data); // Reuse existing function
 
                 // Alert with "Save" Reminder
                 alert(`Loaded "${name}"!\n\nthemeColor: ${data.visuals?.themeColor || 'Default'}\n\nReview the settings and click 'Save Changes' to apply.`);
@@ -878,6 +878,35 @@
                 alert("Error loading template: " + e.message);
                 console.error(e);
             }
+        }
+
+        // Helper: Recursively populate form fields from template data
+        function populateFormFromTemplate(data) {
+            const form = document.getElementById('configForm');
+            // Find all inputs with a 'name' attribute
+            const inputs = form.querySelectorAll('[name]');
+
+            inputs.forEach(input => {
+                const path = input.name.split('.');
+                let current = data;
+
+                // Traverse JSON path (e.g. visuals.themeColor)
+                for (let i = 0; i < path.length; i++) {
+                    if (current && current[path[i]] !== undefined) {
+                        current = current[path[i]];
+                    } else {
+                        current = null;
+                        break;
+                    }
+                }
+
+                // Set value if found
+                if (current !== null) {
+                    input.value = current;
+                    // Trigger visual update (if any listeners exist)
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
         }
 
         // Initialize
