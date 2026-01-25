@@ -670,16 +670,7 @@ function setupCustomControls() {
         });
     }
 
-    // --- AUTO-HIDE CONTROLS LOGIC ---
-    // Listen for activity on the wrapper to keep controls visible
-    if (wrapper && controls) {
-        const resetTimer = () => resetControlsTimer();
 
-        wrapper.addEventListener('mousemove', resetTimer);
-        wrapper.addEventListener('click', resetTimer);
-        wrapper.addEventListener('touchstart', resetTimer);
-        wrapper.addEventListener('touchmove', resetTimer);
-    }
 
     if (btnVolume) {
         btnVolume.addEventListener('click', () => {
@@ -730,7 +721,7 @@ function setupCustomControls() {
 
     // --- NEW: Interaction Layer for Double Tap & Click ---
     // We create this dynamically to ensure it covers everything
-    const wrapper = document.getElementById('youtube-player').parentElement;
+    // Wrapper already defined above
     let clickLayer = document.getElementById('video-click-layer');
 
     if (!clickLayer && wrapper) {
