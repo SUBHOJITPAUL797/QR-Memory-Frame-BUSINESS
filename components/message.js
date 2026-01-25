@@ -8,10 +8,16 @@ export function renderMessage(client) {
         <div class="absolute top-10 left-1/2 -translate-x-1/2 text-[8rem] md:text-[12rem] text-gold-500/5 font-serif leading-none select-none">“</div>
         
         <div id="message-content" class="max-w-2xl mx-auto relative z-10 px-4">
+          <!-- Optional Title -->
+          ${client.messageTitle ? `<h4 class="font-serif text-gold-600 uppercase tracking-widest text-sm mb-6">${client.messageTitle}</h4>` : ''}
+          
           <h3 class="font-serif text-2xl md:text-5xl text-warm-900 italic leading-relaxed md:leading-tight mb-8 md:mb-12 drop-shadow-sm break-words">
-            ${client.dedication}
+            ${client.messageBody || client.dedication} 
           </h3>
           
+          <!-- Sign Off -->
+           ${client.messageSignOff ? `<p class="font-script text-3xl text-gold-600 opacity-80 mb-8">${client.messageSignOff}</p>` : ''}
+
           <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 text-gold-600 mb-8 opacity-80">
              <svg class="w-4 h-4 md:w-6 md:h-6 rotate-90 hidden md:block" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L9 9l-7 3 7 3 3 7 3-7 7-3-7-3-3-7z"/></svg>
              <span class="font-sans text-[10px] md:text-xs tracking-[0.2em] md:tracking-[0.4em] uppercase text-warm-900/60 border-t border-b border-gold-500/30 py-2 px-4 md:px-6 text-center">

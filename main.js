@@ -12,51 +12,92 @@ const app = document.getElementById('app');
 /**
  * Main initialization
  */
+/**
+ * Main initialization
+ */
 async function init() {
     const clientData = buildClientFromConfig();
 
     // Render immediately so overlay is visible
     renderApp(clientData);
 
-    // Start Preloading in background
+    // Elements
     const playBtn = document.getElementById('play-btn');
-    const loadingText = document.getElementById('loading-text');
+    const loadingContainer = document.getElementById('loading-container');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const introContent = document.getElementById('intro-content');
 
-    // Initial State: Loading
+    // Initial State: Loading & Locked Scroll
+    // User requested NO SCROLLING on start page
+    document.body.style.overflow = 'hidden';
+
     if (playBtn) {
-        playBtn.disabled = true;
-        playBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        playBtn.querySelector('span').textContent = "Loading Memories...";
+        playBtn.style.opacity = '0';
+        playBtn.style.pointerEvents = 'none';
+
+        // Ensure strictly wait for downloads to finish
+        // The user wants "PHOTOS SHOW INSTANTLY" - this guarantees they are all in cache
     }
 
     try {
-        await preloadImages(clientData.gallery);
+        // Preload with Progress Tracking
+        // We wait for ALL photos to download (loaded count == total)
+        await preloadImages(clientData.gallery, (progress) => {
+            if (progressBar) progressBar.style.width = `${progress}%`;
+            if (progressText) progressText.textContent = `Loading Memories ${Math.round(progress)}%`;
+        });
 
         // Success State: Ready
-        if (playBtn) {
-            playBtn.disabled = false;
-            playBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            playBtn.querySelector('span').textContent = "Open Memory Frame";
+        setTimeout(() => {
+            // 1. Fade out loading indicators
+            if (loadingContainer) {
+                loadingContainer.style.opacity = '0';
+                setTimeout(() => loadingContainer.remove(), 1000);
+            }
 
-            // Add pulse effect to show readiness
-            playBtn.classList.add('animate-pulse');
+            // 2. Reveal Entry Button
+            if (playBtn) {
+                playBtn.style.opacity = '1';
+                playBtn.style.pointerEvents = 'auto';
+                playBtn.classList.add('animate-fade-in-up');
+            }
 
-            if (loadingText) loadingText.textContent = "Memories Ready";
-        }
+            // 3. Update Text
+            if (introContent) {
+                introContent.querySelector('p').textContent = "Your Collection is Ready";
+            }
+
+        }, 800); // Small buffer for smoothness
+
     } catch (e) {
         console.error("Preload failed", e);
-        // Fallback: Enable anyway if preload fails
-        if (playBtn) playBtn.disabled = false;
+        // Fallback: Unlock anyway if something breaks so user isn't stuck
+        if (loadingContainer) loadingContainer.style.display = 'none';
+        if (playBtn) {
+            playBtn.style.opacity = '1';
+            playBtn.style.pointerEvents = 'auto';
+        }
     }
 }
 
-function preloadImages(urls) {
+function preloadImages(urls, onProgress) {
+    let loaded = 0;
+    const total = urls.length;
+
     return Promise.all(urls.map(url => {
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.src = url;
-            img.onload = resolve;
-            img.onerror = resolve; // Continue even if one fails
+            // Success or Failure, we count it as "processed" to avoid blocking 
+            // if one image is missing.
+            const done = () => {
+                loaded++;
+                if (onProgress) onProgress((loaded / total) * 100);
+                resolve();
+            };
+            img.onload = done;
+            img.onerror = done;
         });
     }));
 }
@@ -82,6 +123,17 @@ function buildClientFromConfig() {
         eventType: config.eventType,
         dedication: config.dedication,
         footerQuote: config.footerQuote,
+
+        // Start Page Config
+        loadingTitle: config.loadingTitle || "Your Story Begins",
+        loadingSubtitle: config.loadingSubtitle || "Multimedia Experience",
+        enterButtonText: config.enterButtonText || "Enter Memory Frame",
+
+        // Message Section Config
+        messageTitle: config.messageTitle || "To My Love",
+        messageBody: config.messageBody,
+        messageSignOff: config.messageSignOff || "With Love,",
+
         heroImage: config.heroImage,
         gallery: galleryImages,
         captions: config.captions || {}, // Pass captions, default to empty object for safety
@@ -96,43 +148,52 @@ function renderApp(client) {
     document.title = `${client.title} - Memory Frame`;
 
     app.innerHTML = `
-        <!-- Suspense Overlay -->
-        <!-- Suspense Overlay (Warm Royal Theme) -->
-        <div id="suspense-overlay" class="fixed inset-0 z-50 bg-[#FDFBF7] flex flex-col items-center justify-center transition-opacity duration-[2000ms] overflow-hidden">
-            <!-- Ambient Background Effects -->
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,215,0,0.15)_0%,_transparent_70%)]"></div>
-            <div class="absolute inset-0 bg-pattern-mandala opacity-[0.08]"></div>
+        <!-- Suspense Overlay / Start Page -->
+        <div id="suspense-overlay" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center transition-opacity duration-[2000ms] overflow-hidden">
             
-            <!-- Central Animated Emblem -->
-            <div class="mb-12 relative scale-125">
-                <!-- Outer Rotating Rings -->
-                <div class="absolute inset-[-40px] border border-[#C5A059]/20 rounded-full animate-[spin_20s_linear_infinite]"></div>
-                <div class="absolute inset-[-20px] border border-[#C5A059]/40 rounded-full animate-[spin_12s_linear_infinite_reverse]"></div>
-                
-                <!-- Inner Emblem -->
-                <div class="w-28 h-28 border-2 border-[#C5A059] rounded-full flex items-center justify-center relative bg-white shadow-2xl overflow-hidden ring-4 ring-[#C5A059]/10">
-                    <img src="${client.heroImage}" alt="Couple" class="w-full h-full object-cover opacity-90 hover:scale-110 transition-transform duration-700" />
-                </div>
+            <!-- Full Screen Hero Background -->
+            <div class="absolute inset-0 z-0">
+                 <img src="${client.heroImage}" class="w-full h-full object-cover opacity-60" alt="Background" />
+                 <!-- Dark Gradient Overlay for Text Pop -->
+                 <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80"></div>
+                 <div class="absolute inset-0 bg-pattern-mandala opacity-[0.1]"></div>
             </div>
 
-            <!-- Typography -->
-            <h1 class="font-serif text-4xl md:text-6xl text-[#2C241B] tracking-[0.2em] mb-4 drop-shadow-sm text-center px-4 uppercase animate-fade-in-up">
-                ${client.title}
-            </h1>
-            
-            <div class="flex items-center gap-4 mb-16 opacity-60">
-                <div class="h-[1px] w-12 bg-[#C5A059]"></div>
-                <p id="loading-text" class="font-sans text-[#8B0000] text-[10px] md:text-xs tracking-[0.4em] uppercase font-semibold">Your Story Begins</p>
-                <div class="h-[1px] w-12 bg-[#C5A059]"></div>
+            <!-- Content Container -->
+            <div class="relative z-10 flex flex-col items-center justify-center w-full max-w-4xl px-6 text-center">
+                
+                <!-- Main Title Group -->
+                <div id="intro-content" class="mb-12">
+                    <h2 class="font-serif text-gold-500 tracking-[0.4em] uppercase text-sm md:text-lg mb-4 animate-[fade-in_2s_ease-out]">${client.eventType}</h2>
+                    <h1 class="font-script text-6xl md:text-9xl text-white drop-shadow-[0_4px_15px_rgba(197,160,89,0.3)] mb-6 animate-[zoom-in_1.5s_ease-out]">
+                        ${client.title}
+                    </h1>
+                    <p class="font-sans text-gray-300 text-xs md:text-sm tracking-[0.3em] uppercase opacity-80">
+                        ${client.loadingSubtitle}
+                    </p>
+                </div>
+
+                <!-- Loading Section -->
+                <div id="loading-container" class="w-64 md:w-96 flex flex-col items-center gap-4">
+                     <div class="w-full h-[2px] bg-gray-800 rounded-full overflow-hidden relative">
+                        <div id="progress-bar" class="absolute left-0 top-0 h-full bg-gold-500 w-0 transition-all duration-300 ease-out shadow-[0_0_10px_#C5A059]"></div>
+                     </div>
+                     <p id="progress-text" class="font-sans text-[10px] text-gold-500 tracking-[0.2em] uppercase">${client.loadingTitle} 0%</p>
+                </div>
+
+                <!-- Action Button (Hidden Initially) -->
+                <button id="play-btn" class="group relative px-10 py-4 bg-transparent border border-gold-500/50 hover:bg-gold-500/10 hover:border-gold-500 transition-all duration-500 opacity-0 pointer-events-none mt-8">
+                    <span class="relative z-10 font-sans text-white tracking-[0.3em] uppercase text-xs font-bold group-hover:text-gold-200 transition-colors">${client.enterButtonText}</span>
+                    <!-- Decorative Corners -->
+                    <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-gold-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-gold-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </button>
+
             </div>
-            
-            <!-- Premium Button (Solid Gold with Shimmer) -->
-            <button id="play-btn" class="group relative px-12 py-5 bg-[#C5A059] shadow-[0_10px_20px_rgba(197,160,89,0.3)] rounded-sm hover:translate-y-[-2px] hover:shadow-[0_15px_30px_rgba(197,160,89,0.4)] transition-all duration-500 overflow-hidden">
-                <div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-0"></div>
-                <span class="relative z-10 font-sans text-white tracking-[0.3em] uppercase text-xs font-bold group-hover:text-white/90">Open Memory Frame</span>
-            </button>
-            
-            <p class="mt-12 font-sans text-[#C5A059] text-[9px] tracking-[0.3em] uppercase opacity-70">Multimedia Experience</p>
+
+             <div class="absolute bottom-8 text-white/20 text-[10px] tracking-[0.5em] font-sans uppercase">
+                ${client.footerQuote || "Forever & Always"}
+             </div>
         </div>
 
         ${renderHero(client)}
@@ -157,6 +218,9 @@ function renderApp(client) {
     const overlay = document.getElementById('suspense-overlay');
 
     playBtn.addEventListener('click', () => {
+        // Unlock scroll when user enters
+        document.body.style.overflow = '';
+
         // Force scroll to top immediately to ensure clean start
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
