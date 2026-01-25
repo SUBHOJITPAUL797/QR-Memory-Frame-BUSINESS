@@ -113,6 +113,8 @@ function preloadImages(urls, onProgress) {
  * Transform config.js into the client data format
  */
 function buildClientFromConfig() {
+    //---------------------- Image section ------------------------------
+
     //d- creating an empty array
     const galleryImages = [];
     //d- iterating based on number of photos in photocount variable in config.js
@@ -120,23 +122,31 @@ function buildClientFromConfig() {
         //d- pushing the imagepaths 
         galleryImages.push(`./assets/photos/${i}.jpg`);
     }
+    //---------------------- Image section ------------------------------
+
+
     
+    //---------------------- URL section ------------------------------
     // d- Copying YouTube Video URL From config.js
     let videoUrl = config.youtubeLink;
-
+    
     // Robust YouTube ID extraction
     // Supports: youtu.be, youtube.com/watch?v=, youtube.com/embed/
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = videoUrl.match(regExp);
     
-
+    
+    let videoId = "";
     if (match && match[2].length === 11) {
+        // Extract Video ID for the Player API
+        videoId = match[2];
         // It's a valid ID, convert to embed
-        videoUrl = `https://www.youtube.com/embed/${match[2]}`;
+        videoUrl = `https://www.youtube.com/embed/${videoId}`;
     }
     // If no match, we assume it's already a valid direct link or let it fail gracefully
-
-
+    //
+   
+    
     // Parse Background Music URL
     let musicUrl = config.music || "";
     let musicEmbedUrl = "";
@@ -146,17 +156,14 @@ function buildClientFromConfig() {
             musicEmbedUrl = `https://www.youtube.com/embed/${musicMatch[2]}?enablejsapi=1&controls=0&loop=1&playlist=${musicMatch[2]}`;
         }
     }
+    //---------------------- URL section ------------------------------
 
     // Construct Video URL with proper query params
     // If invalid ID extraction failed, we fallback to whatever was there, assuming user knows what they did.
     // If valid ID extraction worked, videoUrl is `https://www.youtube.com/embed/ID`
     // We must append params with `?` first.
 
-    // Extract Video ID for the Player API
-    let videoId = "";
-    if (match && match[2].length === 11) {
-        videoId = match[2];
-    }
+    
 
     return {
         title: config.title,
