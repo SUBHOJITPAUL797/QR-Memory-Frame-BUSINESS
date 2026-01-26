@@ -497,6 +497,21 @@
                         <p class="text-slate-400 text-sm">Set the mood with invisible background music.</p>
                     </div>
                 </div>
+                <!-- Photo Base URL (R2 Support) -->
+                <div
+                    class="mb-4 bg-white dark:bg-black rounded-2xl p-8 shadow-md border border-slate-100 dark:border-zinc-800 ring-1 ring-blue-500/5 dark:ring-blue-500/10">
+                    <div class="group">
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 transition-colors">Photo
+                            Storage (Cloudflare R2)</label>
+                        <input type="text" name="photoBaseUrl"
+                            placeholder="https://pub-xxxx.r2.dev/my-album (Leave empty for local photos)"
+                            class="w-full bg-slate-50 dark:bg-zinc-900 border-none rounded-lg py-3 px-4 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all placeholder:text-slate-300 dark:placeholder:text-zinc-700">
+                        <p class="text-[10px] text-slate-400 mt-2">Paste bucket URL to load cloud photos.</p>
+                    </div>
+                </div>
+
+                <!-- YouTube Music Link -->
                 <div
                     class="bg-white dark:bg-black rounded-2xl p-8 shadow-md border border-slate-100 dark:border-zinc-800 ring-1 ring-blue-500/5 dark:ring-blue-500/10">
                     <div class="group">

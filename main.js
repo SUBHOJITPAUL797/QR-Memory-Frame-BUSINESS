@@ -114,17 +114,17 @@ function preloadImages(urls, onProgress) {
  */
 function buildClientFromConfig() {
     //---------------------- Image section ------------------------------
+    // Support for R2 / Remote Photos
+    // If photoBaseUrl is set in config (from Admin), use it. strict check for non-empty string.
+    const baseUrl = (config.photoBaseUrl && config.photoBaseUrl.trim() !== "")
+        ? config.photoBaseUrl
+        : './assets/photos';
 
-    //d- creating an empty array
     const galleryImages = [];
-    //d- iterating based on number of photos in photocount variable in config.js
     for (let i = 1; i <= config.photoCount; i++) {
-        //d- pushing the imagepaths 
-        galleryImages.push(`./assets/photos/${i}.jpg`);
+        galleryImages.push(`${baseUrl}/${i}.jpg`);
     }
 
-    //---------------------- Image section ------------------------------
-    
     //---------------------- URL section ------------------------------
     // d- Copying YouTube Video URL From config.js
     let videoUrl = config.youtubeLink;

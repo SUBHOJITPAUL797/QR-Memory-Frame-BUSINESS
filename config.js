@@ -16,6 +16,7 @@ export const config = {
     "messageSignOff": "With Blessings,",
     "heroImage": "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?auto=format&fit=crop&q=80",
     "photoCount": 10,
+    "photoBaseUrl": "",
     "captions": {
         "1": "The Mehndi Ceremony",
         "2": "Candid Laughter",
