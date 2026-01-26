@@ -15,8 +15,38 @@ const app = document.getElementById('app');
 /**
  * Main initialization
  */
+/**
+ * Main initialization
+ */
 async function init() {
-    const clientData = buildClientFromConfig();
+    // 1. Check if a specific template is requested via URL (?template=loveletter-template.json)
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateName = urlParams.get('template');
+
+    let clientData;
+
+    if (templateName) {
+        // DEMO MODE: Fetch the specific JSON file
+        try {
+            console.log(`Loading template: ${templateName}`);
+            const response = await fetch(`./clients/${templateName}`);
+            if (!response.ok) throw new Error('Template not found');
+            const json = await response.json();
+            // Merge with base config structure if needed, or use as is
+            // We reuse the build helper but we need to mock the "config" object
+            // A cleaner way relies on the fact that buildClientFromConfig READS from the global/imported config.
+            // So we validly just "Swap" the data. 
+            // Better approach: buildClientFromConfig is coupled to the imported 'config'.
+            // Let's refactor buildClientFromConfig to ACCEPT a config object.
+            clientData = buildClientFromObject(json);
+        } catch (e) {
+            console.error("Failed to load template, falling back to default", e);
+            clientData = buildClientFromObject(config);
+        }
+    } else {
+        // DEFAULT MODE: Use imported config
+        clientData = buildClientFromObject(config);
+    }
 
     // Render immediately so overlay is visible
     renderApp(clientData);
@@ -112,22 +142,28 @@ function preloadImages(urls, onProgress) {
 /**
  * Transform config.js into the client data format
  */
-function buildClientFromConfig() {
+/**
+ * Transform config object into the client data format
+ * @param {Object} configSource - The configuration object (from parameters or default)
+ */
+function buildClientFromObject(configSource) {
+    // Use the provided source, or fallback to the imported 'config' (safeguard)
+    const cfg = configSource || config;
     //---------------------- Image section ------------------------------
     // Support for R2 / Remote Photos
     // If photoBaseUrl is set in config (from Admin), use it. strict check for non-empty string.
-    const baseUrl = (config.photoBaseUrl && config.photoBaseUrl.trim() !== "")
-        ? config.photoBaseUrl
+    const baseUrl = (cfg.photoBaseUrl && cfg.photoBaseUrl.trim() !== "")
+        ? cfg.photoBaseUrl
         : './assets/photos';
 
     const galleryImages = [];
-    for (let i = 1; i <= config.photoCount; i++) {
+    for (let i = 1; i <= cfg.photoCount; i++) {
         galleryImages.push(`${baseUrl}/${i}.jpg`);
     }
 
     //---------------------- URL section ------------------------------
     // d- Copying YouTube Video URL From config.js
-    let videoUrl = config.youtubeLink;
+    let videoUrl = cfg.youtubeLink;
 
     // Robust YouTube ID extraction
     // Supports: youtu.be, youtube.com/watch?v=, youtube.com/embed/
@@ -146,7 +182,7 @@ function buildClientFromConfig() {
 
 
     // Parse Background Music URL
-    let musicUrl = config.music || "";
+    let musicUrl = cfg.music || "";
     let musicEmbedUrl = "";
     if (musicUrl) {
         const musicMatch = musicUrl.match(regExp);
@@ -156,35 +192,33 @@ function buildClientFromConfig() {
     }
     //---------------------- URL section ------------------------------
 
-    // Construct Video URL with proper query params
-    // If invalid ID extraction failed, we fallback to whatever was there, assuming user knows what they did.
-    // If valid ID extraction worked, videoUrl is `https://www.youtube.com/embed/ID`
-    // We must append params with `?` first.
-
-
+    // Construct Video URL with proper query params (handled above, we just need the ID)
 
     return {
-        title: config.title,
-        subtitle: config.subtitle,
-        eventType: config.eventType,
-        dedication: config.dedication,
-        footerQuote: config.footerQuote,
+        title: cfg.title,
+        subtitle: cfg.subtitle,
+        eventType: cfg.eventType,
+        dedication: cfg.dedication,
+        footerQuote: cfg.footerQuote,
 
         // Start Page Config
-        loadingTitle: config.loadingTitle || "Your Story Begins",
-        loadingSubtitle: config.loadingSubtitle || "Multimedia Experience",
-        enterButtonText: config.enterButtonText || "Enter Memory Frame",
+        loadingTitle: cfg.loadingTitle || "Your Story Begins",
+        loadingSubtitle: cfg.loadingSubtitle || "Multimedia Experience",
+        enterButtonText: cfg.enterButtonText || "Enter Memory Frame",
 
         // Message Section Config
-        messageTitle: config.messageTitle || "To My Love",
-        messageBody: config.messageBody,
-        messageSignOff: config.messageSignOff || "With Love,",
+        messageTitle: cfg.messageTitle || "To My Love",
+        messageBody: cfg.messageBody,
+        messageSignOff: cfg.messageSignOff || "With Love,",
 
-        heroImage: config.heroImage,
+        heroImage: cfg.heroImage,
         gallery: galleryImages,
-        captions: config.captions || {},
+        captions: cfg.captions || {},
         musicEmbedUrl: musicEmbedUrl, // Pass music URL
-        videos: [{ type: 'youtube', videoId: videoId }] // Pass ID only
+        videos: [{ type: 'youtube', videoId: videoId }],
+
+        // Pass visuals
+        visuals: cfg.visuals || {}
     };
 }
 

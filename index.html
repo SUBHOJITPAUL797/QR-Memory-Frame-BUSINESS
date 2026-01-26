@@ -4,57 +4,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Memory Frame</title>
+    <title>QR Memory Frame - Eternalize Your Moments</title>
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&family=Montserrat:wght@400;600&family=Pacifico&family=Cinzel:wght@400;700&family=Lato:wght@300;400&family=Quicksand:wght@400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet">
-
-    <!-- CSS -->
-    <!-- Loaded via CDN for Zero-Build Stability -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        gold: {
-                            500: '#C5A059',
-                            600: '#B08D55',
-                        },
-                        warm: {
-                            50: '#FDFBF7',
-                            900: '#2C241B',
-                        }
+                        gold: { 500: '#C5A059', 600: '#B08D55' }
                     },
                     fontFamily: {
-                        serif: ['Playfair Display', 'serif'],
                         sans: ['Inter', 'sans-serif'],
-                        script: ['Great Vibes', 'cursive'],
+                        serif: ['Playfair Display', 'serif']
                     }
                 }
             }
         }
     </script>
-    <link rel="stylesheet" href="./styles.css">
-
-    <!-- GSAP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-
-    <!-- Favicon -->
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
 </head>
 
-<body class="antialiased">
-    <div id="app"></div>
+<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased">
 
-    <script type="module" src="./main.js"></script>
+    <!-- Navigation -->
+    <nav
+        class="fixed w-full z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">✨</span>
+                <span class="font-serif text-xl font-bold tracking-tight">QR Memory Frame</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="#features"
+                    class="text-sm font-medium hover:text-gold-500 transition-colors hidden md:block">Features</a>
+                <a href="#pricing"
+                    class="text-sm font-medium hover:text-gold-500 transition-colors hidden md:block">Pricing</a>
+                <a href="dashboard.html"
+                    class="px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-lg text-sm font-medium hover:scale-105 transition-transform">Login
+                    / Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center pt-20 relative overflow-hidden">
+        <!-- Background Elements -->
+        <div
+            class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(197,160,89,0.1),transparent_50%)]">
+        </div>
+
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+            <span
+                class="inline-block py-1 px-3 rounded-full bg-gold-500/10 text-gold-600 text-xs font-bold tracking-wider mb-6 border border-gold-500/20">THE
+                NEXT GEN DIGITAL ALBUM</span>
+            <h1 class="font-serif text-5xl md:text-7xl font-bold leading-tight mb-8">
+                Turn Memories into <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-500 to-amber-700">Timeless Digital
+                    Art</span>
+            </h1>
+            <p class="text-lg text-zinc-500 dark:text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Upload your photos, pick a premium template, and get a unique QR Code.
+                Perfect for Weddings, Birthdays, and Anniversaries.
+            </p>
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+                <a href="dashboard.html"
+                    class="w-full md:w-auto px-8 py-4 bg-gold-500 hover:bg-gold-600 text-white rounded-xl font-medium shadow-lg shadow-gold-500/25 hover:scale-105 transition-transform">Create
+                    My Frame</a>
+                <a href="view.html" target="_blank"
+                    class="w-full md:w-auto px-8 py-4 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-xl font-medium transition-colors">View
+                    Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Template Showcase -->
+    <section class="py-24 bg-white dark:bg-zinc-950/50">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 class="font-serif text-3xl font-bold mb-12">Pick Your Perfect Style</h2>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Wedding Card -->
+                <div class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80"
+                        class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                        <h3 class="text-white font-serif text-2xl font-bold mb-2">Royal Wedding</h3>
+                        <p class="text-zinc-300 text-sm mb-6">Elegant animations with gold accents.</p>
+                        <a href="view.html?template=wedding-template.json" target="_blank"
+                            class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                            Demo</a>
+                    </div>
+                </div>
+
+                <!-- Birthday Card -->
+                <div class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1530103862676-de3c9a59af38?auto=format&fit=crop&q=80"
+                        class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                        <h3 class="text-white font-serif text-2xl font-bold mb-2">Fun Birthday</h3>
+                        <p class="text-zinc-300 text-sm mb-6">Playful confetti and pop effects.</p>
+                        <a href="view.html?template=birthday-template.json" target="_blank"
+                            class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                            Demo</a>
+                    </div>
+                </div>
+
+                <!-- Rice Ceremony Card -->
+                <div class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?auto=format&fit=crop&q=80"
+                        class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                        <h3 class="text-white font-serif text-2xl font-bold mb-2">Rice Ceremony</h3>
+                        <p class="text-zinc-300 text-sm mb-6">Traditional warmth for cultural events.</p>
+                        <a href="view.html?template=bhujono-template.json" target="_blank"
+                            class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                            Demo</a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12">
+                <a href="dashboard.html"
+                    class="text-gold-600 font-medium hover:text-gold-500 underline underline-offset-4">See all 12+
+                    Templates inside Dashboard -></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="py-24 bg-white dark:bg-black">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-serif text-3xl font-bold mb-4">Why Choose QR Memory Frame?</h2>
+                <p class="text-zinc-500">Premium features for your premium moments.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
+                    <div
+                        class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 mb-6 text-xl">
+                        ☁️</div>
+                    <h3 class="font-bold text-xl mb-3">Cloud Storage</h3>
+                    <p class="text-zinc-500 text-sm">Your photos are stored securely in the cloud (R2). No quality loss,
+                        instant loading.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
+                    <div
+                        class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center text-purple-600 mb-6 text-xl">
+                        🎨</div>
+                    <h3 class="font-bold text-xl mb-3">Premium Templates</h3>
+                    <p class="text-zinc-500 text-sm">Choose from Gold, Royal, or Playful themes. Customize fonts, music,
+                        and animations.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
+                    <div
+                        class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center text-green-600 mb-6 text-xl">
+                        📱</div>
+                    <h3 class="font-bold text-xl mb-3">QR Code Sharing</h3>
+                    <p class="text-zinc-500 text-sm">Get a unique QR code for your event. Guests scan and view the magic
+                        instantly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 bg-zinc-50 dark:bg-zinc-950">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-serif text-3xl font-bold mb-4">Simple, Transparent Pricing</h2>
+                <p class="text-zinc-500">Choose the duration that fits your event.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Plan 1 -->
+                <div
+                    class="p-8 rounded-3xl bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 hover:border-gold-500 transition-colors relative overflow-hidden group">
+                    <h3 class="font-serif text-2xl font-bold mb-2">Short Term</h3>
+                    <div class="flex items-baseline gap-1 mb-6">
+                        <span class="text-4xl font-bold">₹199</span>
+                        <span class="text-zinc-500">/ 5 months</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-zinc-600 dark:text-zinc-400 text-sm">
+                        <li class="flex items-center gap-3"><span class="text-green-500">✓</span> 5 Months Validity</li>
+                        <li class="flex items-center gap-3"><span class="text-green-500">✓</span> Standard Templates
+                        </li>
+                        <li class="flex items-center gap-3"><span class="text-green-500">✓</span> Up to 20 Photos</li>
+                        <li class="flex items-center gap-3"><span class="text-green-500">✓</span> QR Code Generation
+                        </li>
+                    </ul>
+                    <a href="dashboard.html"
+                        class="block w-full py-3 text-center rounded-xl bg-zinc-100 dark:bg-zinc-900 font-medium hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">Start
+                        Standard</a>
+                </div>
+
+                <!-- Plan 2 (Premium) -->
+                <div
+                    class="p-8 rounded-3xl bg-black dark:bg-zinc-900 text-white border border-gold-500 shadow-2xl shadow-gold-500/10 relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 bg-gold-500 text-black text-xs font-bold px-3 py-1 rounded-bl-lg">
+                        POPULAR</div>
+                    <h3 class="font-serif text-2xl font-bold mb-2 text-gold-500">Premium Year</h3>
+                    <div class="flex items-baseline gap-1 mb-6">
+                        <span class="text-4xl font-bold">₹499</span>
+                        <span class="text-zinc-400">/ 1 year</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-zinc-300 text-sm">
+                        <li class="flex items-center gap-3"><span class="text-gold-500">✓</span> 1 Full Year Validity
+                        </li>
+                        <li class="flex items-center gap-3"><span class="text-gold-500">✓</span> All Premium Templates
+                            (Royal/Gold)</li>
+                        <li class="flex items-center gap-3"><span class="text-gold-500">✓</span> Unlimited Photos (Cloud
+                            R2)</li>
+                        <li class="flex items-center gap-3"><span class="text-gold-500">✓</span> Custom Background Music
+                        </li>
+                    </ul>
+                    <a href="dashboard.html"
+                        class="block w-full py-3 text-center rounded-xl bg-gold-500 text-black font-bold hover:bg-gold-400 transition-colors">Start
+                        Premium</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-white dark:bg-black border-t border-zinc-200 dark:border-zinc-800 text-center">
+        <p class="text-zinc-500 text-sm">© 2024 QR Memory Frame. Built for Memories.</p>
+    </footer>
+
 </body>
 
 </html>

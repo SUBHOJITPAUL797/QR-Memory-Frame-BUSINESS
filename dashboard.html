@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - QR Memory Frame</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: { 500: '#C5A059', 600: '#B08D55' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .glass-panel {
+                @apply bg-white/80 dark:bg-black/80 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-xl;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 dark:bg-zinc-950 text-slate-800 dark:text-slate-200 transition-colors duration-500">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-view"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-zinc-950 transition-opacity duration-500">
+        <div class="text-center">
+            <div
+                class="inline-block w-20 h-20 bg-gold-500/10 rounded-full flex items-center justify-center mb-8 mx-auto">
+                <span class="text-4xl">✨</span>
+            </div>
+            <h1 class="font-serif text-4xl mb-4">QR Memory Frame</h1>
+            <p class="text-slate-500 dark:text-slate-400 mb-8 max-w-sm mx-auto">Create beautiful, timeless digital
+                memories for your special moments.</p>
+
+            <button id="google-login-btn"
+                class="flex items-center justify-center gap-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl px-8 py-4 shadow-lg hover:scale-105 transition-transform mx-auto">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6">
+                <span class="font-medium">Sign in with Google</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW (Hidden Setup) -->
+    <div id="dashboard-view" class="hidden min-h-screen">
+        <!-- Sidebar -->
+        <aside
+            class="fixed w-64 h-full bg-white dark:bg-black border-r border-slate-200 dark:border-zinc-800 hidden md:block">
+            <div class="p-8">
+                <h2 class="font-serif text-xl font-bold text-gold-500 mb-8">Memory Frame</h2>
+                <nav class="space-y-4">
+                    <a href="#"
+                        class="block px-4 py-3 bg-slate-100 dark:bg-zinc-900 rounded-lg text-slate-900 dark:text-white font-medium">My
+                        Memories</a>
+                    <a href="#"
+                        class="block px-4 py-3 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">Settings</a>
+                    <button id="logout-btn"
+                        class="block w-full text-left px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-zinc-900 rounded-lg transition-colors mt-8">Sign
+                        Out</button>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="md:ml-64 p-8">
+            <header class="flex justify-between items-center mb-12">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">My Memories</h1>
+                    <p class="text-slate-500 dark:text-slate-400">Manage your digital albums</p>
+                </div>
+                <button id="create-new-btn"
+                    class="bg-gold-500 hover:bg-gold-600 text-white px-6 py-3 rounded-xl font-medium shadow-lg shadow-gold-500/25 transition-all flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Create New
+                </button>
+            </header>
+
+            <!-- Projects Grid -->
+            <div id="projects-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                <!-- Loading Skeleton -->
+                <div class="animate-pulse bg-white dark:bg-zinc-900 h-64 rounded-2xl"></div>
+                <div class="animate-pulse bg-white dark:bg-zinc-900 h-64 rounded-2xl"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- FIREBASE LOGIC -->
+    <script type="module">
+        import { app, auth, db } from './js/firebase-config.js';
+        import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const loginView = document.getElementById('login-view');
+        const dashboardView = document.getElementById('dashboard-view');
+        const googleBtn = document.getElementById('google-login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        // Auth State Listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // User is signed in
+                console.log("Logged in:", user.email);
+                loginView.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => {
+                    loginView.classList.add('hidden');
+                    dashboardView.classList.remove('hidden');
+                }, 500);
+
+                // Fetch User Projects
+                loadProjects(user.uid);
+            } else {
+                // User is signed out
+                console.log("Logged out");
+                loginView.classList.remove('hidden');
+                setTimeout(() => loginView.classList.remove('opacity-0', 'pointer-events-none'), 10);
+                dashboardView.classList.add('hidden');
+            }
+        });
+
+        // Login Action
+        googleBtn.addEventListener('click', async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Login failed", error);
+                alert("Login failed: " + error.message);
+            }
+        });
+
+        // Logout Action
+        logoutBtn.addEventListener('click', () => signOut(auth));
+
+        // Load Projects
+        async function loadProjects(userId) {
+            const grid = document.getElementById('projects-grid');
+            grid.innerHTML = ''; // Clear loading state
+
+            try {
+                const q = query(collection(db, "projects"), where("userId", "==", userId));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    grid.innerHTML = `
+                        <div class="col-span-full py-20 text-center">
+                            <div class="w-16 h-16 bg-slate-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">📭</div>
+                            <h3 class="text-lg font-medium">No Memories Yet</h3>
+                            <p class="text-slate-500 mb-6">Create your first QR Memory Frame to get started.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const card = document.createElement('div');
+                    card.className = "bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-zinc-800 hover:border-gold-500/50 transition-colors group";
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="font-serif text-xl font-bold">${data.title || 'Untitled Memory'}</h3>
+                            <span class="px-3 py-1 bg-gold-500/10 text-gold-600 text-xs font-bold rounded-full uppercase">${data.eventType || 'Event'}</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-6 line-clamp-2">${data.subtitle || 'No description'}</p>
+                        <div class="flex gap-2">
+                             <a href="?id=${doc.id}" class="flex-1 bg-slate-100 dark:bg-zinc-800 text-center py-2 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">View</a>
+                             <button class="flex-1 border border-slate-200 dark:border-zinc-700 text-center py-2 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors">Edit</button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+            } catch (e) {
+                console.error("Error loading projects:", e);
+                grid.innerHTML = `<p class="text-red-500">Failed to load projects.</p>`;
+            }
+        }
+    </script>
+</body>
+
+</html>
