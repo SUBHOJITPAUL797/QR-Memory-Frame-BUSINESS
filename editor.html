@@ -799,7 +799,54 @@
             });
         }
 
+        // --- STORAGE QUOTA HELPERS ---
+        let currentUserStorageUsed = 0;
+        let currentUserStorageLimit = 100 * 1024 * 1024; // Default 100MB
+
+        async function initStorageQuota(uid) {
+            try {
+                const userSnap = await getDoc(doc(db, "users", uid));
+                const userData = userSnap.data();
+                currentUserStorageUsed = userData.storageUsed || 0;
+                if (userData.limitMB) currentUserStorageLimit = userData.limitMB * 1024 * 1024;
+
+                // If plan-based limit
+                if (userData.planId) {
+                    const planSnap = await getDoc(doc(db, "plans", userData.planId));
+                    if (planSnap.exists()) {
+                        currentUserStorageLimit = (planSnap.data().storageLimit || 100) * 1024 * 1024;
+                    }
+                }
+                console.log(`Storage: ${(currentUserStorageUsed / 1024 / 1024).toFixed(1)}MB / ${(currentUserStorageLimit / 1024 / 1024).toFixed(1)}MB`);
+            } catch (e) { console.warn("Quota init error", e); }
+        }
+
+        function checkStorageQuota(newBytes) {
+            if (currentUserStorageUsed + newBytes > currentUserStorageLimit) {
+                const limitMB = (currentUserStorageLimit / (1024 * 1024)).toFixed(0);
+                alert(`Storage Quota Exceeded!\nYour plan is limited to ${limitMB}MB.\nPlease delete old files or upgrade.`);
+                return false;
+            }
+            return true;
+        }
+
+        async function updateUserStorage(bytesDelta) {
+            const { increment } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+            if (!auth.currentUser) return;
+
+            currentUserStorageUsed += bytesDelta; // Local optimist update
+            try {
+                const userRef = doc(db, "users", auth.currentUser.uid);
+                await updateDoc(userRef, {
+                    storageUsed: increment(bytesDelta)
+                });
+            } catch (e) { console.warn("Quota sync error", e); }
+        }
+
         async function uploadToR2(blob, key, contentType = 'image/webp', onProgress = null) {
+            // 1. Check Quota
+            if (!checkStorageQuota(blob.size)) throw new Error("Storage Limit Exceeded");
+
             return new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
                 xhr.open('PUT', `${WORKER_URL}/upload?key=${encodeURIComponent(key)}`, true);
@@ -815,8 +862,10 @@
                     };
                 }
 
-                xhr.onload = () => {
+                xhr.onload = async () => {
                     if (xhr.status >= 200 && xhr.status < 300) {
+                        // 2. Track Usage
+                        await updateUserStorage(blob.size);
                         resolve(true);
                     } else {
                         reject(new Error(`Upload failed: ${xhr.status}`));
@@ -826,6 +875,50 @@
                 xhr.onerror = () => reject(new Error("Network Error"));
                 xhr.send(blob);
             });
+        }
+
+        async function deleteFromR2(key) {
+            try {
+                // 1. Get size before delete (HEAD request) - approximation via public URL or Worker?
+                // Worker doesn't expose HEAD easily for key. 
+                // We'll try to guess or skip precise decrement for deletions if not easy.
+                // BETTER: Try to fetch HEAD from public URL if possible.
+                // If private, we rely on generous decrement or ignoring.
+                // Public URL: PUBLIC_R2_DOMAIN + key
+
+                // Note: CORS might block HEAD on public R2 if not configured.
+                // Attempting optimist decrement if possible, otherwise we leak 'used' space (safe for business, bad for user).
+                // Let's rely on the Worker to return size on delete? No, worker is simple.
+
+                // Temporary: We will just delete. 
+                // TODO: Implement accurate size decrement. For now, we only increment.
+                // Wait, this means users verify limit but can never free space?
+                // STARTING FIX: We MUST try to get size.
+
+                let size = 0;
+                try {
+                    // Try HEAD request to Public Domain
+                    const response = await fetch(`${PUBLIC_R2_DOMAIN}/${key}`, { method: 'HEAD' });
+                    if (response.ok) {
+                        size = parseInt(response.headers.get('content-length') || 0);
+                    }
+                } catch (e) {
+                    console.log("Could not determine file size for decrement", e);
+                }
+
+                const res = await fetch(`${WORKER_URL}/delete?key=${encodeURIComponent(key)}`, {
+                    method: 'DELETE',
+                    headers: { 'X-Auth-Secret': WORKER_SECRET }
+                });
+
+                if (res.ok) {
+                    if (size > 0) await updateUserStorage(-size);
+                } else {
+                    console.warn("R2 Delete failed", res.status);
+                }
+            } catch (e) {
+                console.warn("R2 Delete error", e);
+            }
         }
 
         let currentPlan = 'free_trial';
@@ -847,6 +940,9 @@
 
                 const projectData = docSnap.data();
                 currentPlan = projectData.plan || 'free_trial';
+
+                // Init Quota
+                initStorageQuota(user.uid);
 
                 // Construct Industry-Level Hierarchical Storage Path
                 if (projectData.storagePath) {
@@ -985,7 +1081,7 @@
 
                 // Delete old video from R2 if exists (SAVE COSTS!)
                 const existingVideoUrl = document.getElementById('videoUrlInput').value;
-                if (existingVideoUrl && existingVideoUrl.includes(projectId)) {
+                if (existingVideoUrl) {
                     try {
                         const oldKey = extractR2Key(existingVideoUrl);
                         if (oldKey) await deleteFromR2(oldKey);
@@ -1232,17 +1328,7 @@
         });
 
         // --- GALLERY MANAGER ---
-        async function deleteFromR2(key) {
-            try {
-                const res = await fetch(`${WORKER_URL}/delete?key=${encodeURIComponent(key)}`, {
-                    method: 'DELETE',
-                    headers: { 'X-Auth-Secret': WORKER_SECRET }
-                });
-                if (!res.ok) console.warn("R2 Delete failed", res.status);
-            } catch (e) {
-                console.warn("R2 Delete error", e);
-            }
-        }
+
 
         let draggedItem = null;
         // Helper for DnD sorting

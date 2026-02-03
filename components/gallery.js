@@ -40,11 +40,51 @@ export function initGallery(client) {
   const galleryMode = client.visuals?.galleryMode || 'manual';
   const gallerySpeed = (client.visuals?.gallerySpeed || 4) * 1000;
 
+  // --- DOWNLOAD HELPERS ---
+  const convertBlobToJpeg = (blob) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(blob);
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+
+        // Draw white background (JPEG doesn't support transparency)
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+
+        canvas.toBlob((jpegBlob) => {
+          URL.revokeObjectURL(url);
+          if (jpegBlob) resolve(jpegBlob);
+          else reject(new Error('Canvas to Blob conversion failed'));
+        }, 'image/jpeg', 0.95); // High quality JPEG
+      };
+
+      img.onerror = (err) => {
+        URL.revokeObjectURL(url);
+        reject(err);
+      };
+
+      img.src = url;
+    });
+  };
+
   // --- SETUP DOWNLOAD UTILS ---
   window.downloadImage = async (url, filename) => {
-    if (!filename) filename = url.split('/').pop().split('?')[0] || 'photo.webp';
+    // Ensure filename ends in .jpg
+    let downloadName = filename || url.split('/').pop().split('?')[0] || 'photo';
+    if (downloadName.toLowerCase().endsWith('.webp')) {
+      downloadName = downloadName.slice(0, -5);
+    }
+    if (!downloadName.toLowerCase().endsWith('.jpg') && !downloadName.toLowerCase().endsWith('.jpeg')) {
+      downloadName += '.jpg';
+    }
 
-    // UI Feedback (optional, but good for UX)
+    // UI Feedback
     const downloadIcon = event.currentTarget.querySelector('svg');
     const originalIcon = downloadIcon ? downloadIcon.innerHTML : '';
     if (downloadIcon) {
@@ -55,13 +95,16 @@ export function initGallery(client) {
     try {
       const response = await fetch(url, { mode: 'cors' });
       if (!response.ok) throw new Error('Network response was not ok');
-      const blob = await response.blob();
+      const webpBlob = await response.blob();
 
-      // Force download using Blob URL and hidden anchor
-      const blobUrl = window.URL.createObjectURL(blob);
+      // Convert to JPEG
+      const jpegBlob = await convertBlobToJpeg(webpBlob);
+
+      // Force download
+      const blobUrl = window.URL.createObjectURL(jpegBlob);
       const a = document.createElement('a');
       a.href = blobUrl;
-      a.download = filename; // This attribute forces download
+      a.download = downloadName;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -69,13 +112,13 @@ export function initGallery(client) {
 
     } catch (error) {
       console.error('Download failed (CORS likely):', error);
-      alert("This photo cannot be downloaded directly due to security settings. Opening in a new tab instead - you can save it from there.");
+      alert("\u26A0\uFE0F Could not convert image due to security settings. Opening original instead.");
       // Fallback
       window.open(url, '_blank');
     } finally {
       if (downloadIcon) {
         downloadIcon.classList.remove('animate-spin');
-        downloadIcon.innerHTML = originalIcon; // Restore icon
+        downloadIcon.innerHTML = originalIcon;
       }
     }
   };
@@ -95,50 +138,59 @@ export function initGallery(client) {
 
     if (!galleryItems.length) return;
 
-    if (!window.JSZip || !window.saveAs) {
-      alert("Download library not loaded. Please refresh and try again.");
-      return;
-    }
-
-    const zip = new JSZip();
-    const folder = zip.folder("memories");
-
     // UI Feedback
     const btn = document.getElementById('download-all-btn');
     const originalText = btn ? btn.innerHTML : 'Download All';
     if (btn) {
-      btn.innerHTML = `<svg class="animate-spin h-4 w-4 text-warm-900 inline mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Zipping...`;
+      btn.innerHTML = `<svg class="animate-spin h-4 w-4 text-warm-900 inline mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Converting & Downloading...`;
       btn.disabled = true;
     }
 
-    let successCount = 0;
+    // Helper delay function
+    const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
     try {
-      const promises = galleryItems.map(async (url, i) => {
+      let successCount = 0;
+      for (let i = 0; i < galleryItems.length; i++) {
+        const url = galleryItems[i];
+        const filename = `memory-${i + 1}.jpg`; // Direct to JPG
+
         try {
-          const filename = `memory-${i + 1}.webp`;
+          // Fetch blob
           const response = await fetch(url, { mode: 'cors' });
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          const blob = await response.blob();
-          folder.file(filename, blob);
+          const webpBlob = await response.blob();
+
+          // Convert to JPEG
+          const jpegBlob = await convertBlobToJpeg(webpBlob);
+
+          const blobUrl = window.URL.createObjectURL(jpegBlob);
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(blobUrl);
+
           successCount++;
+          // Delay for browser stability
+          await delay(600);
+
         } catch (e) {
-          console.warn(`Failed to fetch ${url}`, e);
+          console.warn(`Failed to download ${url}`, e);
         }
-      });
-
-      await Promise.all(promises);
-
-      if (successCount === 0) {
-        throw new Error("No images could be downloaded. Check CORS settings.");
       }
 
-      const content = await zip.generateAsync({ type: "blob" });
-      window.saveAs(content, "our-memories.zip");
+      if (successCount === 0) {
+        throw new Error("No images could be downloaded. Check CORS settings or Browser constraints.");
+      } else if (successCount < galleryItems.length) {
+        alert(`Downloaded ${successCount} out of ${galleryItems.length} photos.`);
+      }
 
     } catch (err) {
       console.error("Batch download failed", err);
-      alert("Could not download all photos at once. This is likely due to security settings (CORS) on the image server. Please download photos individually.");
+      alert("Could not download photos. Please try individual downloads.");
     } finally {
       if (btn) {
         btn.innerHTML = originalText;

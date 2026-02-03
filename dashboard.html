@@ -79,6 +79,18 @@
                     <button id="nav-settings"
                         class="w-full text-left px-4 py-3 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">Settings</button>
 
+                    <!-- Storage Usage -->
+                    <div class="px-4 py-2 mt-4">
+                        <div class="flex justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                            <span>Storage</span>
+                            <span id="storage-text">0 / 0 MB</span>
+                        </div>
+                        <div class="w-full bg-slate-100 dark:bg-zinc-800 rounded-full h-2 overflow-hidden">
+                            <div id="storage-bar" class="bg-blue-500 h-2 rounded-full transition-all duration-500"
+                                style="width: 0%"></div>
+                        </div>
+                    </div>
+
                     <!-- Spacer to push Logout to the absolute bottom -->
                     <div class="flex-1"></div>
 
@@ -402,6 +414,47 @@
         // State
         let selectedTemplate = null;
 
+        // --- STORAGE QUOTA STATE ---
+        let userStorageUsed = 0; // Bytes
+        let userStorageLimitMB = 100; // Default
+
+        async function updateStorageDisplay(uid) {
+            try {
+                const userSnap = await getDoc(doc(db, "users", uid));
+                const userData = userSnap.exists() ? userSnap.data() : {};
+
+                // 1. Get Used
+                userStorageUsed = userData.storageUsed || 0; // Bytes
+
+                // 2. Get Limit (Plan > Default)
+                if (userData.planId) {
+                    const planSnap = await getDoc(doc(db, "plans", userData.planId));
+                    if (planSnap.exists()) {
+                        userStorageLimitMB = planSnap.data().storageLimit || 100; // Plan limit
+                    }
+                }
+
+                // 3. Render
+                const usedMB = (userStorageUsed / (1024 * 1024)).toFixed(1);
+                const percent = Math.min((usedMB / userStorageLimitMB) * 100, 100);
+
+                const storageText = document.getElementById('storage-text');
+                const storageBar = document.getElementById('storage-bar');
+
+                if (storageText) storageText.textContent = `${usedMB} / ${userStorageLimitMB} MB`;
+                if (storageBar) {
+                    storageBar.style.width = `${percent}%`;
+                    // Color mapping
+                    if (percent > 90) storageBar.classList.add('bg-red-500');
+                    else if (percent > 75) storageBar.classList.add('bg-yellow-500');
+                    else storageBar.classList.remove('bg-red-500', 'bg-yellow-500');
+                }
+
+            } catch (e) {
+                console.warn("Storage fetch error", e);
+            }
+        }
+
         // --- NAVIGATION LOGIC ---
         function switchTab(tab) {
             if (tab === 'memories') {
@@ -519,6 +572,9 @@
 
                 // Load User Projects
                 loadProjects(user.uid);
+
+                // Update Storage Quota UI
+                updateStorageDisplay(user.uid);
 
                 // Load Profile Data
                 settingsEmail.value = user.email;
@@ -736,6 +792,14 @@
 
                 if (currentCount >= planLimits.projectLimit) {
                     alert(`Plan Limit Reached! You have used ${currentCount} / ${planLimits.projectLimit} projects.\nPlease upgrade to create more.`);
+                    closeModal();
+                    return;
+                }
+
+                // --- ENFORCE STORAGE LIMIT (New) ---
+                const usedMB = (userStorageUsed / (1024 * 1024));
+                if (usedMB >= userStorageLimitMB) {
+                    alert(`Storage Quota Exceeded!\nYou have used ${usedMB.toFixed(1)}MB of ${userStorageLimitMB}MB.\nPlease delete old files or upgrade to create new projects.`);
                     closeModal();
                     return;
                 }
