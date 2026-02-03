@@ -1,25 +1,31 @@
 {
-    "title": "My Portfolio",
-    "subtitle": "Selected Works",
+    "title": "Creative Showcase",
+    "subtitle": "A Digital Narrative of Craft & Vision",
     "eventType": "Portfolio",
-    "dedication": "Art & Design",
-    "footerQuote": "Create everyday",
-    "loadingTitle": "Curating Gallery...",
-    "loadingSubtitle": "Showcase",
-    "enterButtonText": "View Work",
-    "messageTitle": "About Me",
-    "messageBody": "A collection of my recent projects, designs, and creative endeavors. Enjoy the visual journey.",
-    "messageSignOff": "Contact Me,",
-    "heroImage": "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80",
-    "photoCount": 12,
+    "dedication": "Designed with Purpose.",
+    "footerQuote": "Innovation is the intersection of art and science.",
+    "loadingTitle": "Curating Experience",
+    "loadingSubtitle": "Pixel Perfect Design",
+    "enterButtonText": "Open Studio",
+    "messageTitle": "Design Philosophy",
+    "messageBody": "This space is dedicated to the pursuit of aesthetic excellence and functional simplicity. Each project represents a unique challenge solved through a blend of strategy and creativity.",
+    "messageSignOff": "Let's collaborate,",
+    "heroImage": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80",
+    "photoCount": 8,
     "captions": {
-        "1": "Project Alpha",
-        "2": "Photography"
+        "1": "Visual Branding",
+        "2": "User Experience Design",
+        "3": "Product Photography",
+        "4": "Digital Artistry",
+        "5": "Typography Study",
+        "6": "Concept Architecture",
+        "7": "Minimalist Interface",
+        "8": "Final Reveal"
     },
     "visuals": {
-        "interactionMode": "click",
-        "transitionEffect": "fade",
-        "photoDuration": 0,
-        "themeColor": "#111827"
+        "themeColor": "#3b82f6",
+        "fontTheme": "modern",
+        "frameStyle": "modern",
+        "bgPattern": "dots"
     }
 }

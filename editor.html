@@ -1,0 +1,2349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Memory - QR Memory Frame</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { slate: { 50: '#f8fafc', 900: '#0f172a' }, gold: { 500: '#C5A059' } }
+                }
+            }
+        }
+    </script>
+    <!-- Theme Initialization (Before DOM renders to prevent flash) -->
+    <script>
+            (function () {
+                const theme = localStorage.getItem('editor-theme');
+                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            })();
+    </script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .autosave-indicator {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body class="bg-slate-50 dark:bg-black text-slate-800 dark:text-white transition-colors duration-300">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Mobile Sidebar Overlay -->
+        <div id="sidebar-overlay"
+            class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="fixed md:relative top-0 left-0 w-64 h-full bg-white dark:bg-zinc-950 border-r border-slate-200 dark:border-zinc-800 flex flex-col z-50 shadow-2xl transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+            <div class="h-16 flex items-center justify-between px-8 border-b border-slate-100 dark:border-zinc-800">
+                <a href="dashboard.html"
+                    class="flex items-center text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span class="hidden md:inline">Back to Dashboard</span>
+                </a>
+                <button id="close-sidebar" class="md:hidden text-slate-500 hover:text-slate-800">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 border-b border-slate-100 dark:border-zinc-800">
+                <h1 class="text-xl font-bold font-serif">Editor</h1>
+                <p class="text-xs text-slate-400 mt-1">Customize your memory.</p>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-6 space-y-1">
+                <a href="#section-main"
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm">1.
+                    Main Details</a>
+                <a href="#section-photos"
+                    class="sidebar-link flex items-center px-8 py-3 text-blue-600 font-bold text-sm">2. Gallery
+                    Manager</a>
+                <a href="#section-message"
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm">3.
+                    Message</a>
+                <a href="#section-audio"
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm">4.
+                    Music</a>
+                <a href="#section-visuals"
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm">5.
+                    Visuals</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto relative no-scrollbar scroll-smooth bg-slate-50 dark:bg-black">
+            <!-- Header -->
+            <div
+                class="sticky top-0 z-30 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 px-4 md:px-8 py-3 md:py-4 flex justify-between items-center gap-2">
+                <div class="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
+                    <button id="menu-toggle" class="md:hidden text-slate-600 dark:text-slate-400 p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <h2 id="current-section-title"
+                        class="text-lg md:text-xl font-bold text-slate-800 dark:text-white truncate">Editor</h2>
+                    <div id="save-status"
+                        class="hidden md:flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400 opacity-0 autosave-indicator">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                        <span>Saving...</span>
+                    </div>
+                </div>
+                <div class="flex gap-2 md:gap-4">
+                    <!-- Theme Toggle Button -->
+                    <button id="theme-toggle-btn"
+                        class="p-2.5 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-yellow-400 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-all border border-transparent hover:border-slate-300 dark:hover:border-zinc-600"
+                        title="Toggle Dark/Light Mode">
+                        <!-- Sun Icon (shown in dark mode) -->
+                        <svg id="theme-sun-icon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <!-- Moon Icon (shown in light mode) -->
+                        <svg id="theme-moon-icon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    </button>
+                    <button type="button" id="preview-btn"
+                        class="px-4 md:px-6 py-2.5 border border-slate-200 dark:border-zinc-700 rounded-full text-sm font-semibold hover:bg-slate-50 dark:hover:bg-zinc-800 transition-all flex items-center gap-2 shadow-sm active:scale-95">
+                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span class="hidden sm:inline">Live Preview</span>
+                    </button>
+                    <button id="open-new-tab-btn"
+                        class="hidden md:flex px-3 py-2.5 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-slate-300 rounded-full hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors items-center justify-center border border-transparent hover:border-slate-300 dark:hover:border-zinc-600"
+                        title="Open in New Tab">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </button>
+                    <button id="manual-save-btn"
+                        class="px-5 md:px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-white dark:text-indigo-900 rounded-full text-white text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none transition-all active:scale-95 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                        </svg>
+                        <span class="hidden sm:inline">Save Experience</span>
+                        <span class="sm:hidden">Save</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Error Toast -->
+            <div id="error-toast"
+                class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-lg shadow-xl z-50 max-w-md text-center">
+                <p id="error-message">An error occurred</p>
+            </div>
+
+            <form id="configForm" class="max-w-4xl mx-auto space-y-8 md:space-y-16 px-4 md:px-8 py-6 md:py-8 pb-32">
+
+                <!-- HIDDEN CONFIGS -->
+                <input type="hidden" id="worker-url" value="https://qr-memory-uploader.subhojit.workers.dev">
+                <input type="hidden" id="worker-secret" value="qr-admin-secret-2024">
+                <input type="hidden" id="r2-domain" value="https://pub-09b0269178c944e19a7f4bad3d3add30.r2.dev">
+
+                <section id="section-main">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-bold">1. Main Details</h3>
+                        <div
+                            class="flex items-center gap-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 p-2 rounded-lg">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Hero
+                                Color</label>
+                            <input type="color" name="visuals.heroTextColor" value="#ffffff"
+                                class="w-8 h-8 rounded cursor-pointer autosave-field">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Title</label>
+                            <input type="text" name="title"
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Hero
+                                Font Style</label>
+                            <select name="visuals.heroFont"
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                <option value="script">Romantic (Great Vibes)</option>
+                                <option value="serif">Classic (Playfair)</option>
+                                <option value="sans">Modern (Montserrat)</option>
+                                <option value="cinzel">Cinematic (Cinzel)</option>
+                                <option value="pacifico">Casual (Pacifico)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Hero Quote /
+                            Footer Quote</label>
+                        <input type="text" name="footerQuote"
+                            placeholder="Every love story is beautiful, but ours is my favorite."
+                            class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Subtitle
+                                / Date</label>
+                            <input type="text" name="subtitle"
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Event /
+                                Template</label>
+                            <select id="template-switcher" name="eventType"
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                <option value="wedding">Wedding</option>
+                                <option value="birthday">Birthday</option>
+                                <option value="anniversary">Anniversary</option>
+                                <option value="bhujono">Rice Ceremony (Bhujono)</option>
+                                <option value="festival">Festival</option>
+                                <option value="proposal">Proposal</option>
+                                <option value="marriage">Marriage Proposal</option>
+                                <option value="achievement">Achievement</option>
+                                <option value="party">Party</option>
+                                <option value="loveletter">Love Letter</option>
+                                <option value="portfolio">Portfolio</option>
+                                <option value="custom">Custom Memory</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Photos -->
+                <section id="section-photos" class="border-t border-slate-200 dark:border-zinc-800 pt-8">
+                    <h3 class="text-2xl font-bold mb-6">2. Gallery Manager</h3>
+
+                    <!-- Hero Image -->
+                    <div
+                        class="mb-8 p-6 bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-sm">
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Cover Photo (Hero
+                            Image)</label>
+                        <div class="flex gap-6 items-start">
+                            <div
+                                class="w-32 h-44 bg-slate-100 dark:bg-zinc-800 rounded-lg overflow-hidden flex-shrink-0 border border-slate-200 dark:border-zinc-700">
+                                <img id="hero-preview" src="" class="w-full h-full object-cover hidden"
+                                    onerror="this.classList.add('hidden')">
+                                <div id="hero-placeholder"
+                                    class="w-full h-full flex items-center justify-center text-slate-300">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex gap-3 mb-4">
+                                    <div class="relative overflow-hidden">
+                                        <button type="button" id="hero-btn"
+                                            class="bg-slate-900 dark:bg-white dark:text-black text-white px-5 py-2 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity">
+                                            Upload Cover
+                                        </button>
+                                        <input type="file" id="hero-upload" accept="image/*"
+                                            class="absolute inset-0 opacity-0 cursor-pointer">
+                                    </div>
+                                    <p id="hero-status" class="py-2 text-sm text-slate-500 font-medium"></p>
+                                </div>
+                                <input type="hidden" name="heroImage" id="heroImageInput" class="autosave-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1.5 Video Upload (New) -->
+                    <div
+                        class="mb-8 p-4 md:p-6 bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-sm">
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Memory
+                            Video</label>
+                        <div class="flex flex-col md:flex-row gap-4 md:gap-6 items-start">
+                            <div
+                                class="w-48 h-32 bg-black rounded-lg overflow-hidden flex-shrink-0 border border-slate-200 dark:border-zinc-700 relative">
+                                <video id="video-preview" src="" class="w-full h-full object-cover hidden"
+                                    controls></video>
+                                <div id="video-placeholder"
+                                    class="absolute inset-0 flex items-center justify-center text-slate-500 pointer-events-none">
+                                    <span class="text-xs">No Video</span>
+                                </div>
+                            </div>
+                            <div class="flex-1 w-full space-y-3">
+                                <p class="text-xs text-slate-500">
+                                    Upload a video message or montage.
+                                    <br>Limits: <span class="font-bold">1 min</span> (Standard) / <span
+                                        class="font-bold">3 min</span>
+                                    (Premium)
+                                </p>
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <label id="video-upload-label"
+                                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg cursor-pointer transition-colors shadow-sm">
+                                        Upload Video
+                                        <input type="file" id="video-upload"
+                                            accept="video/mp4,video/quicktime,video/webm" class="hidden">
+                                    </label>
+                                    <button type="button" id="delete-video-btn"
+                                        class="hidden px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-bold rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+                                        Delete Video
+                                    </button>
+                                    <span id="video-status" class="text-xs font-bold text-slate-400"></span>
+                                </div>
+                                <input type="hidden" name="video" id="videoUrlInput" class="autosave-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Controls (New) -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+                        <h4 class="text-lg font-bold">Photos</h4>
+                        <div class="flex items-center gap-2 md:gap-4 flex-wrap">
+
+                            <!-- Bulk Controls -->
+                            <div
+                                class="flex items-center gap-2 mr-2 border-r border-slate-200 dark:border-zinc-800 pr-4">
+                                <button type="button" id="bulk-upload-btn"
+                                    class="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                    </svg>
+                                    Bulk Upload
+                                </button>
+                                <input type="file" id="bulk-upload-input" multiple accept="image/*" class="hidden">
+                                <button type="button" id="select-all-btn"
+                                    class="text-xs font-bold text-slate-500 hover:text-indigo-600">Select All</button>
+                                <button type="button" id="bulk-delete-btn"
+                                    class="hidden px-2 py-1 bg-red-100 text-red-600 rounded text-xs font-bold hover:bg-red-200">Delete
+                                    (0)</button>
+                            </div>
+
+                            <div class="flex items-center gap-2 bg-slate-100 dark:bg-zinc-800 p-1 rounded-lg">
+                                <span class="text-xs font-bold text-slate-500 px-2">Set Slots:</span>
+                                <input type="number" id="manual-slot-count" min="1" max="100"
+                                    class="w-16 bg-white dark:bg-zinc-900 border-none rounded-md text-center text-sm font-bold focus:ring-2 focus:ring-indigo-500"
+                                    placeholder="#">
+                            </div>
+                            <button type="button" id="add-photo-btn"
+                                class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg hover:border-indigo-500 hover:text-indigo-500 transition-colors text-sm font-bold">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4" />
+                                </svg>
+                                Add Slot
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Gallery List -->
+                    <div id="gallery-container" class="space-y-4"></div>
+
+                    <input type="hidden" name="photoBaseUrl" id="photoBaseUrlInput">
+                    <input type="hidden" name="photoCount" id="photoCountInput">
+                </section>
+
+                <section id="section-message" class="border-t border-slate-200 dark:border-zinc-800 pt-8">
+                    <h3 class="text-2xl font-bold mb-6">3. Message</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Message
+                                Title</label>
+                            <input type="text" name="messageTitle" placeholder="A Message for You"
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Message
+                                Body</label>
+                            <textarea name="messageBody" id="message-body-input" rows="5" maxlength="500"
+                                placeholder="Write your heartfelt message here..."
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field"></textarea>
+                            <div class="text-[10px] text-slate-400 mt-1 text-right">
+                                <span id="char-count">0</span>/500 characters
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Display
+                                    Duration (sec)</label>
+                                <input type="number" name="visuals.messageDuration" value="8" min="3" max="60"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Section
+                                    Music (YouTube)</label>
+                                <input type="text" name="visuals.messageMusic" placeholder="https://youtu.be/..."
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                            </div>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Sign-off</label>
+                            <input type="text" name="messageSignOff" placeholder="With Love, Us"
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4: Music -->
+                <section id="section-audio" class="border-t border-slate-200 dark:border-zinc-800 pt-8">
+                    <h3 class="text-2xl font-bold mb-6">4. Background Music</h3>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">YouTube
+                            Link</label>
+                        <input type="text" name="music" placeholder="https://youtu.be/..."
+                            class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                        <p class="text-[10px] text-slate-400 mt-2">Paste a YouTube URL. It will play automatically.</p>
+                    </div>
+                </section>
+
+                <!-- Section 5: Visuals -->
+                <section id="section-visuals" class="border-t border-slate-200 dark:border-zinc-800 pt-8">
+                    <h3 class="text-2xl font-bold mb-6">5. Visuals</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Theme
+                                Color</label>
+                            <input type="color" name="visuals.themeColor"
+                                class="h-10 w-full rounded cursor-pointer autosave-field">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Frame
+                                Style</label>
+                            <select name="visuals.frameStyle"
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                <option value="classic">Classic</option>
+                                <option value="modern">Modern</option>
+                                <option value="polaroid">Polaroid</option>
+                                <option value="cinema">Cinema</option>
+                                <option value="vintage">Vintage</option>
+                                <option value="neon">Neon</option>
+                                <option value="minimal">Minimal</option>
+                                <option value="floating">Floating</option>
+                                <option value="stacked">Stacked</option>
+                                <option value="rotated">Rotated</option>
+                                <option value="oval">Oval</option>
+                                <option value="glass">Glass</option>
+                                <option value="wooden">Wooden</option>
+                                <option value="watercolor">Watercolor</option>
+                                <option value="gold">Golden</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Story Flow Settings -->
+                    <div
+                        class="mt-8 p-6 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 rounded-xl border border-indigo-200 dark:border-indigo-800">
+                        <div class="flex items-center gap-2 mb-4">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <h4 class="font-bold text-lg text-indigo-900 dark:text-indigo-300">Immersive Story Flow</h4>
+                        </div>
+                        <p class="text-xs text-indigo-700 dark:text-indigo-400 mb-6">Control how visitors experience
+                            your memory</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Hero Duration -->
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">
+                                    Hero Display Duration (seconds)
+                                </label>
+                                <input type="number" name="visuals.heroDuration" value="5" min="3" max="30" step="1"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                <p class="text-xs text-slate-500 mt-1">How long to show the cover before auto-scrolling
+                                </p>
+                            </div>
+
+                            <!-- Gallery Mode -->
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">
+                                    Gallery Mode
+                                </label>
+                                <select id="gallery-mode-select" name="visuals.galleryMode"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                    <option value="auto">Auto-play Slideshow</option>
+                                    <option value="manual">Manual (Tap to Next)</option>
+                                </select>
+                                <p class="text-xs text-slate-500 mt-1">Let photos advance automatically or require tap
+                                </p>
+                            </div>
+
+                            <!-- Gallery Speed (conditional) -->
+                            <div id="gallery-speed-wrapper">
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">
+                                    Slideshow Speed (seconds per photo)
+                                </label>
+                                <input type="number" name="visuals.gallerySpeed" value="4" min="2" max="10" step="0.5"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                <p class="text-xs text-slate-500 mt-1">Only applies when Auto-play is selected</p>
+                            </div>
+
+                            <!-- Auto-Scroll -->
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">
+                                    Auto-scroll Between Sections
+                                </label>
+                                <div class="flex items-center space-x-3">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="visuals.autoScroll"
+                                            class="sr-only peer autosave-field" checked>
+                                        <div
+                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600">
+                                        </div>
+                                    </label>
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">Enabled</span>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1">Automatically move through your story sections in
+                                    order.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Experience Sequence (New) -->
+                    <div class="mt-8 border-t border-slate-100 dark:border-zinc-800 pt-8" id="section-sorting-area">
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Experience
+                            Sequence (Drag to Reorder)</label>
+                        <div id="section-order-container" class="flex flex-col gap-2 mb-4 min-h-[50px]">
+                            <!-- Populated via script -->
+                        </div>
+                        <input type="hidden" name="visuals.sectionOrder" id="section-order-input"
+                            value="hero,gallery,message,video" class="autosave-field">
+                        <p class="text-[10px] text-indigo-500 font-bold italic">Drag and drop the tabs above to set the
+                            order visitors will see your content.</p>
+                    </div>
+                </section>
+
+                <div class="h-20"></div>
+            </form>
+        </main>
+    </div>
+
+    <!-- PREVIEW MODAL OVERLAY -->
+    <div id="preview-modal"
+        class="fixed inset-0 z-[100] bg-zinc-900/95 backdrop-blur-sm hidden transition-opacity duration-300 opacity-0">
+        <!-- Toolbar -->
+        <div
+            class="absolute top-0 left-0 right-0 h-16 bg-zinc-900 border-b border-white/10 flex items-center justify-between px-6 z-20">
+            <h3 class="text-white font-serif tracking-wider">Live Preview</h3>
+
+            <!-- Device Toggle -->
+            <div class="flex items-center bg-zinc-800 rounded-full p-1 border border-white/5">
+                <button id="device-mobile"
+                    class="p-2 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active-device">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                </button>
+                <button id="device-desktop"
+                    class="p-2 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Close -->
+            <button id="close-preview" class="p-2 text-white/50 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Preview Container -->
+        <div class="absolute inset-x-0 top-16 bottom-0 flex items-center justify-center p-4 md:p-8 overflow-hidden">
+            <div id="preview-frame-wrapper"
+                class="relative transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] shadow-2xl device-mobile">
+                <!-- Phone Bezel / Desktop Frame -->
+                <iframe id="preview-iframe" class="w-full h-full bg-white transition-all" src="about:blank"
+                    allow="autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-write"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .active-device {
+            background-color: #4f46e5 !important;
+            color: white !important;
+        }
+
+        /* Mobile Simulation */
+        .device-mobile {
+            width: 375px;
+            height: 812px;
+            /* Responsive Scaling */
+            max-width: 90vw;
+            max-height: 85vh;
+            aspect-ratio: 375/812;
+
+            border-radius: 40px;
+            border: 8px solid #27272a;
+            box-shadow: 0 0 0 2px #404040, 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .device-mobile iframe {
+            border-radius: 32px;
+        }
+
+        /* Desktop Simulation */
+        .device-desktop {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            border: none;
+        }
+
+        .device-desktop iframe {
+            border-radius: 0;
+        }
+
+
+        /* Hide scrollbar in iframe content (applied to iframe, but really needs to be inside or handled via CSS injection) */
+        iframe {
+            display: block;
+            border: none;
+        }
+    </style>
+
+    <script type="module">
+        import { app, auth, db } from './js/firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { doc, getDoc, setDoc, serverTimestamp } from
+            "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- CONFIG ---
+        const WORKER_URL = document.getElementById('worker-url').value;
+        const WORKER_SECRET = document.getElementById('worker-secret').value;
+        const PUBLIC_R2_DOMAIN = document.getElementById('r2-domain').value;
+
+        const projectId = new URLSearchParams(window.location.search).get('id');
+        if (!projectId) window.location.href = 'dashboard.html';
+
+        // --- THEME TOGGLE LOGIC ---
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        themeToggleBtn.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('editor-theme', isDark ? 'dark' : 'light');
+        });
+
+        // --- AUTOSAVE LOGIC ---
+        let autoSaveTimeout = null;
+        let isSaving = false;
+
+        function updateSaveIndicator(state) {
+            const indicator = document.getElementById('save-status');
+            const dot = indicator.querySelector('span');
+            const text = indicator.querySelectorAll('span')[1];
+
+            if (state === 'saving') {
+                dot.className = "w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse";
+                text.textContent = "Saving...";
+                indicator.style.opacity = '1';
+            } else if (state === 'saved') {
+                dot.className = "w-1.5 h-1.5 rounded-full bg-green-500";
+                text.textContent = "All changes saved";
+                indicator.style.opacity = '1';
+                setTimeout(() => { if (!isSaving) indicator.style.opacity = '0'; }, 3000);
+            } else if (state === 'error') {
+                dot.className = "w-1.5 h-1.5 rounded-full bg-red-500";
+                text.textContent = "Save failed";
+                indicator.style.opacity = '1';
+            }
+        }
+
+        async function triggerSave() {
+            if (isSaving) return;
+            isSaving = true;
+            updateSaveIndicator('saving');
+
+            const form = document.getElementById('configForm');
+            const formData = new FormData(form);
+            const updates = {
+                lastUpdated: serverTimestamp()
+            };
+
+            // Build dot-notation map
+            for (const [key, value] of formData.entries()) {
+                if (key.startsWith('caption_')) {
+                    // Start from fresh, we will rebuild captions from DOM order below
+                    // updates[`config.captions.${index}`] = value;
+                } else if (key === 'photoCount') {
+                    // Ignored, calculated below
+                } else if (key === 'photoBaseUrl') {
+                    updates[`config.photoBaseUrl`] = value;
+                } else if (key === 'heroImage') {
+                    updates[`config.heroImage`] = value;
+                } else {
+                    updates[`config.${key}`] = value;
+                }
+            }
+
+            // COMPILE GALLERY FROM DOM
+            const gallerySlots = document.querySelectorAll('.gallery-slot');
+            const galleryArray = [];
+            const captionMap = {};
+
+            gallerySlots.forEach((slot, index) => {
+                const urlInput = slot.querySelector('.photo-url-input');
+                const captionInput = slot.querySelector('.caption-field');
+
+                galleryArray.push(urlInput ? urlInput.value : "");
+                captionMap[index + 1] = captionInput ? captionInput.value : "";
+            });
+
+            updates['config.gallery'] = galleryArray;
+            updates['config.captions'] = captionMap;
+            updates['config.photoCount'] = galleryArray.length;
+
+            try {
+                const { updateDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                await updateDoc(doc(db, "projects", projectId), updates);
+                updateSaveIndicator('saved');
+            } catch (error) {
+                console.error("Autosave failed:", error);
+                updateSaveIndicator('error');
+            } finally {
+                isSaving = false;
+            }
+        }
+
+        function debouncedAutoSave() {
+            // Instant Preview Update
+            if (typeof updatePreview === 'function') {
+                updatePreview();
+            }
+
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(triggerSave, 1500);
+        }
+
+        // --- UTILITY: Show Error ---
+        function showError(message) {
+            const toast = document.getElementById('error-toast');
+            const msgEl = document.getElementById('error-message');
+            msgEl.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 5000);
+        }
+
+        // --- COMPRESSION & UPLOAD ---
+        async function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const reader = new FileReader();
+                reader.onload = (e) => { img.src = e.target.result; };
+                reader.onerror = () => reject(new Error("Failed to read file"));
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width; let height = img.height;
+                    const MAX_DIM = 1920;
+                    if (width > MAX_DIM || height > MAX_DIM) {
+                        if (width > height) { height = Math.round(height * MAX_DIM / width); width = MAX_DIM; }
+                        else { width = Math.round(width * MAX_DIM / height); height = MAX_DIM; }
+                    }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    let quality = 0.85;
+                    function tryCompress() {
+                        canvas.toBlob((blob) => {
+                            if (!blob) { reject(new Error("Compression failed")); return; }
+                            if (blob.size > 500 * 1024 && quality > 0.2) { quality -= 0.1; tryCompress(); }
+                            else { resolve(blob); }
+                        }, 'image/webp', quality);
+                    }
+                    tryCompress();
+                };
+                img.onerror = () => reject(new Error("Failed to load image"));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function uploadToR2(blob, key, contentType = 'image/webp', onProgress = null) {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('PUT', `${WORKER_URL}/upload?key=${encodeURIComponent(key)}`, true);
+                xhr.setRequestHeader('X-Auth-Secret', WORKER_SECRET);
+                xhr.setRequestHeader('Content-Type', contentType);
+
+                if (onProgress) {
+                    xhr.upload.onprogress = (e) => {
+                        if (e.lengthComputable) {
+                            const percent = Math.round((e.loaded / e.total) * 100);
+                            onProgress(percent);
+                        }
+                    };
+                }
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(true);
+                    } else {
+                        reject(new Error(`Upload failed: ${xhr.status}`));
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error("Network Error"));
+                xhr.send(blob);
+            });
+        }
+
+        let currentPlan = 'free_trial';
+        let STORAGE_ROOT = projectId; // Default fallback
+
+        function slugify(text) {
+            return text.toString().toLowerCase().trim()
+                .replace(/\s+/g, '_')           // Replace spaces with _
+                .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+                .replace(/\-\-+/g, '_');         // Replace multiple - with single _
+        }
+
+        // --- LOAD DATA ---
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = 'index.html'; return; }
+            try {
+                const docSnap = await getDoc(doc(db, "projects", projectId));
+                if (!docSnap.exists()) { window.location.href = 'dashboard.html'; return; }
+
+                const projectData = docSnap.data();
+                currentPlan = projectData.plan || 'free_trial';
+
+                // Construct Industry-Level Hierarchical Storage Path
+                if (projectData.storagePath) {
+                    STORAGE_ROOT = projectData.storagePath;
+                } else {
+                    // Fallback for older projects: calculate once and stick to it for this session
+                    const clientNameSlug = slugify(projectData.clientName || projectData.config?.clientName || 'User');
+                    const projectTitleSlug = slugify(projectData.title || projectData.config?.title || 'Memory');
+                    STORAGE_ROOT = `${clientNameSlug}/${projectTitleSlug}_${projectId}`;
+                }
+
+                const data = projectData.config || {};
+                populateForm(data);
+
+                // Attach autosave listeners after initial load
+                document.querySelectorAll('.autosave-field').forEach(el => {
+                    el.addEventListener('input', debouncedAutoSave);
+                    el.addEventListener('change', debouncedAutoSave);
+                });
+            } catch (e) {
+                console.error(e);
+                showError("Failed to load project data");
+            }
+        });
+
+        // --- VIDEO UPLOAD WITH COMPRESSION ---
+        let ffmpegLoaded = false;
+        let ffmpeg = null;
+
+        async function loadFFmpeg() {
+            if (ffmpegLoaded) return ffmpeg;
+
+            const status = document.getElementById('video-status');
+            status.textContent = "Loading compression tool...";
+
+            try {
+                // Load FFmpeg.wasm from CDN
+                const { FFmpeg } = await import('https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/esm/index.js');
+                const { fetchFile, toBlobURL } = await import('https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js');
+
+                ffmpeg = new FFmpeg();
+                const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.4/dist/esm';
+
+                await ffmpeg.load({
+                    coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+                    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+                });
+
+                ffmpegLoaded = true;
+                return ffmpeg;
+            } catch (err) {
+                console.warn("FFmpeg load failed, will upload without compression:", err);
+                return null;
+            }
+        }
+
+        async function compressVideo(file) {
+            const status = document.getElementById('video-status');
+
+            try {
+                status.textContent = "Compressing to 720p for mobile...";
+
+                const ffmpegInstance = await loadFFmpeg();
+                if (!ffmpegInstance) {
+                    // Fallback: no compression
+                    return file;
+                }
+
+                const { fetchFile } = await import('https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js');
+
+                // Write input file
+                await ffmpegInstance.writeFile('input.mp4', await fetchFile(file));
+
+                // Progress tracking
+                ffmpegInstance.on('progress', ({ progress }) => {
+                    const percent = Math.round(progress * 100);
+                    status.textContent = `Compressing: ${percent}%`;
+                });
+
+                // Compress: 720p, H.264, 2Mbps bitrate, AAC audio
+                await ffmpegInstance.exec([
+                    '-i', 'input.mp4',
+                    '-vf', 'scale=-2:720', // Keep aspect ratio, max height 720
+                    '-c:v', 'libx264', // H.264 codec
+                    '-b:v', '2M', // 2Mbps video bitrate
+                    '-c:a', 'aac', // AAC audio
+                    '-b:a', '128k', // 128kbps audio
+                    '-preset', 'fast', // Faster encoding
+                    '-movflags', '+faststart', // Web optimized
+                    'output.mp4'
+                ]);
+
+                // Read compressed file
+                const data = await ffmpegInstance.readFile('output.mp4');
+                const compressedBlob = new Blob([data.buffer], { type: 'video/mp4' });
+
+                // Cleanup
+                await ffmpegInstance.deleteFile('input.mp4');
+                await ffmpegInstance.deleteFile('output.mp4');
+
+                status.textContent = `Compressed: ${(file.size / 1024 / 1024).toFixed(1)}MB → ${(compressedBlob.size / 1024 /
+                    1024).toFixed(1)}MB`;
+
+                return compressedBlob;
+            } catch (err) {
+                console.warn("Compression failed, uploading original:", err);
+                status.textContent = "Compression failed, uploading original...";
+                return file; // Fallback to original
+            }
+        }
+
+        document.getElementById('video-upload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const maxDuration = window.projectLimits?.videoDuration || 60;
+            const status = document.getElementById('video-status');
+            const videoPreview = document.getElementById('video-preview');
+            const videoPlaceholder = document.getElementById('video-placeholder');
+            const deleteBtn = document.getElementById('delete-video-btn');
+
+            status.textContent = "Checking video...";
+            status.classList.remove('text-green-500');
+
+            // Check duration
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.onloadedmetadata = async function () {
+                window.URL.revokeObjectURL(video.src);
+
+                if (video.duration > maxDuration) {
+                    showError(`Video too long! Your plan limit is ${maxDuration} seconds.`);
+                    status.textContent = "Error: Too long";
+                    return;
+                }
+
+                // Delete old video from R2 if exists (SAVE COSTS!)
+                const existingVideoUrl = document.getElementById('videoUrlInput').value;
+                if (existingVideoUrl && existingVideoUrl.includes(projectId)) {
+                    try {
+                        const oldKey = extractR2Key(existingVideoUrl);
+                        if (oldKey) await deleteFromR2(oldKey);
+                    } catch (e) { console.warn("Old video delete failed", e); }
+                }
+
+                // Compress before upload
+                const compressedFile = await compressVideo(file);
+
+                // Upload
+                status.textContent = "Uploading: 0%";
+                status.classList.add('animate-pulse');
+
+                try {
+                    const key = `${STORAGE_ROOT}/video_${Date.now()}.mp4`;
+                    await uploadToR2(compressedFile, key, 'video/mp4', (percent) => {
+                        status.textContent = `Uploading: ${percent}%`;
+                    });
+
+                    const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
+                    document.getElementById('videoUrlInput').value = publicUrl;
+                    videoPreview.src = publicUrl;
+                    videoPreview.classList.remove('hidden');
+                    videoPlaceholder.classList.add('hidden');
+                    deleteBtn.classList.remove('hidden'); // Show delete button
+                    status.textContent = "✓ Video Uploaded";
+                    status.classList.remove('animate-pulse');
+                    status.classList.add('text-green-500');
+
+                    const videoUploadLabel = document.getElementById('video-upload-label');
+                    if (videoUploadLabel) videoUploadLabel.childNodes[0].textContent = "Replace Video";
+
+                    triggerSave();
+                } catch (err) {
+                    status.textContent = "Upload Failed";
+                    showError("Video upload failed: " + err.message);
+                }
+            }
+            video.src = URL.createObjectURL(file);
+        });
+
+        // Video Delete Button
+        document.getElementById('delete-video-btn').addEventListener('click', async () => {
+            if (!confirm("Permanently delete this video? This cannot be undone.")) return;
+
+            const videoUrlInput = document.getElementById('videoUrlInput');
+            const videoPreview = document.getElementById('video-preview');
+            const videoPlaceholder = document.getElementById('video-placeholder');
+            const deleteBtn = document.getElementById('delete-video-btn');
+            const status = document.getElementById('video-status');
+
+            const currentUrl = videoUrlInput.value;
+            if (currentUrl) {
+                try {
+                    const r2Key = extractR2Key(currentUrl);
+                    if (r2Key) {
+                        status.textContent = "Deleting...";
+                        await deleteFromR2(r2Key);
+                    }
+                } catch (e) {
+                    console.error("Video deletion error", e);
+                }
+            }
+
+            // Clear UI
+            videoUrlInput.value = '';
+            videoPreview.src = '';
+            videoPreview.classList.add('hidden');
+            videoPlaceholder.classList.remove('hidden');
+            deleteBtn.classList.add('hidden');
+            status.textContent = '';
+
+            triggerSave();
+
+            const videoUploadLabel = document.getElementById('video-upload-label');
+            if (videoUploadLabel) videoUploadLabel.childNodes[0].textContent = "Upload Video";
+        });
+
+        // --- GALLERY SLOT CONTROL ---
+        document.getElementById('manual-slot-count').addEventListener('change', async (e) => {
+            const newCount = parseInt(e.target.value);
+            const limit = window.projectLimits?.storageLimit || 6;
+
+            if (isNaN(newCount) || newCount < 1) return;
+
+            if (newCount > limit) {
+                alert(`Plan Limit Reached! You can only add up to ${limit} photos.`);
+                e.target.value = limit; // Reset to max
+                return;
+            }
+
+            const slots = document.querySelectorAll('.gallery-slot');
+            const currentCount = slots.length;
+
+            if (newCount === currentCount) return;
+
+            if (newCount < currentCount) {
+                if (confirm(`Reducing slots to ${newCount} will PERMANENTLY delete photos in slots ${newCount + 1} to ${currentCount}. Proceed?`)) {
+                    // Logic to delete extra slots
+                    const slotsToRemove = Array.from(slots).slice(newCount);
+                    for (const slot of slotsToRemove) {
+                        const url = slot.querySelector('.photo-url-input').value;
+                        if (url && url.includes(projectId)) {
+                            const key = extractR2Key(url);
+                            if (key) await deleteFromR2(key);
+                        }
+                        slot.remove();
+                    }
+                    updateSlotNumbers();
+                    debouncedAutoSave();
+                } else {
+                    // Revert input value if cancelled
+                    e.target.value = currentCount;
+                }
+            } else {
+                // Just add new empty slots
+                const diff = newCount - currentCount;
+                for (let i = 0; i < diff; i++) {
+                    galleryContainer.appendChild(createPhotoSlot());
+                }
+                updateSlotNumbers();
+                debouncedAutoSave();
+            }
+        });
+
+        // Helper to extract key reliably (handle hierarchical paths)
+        function extractR2Key(url) {
+            if (!url) return null;
+            try {
+                // Find where our domain ends and the path begins
+                const urlObj = new URL(url);
+                const path = urlObj.pathname.startsWith('/') ? urlObj.pathname.substring(1) : urlObj.pathname;
+                return decodeURIComponent(path);
+            } catch (e) {
+                // Fallback for simple splitting if URL is partial
+                if (url.includes(PUBLIC_R2_DOMAIN)) {
+                    return url.split(PUBLIC_R2_DOMAIN + '/')[1];
+                }
+                return null;
+            }
+        }
+
+        // --- TEMPLATE SWITCHING ---
+        async function applyTemplate(templateName) {
+            updateSaveIndicator('saving');
+            try {
+                const response = await fetch(`./clients/${templateName}-template.json`);
+                if (!response.ok) throw new Error("Template file not found");
+                const templateData = await response.json();
+
+                // CRITICAL: Preserve ALL user uploads before merging template
+                // Get current project data from Firestore
+                const { getDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                const projectSnap = await getDoc(doc(db, "projects", projectId));
+                const currentData = projectSnap.exists() ? projectSnap.data().config : {};
+
+                // Preserve user uploads (these should NEVER be lost on template switch)
+                if (currentData.heroImage) templateData.heroImage = currentData.heroImage;
+                if (currentData.video) templateData.video = currentData.video;
+                if (currentData.gallery && currentData.gallery.length > 0) {
+                    templateData.gallery = currentData.gallery;
+                    templateData.photoCount = currentData.gallery.length;
+                }
+                if (currentData.captions) templateData.captions = currentData.captions;
+
+                // Preserve Messages
+                if (currentData.messageTitle) templateData.messageTitle = currentData.messageTitle;
+                if (currentData.messageBody) templateData.messageBody = currentData.messageBody;
+                if (currentData.messageSignOff) templateData.messageSignOff = currentData.messageSignOff;
+                if (currentData.message) templateData.messageBody = currentData.message; // Legacy migration
+
+                // Re-populate form with merged data (template theme + user uploads)
+                populateForm(templateData);
+
+                // Trigger full save
+                await triggerSave();
+                updateSaveIndicator('saved');
+            } catch (err) {
+                console.error(err);
+                showError("Failed to switch template: " + err.message);
+            }
+        }
+
+        document.getElementById('template-switcher').addEventListener('change', (e) => {
+            const template = e.target.value;
+            if (confirm("Switching templates will reset your theme and default text. Your uploaded photos will be kept. Proceed?")) {
+                applyTemplate(template);
+            } else {
+                // Revert selection if cancelled (not trivial with simple select, but better than silent change)
+            }
+        });
+
+        // --- HERO UPLOAD ---
+        document.getElementById('hero-upload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const btn = document.getElementById('hero-btn');
+            const status = document.getElementById('hero-status');
+            const preview = document.getElementById('hero-preview');
+            const placeholder = document.getElementById('hero-placeholder');
+            const heroInput = document.getElementById('heroImageInput');
+
+            // Check if there's an existing hero image to delete
+            const existingUrl = heroInput.value;
+
+            btn.textContent = 'Processing...'; btn.disabled = true;
+            try {
+                // Delete old hero from R2 if exists
+                if (existingUrl && existingUrl.includes(projectId)) {
+                    try {
+                        const key = `${projectId}/hero.webp`;
+                        status.textContent = "Removing old...";
+                        await deleteFromR2(key);
+                    } catch (e) {
+                        console.warn("Old hero delete failed (might not exist)", e);
+                    }
+                }
+
+                const blob = await compressImage(file);
+                btn.textContent = 'Uploading...';
+                const key = `${STORAGE_ROOT}/hero.webp`;
+                await uploadToR2(blob, key);
+
+                const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
+                heroInput.value = publicUrl;
+                preview.src = URL.createObjectURL(blob);
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                status.textContent = "✓ Uploaded";
+                status.className = "py-2 text-sm text-green-600 font-bold";
+
+                // Update button text to "Replace Cover"
+                btn.textContent = 'Replace Cover';
+
+                // Instant save for photo meta
+                triggerSave();
+            } catch (err) {
+                showError("Hero upload failed: " + err.message);
+                // Reset button text
+                btn.textContent = existingUrl ? 'Replace Cover' : 'Upload Cover';
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        // --- GALLERY MANAGER ---
+        async function deleteFromR2(key) {
+            try {
+                const res = await fetch(`${WORKER_URL}/delete?key=${encodeURIComponent(key)}`, {
+                    method: 'DELETE',
+                    headers: { 'X-Auth-Secret': WORKER_SECRET }
+                });
+                if (!res.ok) console.warn("R2 Delete failed", res.status);
+            } catch (e) {
+                console.warn("R2 Delete error", e);
+            }
+        }
+
+        let draggedItem = null;
+        // Helper for DnD sorting
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.gallery-slot:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        const galleryContainer = document.getElementById('gallery-container');
+        const addPhotoBtn = document.getElementById('add-photo-btn');
+        let currentPhotoCount = 0;
+
+        // Selection Management
+        function toggleSlotSelection(slotDiv) {
+            const isSelected = slotDiv.dataset.selected === 'true';
+            const indicator = slotDiv.querySelector('.selection-indicator');
+            const deleteBtn = slotDiv.querySelector('.delete-slot-btn');
+            const uploadBtn = slotDiv.querySelector('.upload-btn'); // Get upload button
+
+            if (isSelected) {
+                // Deselect
+                slotDiv.dataset.selected = 'false';
+                slotDiv.classList.remove('ring-4', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-950/20');
+                indicator.classList.add('hidden');
+                indicator.classList.remove('flex');
+                if (deleteBtn) deleteBtn.classList.remove('hidden'); // Show individual delete
+
+                // Re-enable upload button
+                if (uploadBtn) {
+                    uploadBtn.disabled = false;
+                    uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+
+            } else {
+                // Select
+                slotDiv.dataset.selected = 'true';
+                slotDiv.classList.add('ring-4', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-950/20');
+                indicator.classList.remove('hidden');
+                indicator.classList.add('flex');
+                if (deleteBtn) deleteBtn.classList.add('hidden'); // Hide individual delete
+
+                // Disable upload button
+                if (uploadBtn) {
+                    uploadBtn.disabled = true;
+                    uploadBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+
+            updateBulkDeleteButton();
+        }
+
+        function updateBulkDeleteButton() {
+            const selectedSlots = document.querySelectorAll('.gallery-slot[data-selected="true"]');
+            const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+
+            if (selectedSlots.length > 0) {
+                bulkDeleteBtn.classList.remove('hidden');
+                bulkDeleteBtn.textContent = `Delete (${selectedSlots.length})`;
+            } else {
+                bulkDeleteBtn.classList.add('hidden');
+            }
+        }
+
+        function createPhotoSlot(photoUrl = "", captionValue = "") {
+            const slotId = Date.now() + Math.random().toString(36).substr(2, 9);
+            const div = document.createElement('div');
+            div.className = "gallery-slot relative bg-white dark:bg-zinc-900 rounded-xl p-6 border border-slate-200 dark:border-zinc-800 shadow-sm transition-all duration-200 cursor-pointer select-none";
+            div.dataset.id = slotId;
+            div.dataset.selected = "false";
+            div.draggable = true;
+
+            const hasPhoto = photoUrl && photoUrl.length > 5;
+
+            div.innerHTML = `
+                <!-- Selection Indicator (Hidden by default) -->
+                <div class="selection-indicator absolute top-3 right-3 w-6 h-6 bg-indigo-600 rounded-full items-center justify-center hidden z-10">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+
+                <!-- Card Header: Title + Delete -->
+                <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200 dark:border-zinc-800">
+                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider slot-number">Photo</span>
+                    <button type="button"
+                        class="delete-slot-btn text-red-400 hover:text-red-600 p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        title="Delete Slot">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Card Body: Photo + Upload -->
+                <div class="flex gap-3 mb-3">
+                    <!-- Photo Thumbnail -->
+                    <div class="w-24 h-24 md:w-28 md:h-28 bg-slate-100 dark:bg-zinc-800 rounded-lg overflow-hidden border border-slate-200 dark:border-zinc-700 relative group flex-shrink-0">
+                        <img id="img-${slotId}" src="${hasPhoto ? photoUrl : ''}"
+                            class="w-full h-full object-cover ${hasPhoto ? '' : 'opacity-0'}"
+                            onerror="this.style.opacity=0">
+                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                            <span class="text-white text-[10px] font-bold">CHANGE</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Controls -->
+                    <div class="flex-1 flex flex-col justify-center gap-2">
+                        <div class="relative">
+                            <button type="button"
+                                class="upload-btn w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm">
+                                ${hasPhoto ? 'Replace Photo' : 'Upload Photo'}
+                            </button>
+                            <input type="file" accept="image/*"
+                                class="photo-upload-input absolute inset-0 opacity-0 cursor-pointer">
+                        </div>
+                        <span id="status-${slotId}" class="text-[10px] md:text-xs font-bold text-center text-slate-400"></span>
+                    </div>
+                </div>
+
+                <!-- Card Footer: Caption (Resizable) -->
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">Caption</label>
+                    <textarea rows="2" placeholder="Add a caption..."
+                        class="caption-field w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-lg p-2.5 text-sm autosave-field focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">${captionValue}</textarea>
+                </div>
+                <input type="hidden" class="photo-url-input" value="${photoUrl}">
+                `;
+
+            // EVENT LISTENERS
+
+            // 1. Long Press Selection (Android-style)
+            let pressTimer = null;
+            let isDragging = false;
+            let longPressTriggered = false; // Flag to prevent click conflict
+
+            const startPress = (e) => {
+                // Don't trigger on buttons/inputs/textareas
+                if (e.target.closest('button, input, textarea')) return;
+
+                isDragging = false;
+                longPressTriggered = false; // Reset flag
+
+                pressTimer = setTimeout(() => {
+                    if (!isDragging) {
+                        toggleSlotSelection(div);
+                        // Haptic feedback on mobile
+                        if (navigator.vibrate) navigator.vibrate(50);
+                        longPressTriggered = true; // Mark as handled
+                    }
+                }, 500); // 500ms long press
+            };
+
+            const onClick = (e) => {
+                // Prevent click if long press just happened
+                if (longPressTriggered) {
+                    longPressTriggered = false;
+                    return;
+                }
+
+                // Check if we are in "Selection Mode" (i.e., at least one other item is selected)
+                const selectedCount = document.querySelectorAll('.gallery-slot[data-selected="true"]').length;
+                if (selectedCount > 0 && !e.target.closest('button, input, textarea')) {
+                    // Prevent default actions if needed, though mostly clicking div is safe
+                    toggleSlotSelection(div);
+                }
+            };
+
+            const cancelPress = () => {
+                if (pressTimer) {
+                    clearTimeout(pressTimer);
+                    pressTimer = null;
+                }
+            };
+
+            const onMove = () => {
+                isDragging = true;
+                cancelPress();
+            };
+
+            div.addEventListener('mousedown', startPress);
+            div.addEventListener('click', onClick); // New click listener for selection mode
+            div.addEventListener('touchstart', startPress, { passive: true });
+            div.addEventListener('mousemove', onMove);
+            div.addEventListener('touchmove', onMove, { passive: true });
+            div.addEventListener('mouseup', cancelPress);
+            div.addEventListener('touchend', cancelPress);
+            div.addEventListener('mouseleave', cancelPress);
+
+            // 2. Upload
+            const input = div.querySelector('.photo-upload-input');
+            input.addEventListener('change', (evt) => handlePhotoUpload(evt, slotId));
+
+            // 2. Caption Autosave
+            const captionInput = div.querySelector('.caption-field');
+            captionInput.addEventListener('input', debouncedAutoSave);
+
+            // 3. Delete
+            const deleteBtn = div.querySelector('.delete-slot-btn');
+            deleteBtn.addEventListener('click', async (e) => {
+                e.stopPropagation(); // Prevent long-press selection
+                if (confirm("Permanently delete this photo? This cannot be undone.")) {
+                    const currentUrl = div.querySelector('.photo-url-input').value;
+                    if (currentUrl) {
+                        try {
+                            const r2Key = extractR2Key(currentUrl);
+                            if (r2Key) {
+                                deleteBtn.innerHTML = `...`;
+                                await deleteFromR2(r2Key);
+                            }
+                        } catch (e) { console.error("Deletion error", e); }
+                    }
+                    div.remove();
+                    updateSlotNumbers();
+                    debouncedAutoSave();
+                }
+            });
+
+            // 4. Drag and Drop Logic
+            div.addEventListener('dragstart', function (e) {
+                draggedItem = div;
+                div.classList.add('opacity-50');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            div.addEventListener('dragend', function () {
+                div.classList.remove('opacity-50');
+                draggedItem = null;
+                debouncedAutoSave();
+            });
+
+            div.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                const container = galleryContainer;
+                const afterElement = getDragAfterElement(container, e.clientY);
+                if (afterElement == null) {
+                    container.appendChild(draggedItem);
+                } else {
+                    container.insertBefore(draggedItem, afterElement);
+                }
+                updateSlotNumbers();
+            });
+
+            return div;
+        }
+
+        function updateSlotNumbers() {
+            document.querySelectorAll('.gallery-slot').forEach((slot, index) => {
+                slot.querySelector('.slot-number').textContent = `Photo ${index + 1}`;
+            });
+        }
+
+
+        async function handlePhotoUpload(evt, slotId) {
+            const file = evt.target.files[0]; if (!file) return;
+            const slotEl = document.querySelector(`div[data-id="${slotId}"]`);
+            if (!slotEl) { console.error("Slot not found", slotId); return; }
+
+            const statusEl = document.getElementById(`status-${slotId}`);
+            const imgEl = document.getElementById(`img-${slotId}`);
+            const urlInput = slotEl.querySelector('.photo-url-input');
+            const uploadBtn = slotEl.querySelector('.photo-upload-input + button, button');
+
+            // Check if there's an existing photo to delete (SAVE COSTS!)
+            const existingUrl = urlInput ? urlInput.value : "";
+
+            statusEl.textContent = "Processing...";
+            statusEl.className = "text-xs font-bold text-blue-500 animate-pulse";
+
+            try {
+                // Delete old photo from R2 if exists
+                if (existingUrl && existingUrl.includes(projectId)) {
+                    try {
+                        const r2Key = extractR2Key(existingUrl);
+                        if (r2Key) {
+                            statusEl.textContent = "Removing old...";
+                            await deleteFromR2(r2Key);
+                        }
+                    } catch (e) {
+                        console.warn("Old photo delete failed", e);
+                    }
+                }
+
+                const blob = await compressImage(file);
+                statusEl.textContent = "Uploading...";
+
+                // Use UNIQUE filename
+                const uniqueName = `gallery_${Date.now()}_${Math.random().toString(36).substr(2, 5)}.webp`;
+                const key = `${STORAGE_ROOT}/${uniqueName}`;
+
+                await uploadToR2(blob, key);
+
+                const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
+
+                statusEl.textContent = "Saved"; statusEl.className = "text-xs font-bold text-green-500";
+
+                // FORCE PREVIEW UPDATE
+                const objectUrl = URL.createObjectURL(blob);
+                console.log("Updating slot preview:", slotId, objectUrl);
+
+                imgEl.src = objectUrl;
+
+                // Ensure visibility (remove class AND set direct style)
+                imgEl.classList.remove('opacity-0');
+                imgEl.style.opacity = '1';
+
+                if (urlInput) urlInput.value = publicUrl;
+
+                // Update button text
+                const buttonEl = slotEl.querySelector('button[type="button"]');
+                if (buttonEl && buttonEl.textContent.trim() === 'Upload Photo') {
+                    buttonEl.textContent = 'Replace Photo';
+                }
+
+                triggerSave();
+            } catch (err) {
+                statusEl.textContent = "Error";
+                showError(`Upload failed: ${err.message}`);
+                console.error(err);
+            }
+        }
+
+        addPhotoBtn.addEventListener('click', () => {
+            galleryContainer.appendChild(createPhotoSlot());
+            updateSlotNumbers();
+            debouncedAutoSave();
+        });
+
+        // --- FORM POPULATION ---
+        function populateForm(data) {
+            const form = document.getElementById('configForm');
+            // reset standard fields
+            Array.from(form.elements).forEach(input => {
+                if (!input.name || input.name === 'eventType' || input.classList.contains('caption-field')) return;
+                const path = input.name.split('.');
+                let val = data;
+                for (let key of path) if (val) val = val[key];
+                if (val !== undefined) input.value = val;
+            });
+
+            if (data.eventType) {
+                const select = form.querySelector('select[name="eventType"]');
+                for (let opt of select.options) {
+                    if (opt.value.toLowerCase() === data.eventType.toLowerCase()) {
+                        select.value = opt.value;
+                        break;
+                    }
+                }
+            }
+
+            if (data.heroImage) {
+                const preview = document.getElementById('hero-preview');
+                const heroBtn = document.getElementById('hero-btn');
+                document.getElementById('hero-placeholder').classList.add('hidden');
+                preview.src = data.heroImage;
+                preview.classList.remove('hidden');
+                document.getElementById('heroImageInput').value = data.heroImage;
+                // Update button text
+                if (heroBtn) heroBtn.textContent = 'Replace Cover';
+            }
+
+            // Video restoration
+            if (data.video) {
+                const videoPreview = document.getElementById('video-preview');
+                const videoPlaceholder = document.getElementById('video-placeholder');
+                const videoStatus = document.getElementById('video-status');
+                const deleteBtn = document.getElementById('delete-video-btn');
+
+                if (videoPreview && videoPlaceholder) {
+                    videoPlaceholder.classList.add('hidden');
+                    videoPreview.src = data.video;
+                    videoPreview.classList.remove('hidden');
+                    document.getElementById('videoUrlInput').value = data.video;
+                    if (deleteBtn) deleteBtn.classList.remove('hidden'); // Show delete button
+
+                    if (videoStatus) {
+                        videoStatus.textContent = "✓ Video Uploaded";
+                        videoStatus.classList.add('text-green-500');
+                    }
+
+                    // Update button text using the new ID
+                    const videoUploadLabel = document.getElementById('video-upload-label');
+                    if (videoUploadLabel) videoUploadLabel.childNodes[0].textContent = "Replace Video";
+                }
+            }
+
+            // Gallery Population
+            galleryContainer.innerHTML = '';
+            let itemsToRender = [];
+
+            if (data.gallery && Array.isArray(data.gallery) && data.gallery.length > 0) {
+                itemsToRender = data.gallery; // Array of URLs
+            } else {
+                // Default to 6 EMPTY slots for fresh projects
+                // We ignore photoCount from template to prevent pre-filling "ghost" slots if we wanted to be strict, but here we just want empty slots.
+                itemsToRender = Array(6).fill('');
+            }
+            itemsToRender.forEach((url, index) => {
+                const caption = data.captions ? data.captions[index + 1] : "";
+                galleryContainer.appendChild(createPhotoSlot(url, caption));
+            });
+
+            updateSlotNumbers();
+        }
+
+
+        // --- BULK UPLOAD ---
+        const bulkUploadBtn = document.getElementById('bulk-upload-btn');
+        const bulkUploadInput = document.getElementById('bulk-upload-input');
+
+        bulkUploadBtn.addEventListener('click', () => {
+            const selectedCount = document.querySelectorAll('.gallery-slot[data-selected="true"]').length;
+
+            if (selectedCount === 1) {
+                bulkUploadInput.removeAttribute('multiple');
+            } else {
+                bulkUploadInput.setAttribute('multiple', '');
+            }
+
+            bulkUploadInput.click();
+        });
+
+        bulkUploadInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+
+            // Check for selected slots (Targeted Mode)
+            const selectedSlots = Array.from(document.querySelectorAll('.gallery-slot[data-selected="true"]'));
+            const isTargetedMode = selectedSlots.length > 0;
+
+            if (isTargetedMode) {
+                // VALIDATION: Prevent uploading more files than selected slots
+                if (files.length > selectedSlots.length) {
+                    alert(`You selected ${selectedSlots.length} slot${selectedSlots.length > 1 ? 's' : ''} but chose ${files.length} photo${files.length > 1 ? 's' : ''}. Please select exactly ${selectedSlots.length} photo${selectedSlots.length > 1 ? 's' : ''} (or fewer) to match your selection.`);
+                    e.target.value = '';
+                    return;
+                }
+
+                // TARGETED UPLOAD MODE
+                // Only fill up to the number of selected slots or files, whichever is smaller.
+                const count = Math.min(files.length, selectedSlots.length);
+
+                for (let i = 0; i < count; i++) {
+                    const file = files[i];
+                    const slotDiv = selectedSlots[i];
+
+                    const slotId = slotDiv.dataset.id;
+                    const statusEl = document.getElementById(`status-${slotId}`);
+                    const imgEl = document.getElementById(`img-${slotId}`);
+                    const urlInput = slotDiv.querySelector('.photo-url-input');
+                    const btn = slotDiv.querySelector('.upload-btn'); // Should be disabled but we update it
+
+                    // 1. Cleanup existing image if present
+                    if (urlInput.value && urlInput.value.includes(projectId)) {
+                        try {
+                            const r2Key = extractR2Key(urlInput.value);
+                            if (r2Key) await deleteFromR2(r2Key);
+                        } catch (err) {
+                            console.warn("Failed to cleanup old image during targeted upload", err);
+                        }
+                    }
+
+                    statusEl.textContent = "Compressing...";
+                    statusEl.className = "text-xs font-bold text-blue-500 animate-pulse";
+
+                    try {
+                        const blob = await compressImage(file);
+                        statusEl.textContent = "Uploading...";
+
+                        const uniqueName = `gallery_${Date.now()}_${Math.random().toString(36).substr(2, 5)}.webp`;
+                        const key = `${STORAGE_ROOT}/${uniqueName}`;
+
+                        await uploadToR2(blob, key);
+
+                        const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
+
+                        // Update UI
+                        imgEl.src = URL.createObjectURL(blob);
+                        imgEl.classList.remove('opacity-0');
+                        imgEl.style.opacity = '1';
+                        urlInput.value = publicUrl;
+                        statusEl.textContent = "Saved";
+                        statusEl.className = "text-xs font-bold text-green-500";
+                        btn.textContent = 'Replace Photo';
+
+                        // Note: We leave it selected so user knows which one changed, 
+                        // or we could deselect it. Keeping it selected seems safer for now.
+
+                    } catch (err) {
+                        console.error("Targeted bulk upload error", file.name, err);
+                        statusEl.textContent = "Failed";
+                        statusEl.className = "text-xs font-bold text-red-500";
+                    }
+                }
+
+                // If user selected MORE slots than files, the remaining selected slots are UNTOUCHED.
+                // If user selected FEWER slots than files, the extra files are IGNORED.
+
+            } else {
+                // NORMAL MODE (Fill Empty -> Append)
+                for (const file of files) {
+                    // 1. Find the FIRST empty slot
+                    let slotDiv = null;
+                    const allSlots = Array.from(document.querySelectorAll('.gallery-slot'));
+
+                    for (const slot of allSlots) {
+                        const urlInput = slot.querySelector('.photo-url-input');
+                        // Check if empty (no value) AND not currently processing (we'll tag it)
+                        if (!urlInput.value && !slot.dataset.processing) {
+                            slotDiv = slot;
+                            break; // Found the first one
+                        }
+                    }
+
+                    // 2. If no empty slot, create a new one
+                    if (!slotDiv) {
+                        slotDiv = createPhotoSlot("", "");
+                        galleryContainer.appendChild(slotDiv);
+                        updateSlotNumbers();
+                    }
+
+                    // Mark as processing so next iteration doesn't grab it
+                    slotDiv.dataset.processing = "true";
+
+                    const slotId = slotDiv.dataset.id;
+                    const statusEl = document.getElementById(`status-${slotId}`);
+                    const imgEl = document.getElementById(`img-${slotId}`);
+                    const urlInput = slotDiv.querySelector('.photo-url-input');
+                    const btn = slotDiv.querySelector('.upload-btn');
+
+                    statusEl.textContent = "Compressing...";
+                    statusEl.className = "text-xs font-bold text-blue-500 animate-pulse";
+
+                    try {
+                        const blob = await compressImage(file);
+                        statusEl.textContent = "Uploading...";
+
+                        const uniqueName = `gallery_${Date.now()}_${Math.random().toString(36).substr(2, 5)}.webp`;
+                        const key = `${STORAGE_ROOT}/${uniqueName}`;
+
+                        await uploadToR2(blob, key);
+
+                        const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
+
+                        // Update UI
+                        imgEl.src = URL.createObjectURL(blob);
+                        imgEl.classList.remove('opacity-0');
+                        imgEl.style.opacity = '1';
+                        urlInput.value = publicUrl;
+                        statusEl.textContent = "Saved";
+                        statusEl.className = "text-xs font-bold text-green-500";
+                        btn.textContent = 'Replace Photo';
+
+                    } catch (err) {
+                        console.error("Bulk upload error for file", file.name, err);
+                        statusEl.textContent = "Failed";
+                        statusEl.className = "text-xs font-bold text-red-500";
+                    } finally {
+                        delete slotDiv.dataset.processing; // Clear processing tag
+                    }
+                }
+            }
+
+            e.target.value = ''; // Reset input
+            debouncedAutoSave();
+        });
+
+        // --- BULK SELECTION CONTROLS ---
+        const selectAllBtn = document.getElementById('select-all-btn');
+        const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+
+        // Select/Deselect All
+        selectAllBtn.addEventListener('click', () => {
+            const allSlots = document.querySelectorAll('.gallery-slot');
+            const allSelected = Array.from(allSlots).every(slot => slot.dataset.selected === 'true');
+
+            allSlots.forEach(slot => {
+                const indicator = slot.querySelector('.selection-indicator');
+                const deleteBtn = slot.querySelector('.delete-slot-btn');
+
+                if (allSelected) {
+                    // Deselect all
+                    slot.dataset.selected = 'false';
+                    slot.classList.remove('ring-4', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-950/20');
+                    indicator.classList.add('hidden');
+                    indicator.classList.remove('flex');
+                    if (deleteBtn) deleteBtn.classList.remove('hidden');
+                } else {
+                    // Select all
+                    slot.dataset.selected = 'true';
+                    slot.classList.add('ring-4', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-950/20');
+                    indicator.classList.remove('hidden');
+                    indicator.classList.add('flex');
+                    if (deleteBtn) deleteBtn.classList.add('hidden');
+                }
+            });
+
+            updateBulkDeleteButton();
+            selectAllBtn.textContent = allSelected ? 'Select All' : 'Deselect All';
+        });
+
+        // Bulk Delete
+        bulkDeleteBtn.addEventListener('click', async () => {
+            const selectedSlots = document.querySelectorAll('.gallery-slot[data-selected="true"]');
+            const count = selectedSlots.length;
+
+            if (count === 0) return;
+
+            if (!confirm(`Permanently delete ${count} photo${count > 1 ? 's' : ''}? This cannot be undone.`)) return;
+
+            bulkDeleteBtn.disabled = true;
+            bulkDeleteBtn.textContent = 'Deleting...';
+
+            // Delete from R2 and DOM
+            for (const slot of selectedSlots) {
+                const urlInput = slot.querySelector('.photo-url-input');
+                const currentUrl = urlInput ? urlInput.value : '';
+
+                if (currentUrl && currentUrl.includes(projectId)) { // Only delete if it belongs to this project
+                    try {
+                        const r2Key = extractR2Key(currentUrl);
+                        if (r2Key) {
+                            await deleteFromR2(r2Key);
+                        }
+                    } catch (e) {
+                        console.error('Bulk deletion error:', e);
+                    }
+                }
+
+                slot.remove();
+            }
+
+            updateSlotNumbers();
+            updateBulkDeleteButton();
+            debouncedAutoSave();
+
+            bulkDeleteBtn.disabled = false;
+        });
+
+        // --- PREVIEW (Live) ---
+        function getPreviewConfig() {
+            const form = document.getElementById('configForm');
+            const formData = new FormData(form);
+            const previewConfig = {};
+            const setNested = (obj, path, value) => {
+                const keys = path.split('.');
+                let current = obj;
+                for (let i = 0; i < keys.length - 1; i++) {
+                    if (!current[keys[i]]) current[keys[i]] = {};
+                    current = current[keys[i]];
+                }
+                current[keys[keys.length - 1]] = value;
+            };
+
+            for (const [key, value] of formData.entries()) {
+                if (key === 'photoCount' || key.startsWith('caption_')) continue;
+                setNested(previewConfig, key, value);
+            }
+
+            // Manually capture gallery & captions
+            const gallerySlots = document.querySelectorAll('.gallery-slot');
+            const galleryArray = [];
+            const captionMap = {};
+
+            gallerySlots.forEach((slot, index) => {
+                const urlInput = slot.querySelector('.photo-url-input');
+                const captionInput = slot.querySelector('.caption-field');
+
+                galleryArray.push(urlInput ? urlInput.value : "");
+                captionMap[index + 1] = captionInput ? captionInput.value : "";
+            });
+
+            previewConfig.gallery = galleryArray;
+            previewConfig.captions = captionMap;
+            previewConfig.photoCount = galleryArray.length;
+
+            return previewConfig;
+        }
+
+        const previewModal = document.getElementById('preview-modal');
+        const previewIframe = document.getElementById('preview-iframe');
+        const frameWrapper = document.getElementById('preview-frame-wrapper');
+        let isPreviewOpen = false;
+
+        document.getElementById('preview-btn').addEventListener('click', () => {
+            const messageBodyInput = document.getElementById('message-body-input');
+            if (messageBodyInput && messageBodyInput.value.length > 500) {
+                showError(`Your message is too long (${messageBodyInput.value.length}/500). Please shorten it to proceed.`);
+                messageBodyInput.focus();
+                messageBodyInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            const config = getPreviewConfig();
+            localStorage.setItem('preview_config', JSON.stringify(config));
+
+            // Show Modal
+            previewModal.classList.remove('hidden');
+            // Small delay to allow display:block to apply before opacity transition
+            requestAnimationFrame(() => {
+                previewModal.classList.remove('opacity-0');
+            });
+
+            // Load Iframe with cache buster
+            previewIframe.src = `view.html?preview=true&t=${Date.now()}`;
+            isPreviewOpen = true;
+        });
+
+        document.getElementById('close-preview').addEventListener('click', () => {
+            previewModal.classList.add('opacity-0');
+            setTimeout(() => {
+                previewModal.classList.add('hidden');
+                previewIframe.src = 'about:blank'; // Stop audio/video
+            }, 300);
+            isPreviewOpen = false;
+        });
+
+        // Device Toggles
+        document.getElementById('device-mobile').addEventListener('click', (e) => {
+            frameWrapper.className = "relative transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] shadow-2xl device-mobile";
+            document.querySelectorAll('.active-device').forEach(el => el.classList.remove('active-device'));
+            e.currentTarget.classList.add('active-device');
+        });
+
+        document.getElementById('device-desktop').addEventListener('click', (e) => {
+            frameWrapper.className = "relative transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] shadow-2xl device-desktop";
+            document.querySelectorAll('.active-device').forEach(el => el.classList.remove('active-device'));
+            e.currentTarget.classList.add('active-device');
+        });
+
+        // Send updates to iframe when editing
+        function updatePreview() {
+            if (!isPreviewOpen) return;
+            const config = getPreviewConfig();
+            previewIframe.contentWindow.postMessage({ type: 'configUpdate', config: config }, '*');
+        }
+
+        document.getElementById('manual-save-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            triggerSave();
+        });
+
+        // Mobile Menu Toggle logic
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menu-toggle');
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+            setTimeout(() => sidebarOverlay.classList.remove('opacity-0'), 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('opacity-0');
+            setTimeout(() => {
+                sidebarOverlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        menuToggle?.addEventListener('click', (e) => {
+            e.preventDefault();
+            openSidebar();
+        });
+
+        closeSidebarBtn?.addEventListener('click', closeSidebar);
+        sidebarOverlay?.addEventListener('click', closeSidebar);
+
+        // Close sidebar when clicking a link on mobile
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) closeSidebar();
+            });
+        });
+
+        // Gallery Mode Toggle (Show/Hide Speed Setting)
+        const galleryModeSelect = document.getElementById('gallery-mode-select');
+        const gallerySpeedWrapper = document.getElementById('gallery-speed-wrapper');
+
+        function toggleGallerySpeed() {
+            if (galleryModeSelect && gallerySpeedWrapper) {
+                if (galleryModeSelect.value === 'manual') {
+                    gallerySpeedWrapper.style.opacity = '0.5';
+                    gallerySpeedWrapper.style.pointerEvents = 'none';
+                } else {
+                    gallerySpeedWrapper.style.opacity = '1';
+                    gallerySpeedWrapper.style.pointerEvents = 'auto';
+                }
+            }
+        }
+
+        if (galleryModeSelect) {
+            galleryModeSelect.addEventListener('change', toggleGallerySpeed);
+            // Run on load 
+            toggleGallerySpeed();
+            toggleGallerySpeed();
+        }
+
+        // --- CHARACTER COUNT LOGIC ---
+        const messageBodyInput = document.getElementById('message-body-input');
+        const charCountEl = document.getElementById('char-count');
+
+        function updateCharCount() {
+            if (messageBodyInput && charCountEl) {
+                const count = messageBodyInput.value.length;
+                charCountEl.textContent = count;
+                if (count > 500) {
+                    charCountEl.className = "font-bold text-red-600";
+                } else if (count >= 480) {
+                    charCountEl.className = "text-red-400";
+                } else {
+                    charCountEl.className = "";
+                }
+            }
+        }
+
+        if (messageBodyInput) {
+            messageBodyInput.addEventListener('input', updateCharCount);
+            setTimeout(updateCharCount, 500);
+        }
+
+        // --- SECTION ORDER DRAG-AND-DROP ---
+        const sectionOrderContainer = document.getElementById('section-order-container');
+        const sectionOrderInput = document.getElementById('section-order-input');
+
+        const sectionNames = {
+            'hero': 'Landing Screen',
+            'gallery': 'Memories Gallery',
+            'message': 'Heartfelt Message',
+            'video': 'Cinematic Video'
+        };
+
+        function renderSectionChips(orderString) {
+            if (!sectionOrderContainer) return;
+            const order = orderString ? orderString.split(',') : ['hero', 'gallery', 'message', 'video'];
+            sectionOrderContainer.innerHTML = '';
+
+            order.forEach(id => {
+                const name = sectionNames[id] || id;
+                const chip = document.createElement('div');
+                chip.className = 'section-chip px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-lg text-xs font-bold cursor-move flex items-center gap-2 select-none shadow-sm';
+                chip.draggable = true;
+                chip.dataset.id = id;
+                chip.innerHTML = `
+                    <svg class="w-3.5 h-3.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
+                    ${name}
+                `;
+
+                chip.addEventListener('dragstart', (e) => {
+                    chip.classList.add('opacity-40');
+                    e.dataTransfer.setData('text/plain', id);
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                chip.addEventListener('dragend', () => chip.classList.remove('opacity-40'));
+
+                sectionOrderContainer.appendChild(chip);
+            });
+        }
+
+        sectionOrderContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const draggingId = e.dataTransfer.getData('text/plain');
+            const target = e.target.closest('.section-chip');
+
+            if (target) {
+                const children = Array.from(sectionOrderContainer.children);
+                const draggingChip = children.find(c => c.dataset.id === draggingId || c.classList.contains('opacity-40'));
+
+                if (draggingChip && draggingChip !== target) {
+                    const rect = target.getBoundingClientRect();
+                    const nextPage = (e.clientX - rect.left) > (rect.width / 2);
+
+                    if (nextPage) sectionOrderContainer.insertBefore(draggingChip, target.nextSibling);
+                    else sectionOrderContainer.insertBefore(draggingChip, target);
+
+                    // Update hidden input and save
+                    const newOrder = Array.from(sectionOrderContainer.children).map(c => c.dataset.id).join(',');
+                    if (sectionOrderInput.value !== newOrder) {
+                        sectionOrderInput.value = newOrder;
+                        triggerSave();
+                    }
+                }
+            }
+        });
+
+        // Initialize from existing input value
+        setTimeout(() => {
+            if (sectionOrderInput) renderSectionChips(sectionOrderInput.value);
+        }, 1000);
+
+        // --- SHARING LOGIC ---
+        const openNewTabBtn = document.getElementById('open-new-tab-btn');
+        if (openNewTabBtn) {
+            openNewTabBtn.addEventListener('click', () => {
+                const url = `view.html?id=${projectId}`;
+                window.open(url, '_blank');
+            });
+        }
+
+        const shareModal = document.getElementById('share-modal');
+        const closeShareModalBtn = document.getElementById('close-share-modal');
+        const qrContainer = document.getElementById('qr-code-container');
+        const shareUrlInput = document.getElementById('share-url-input');
+        const copyLinkBtn = document.getElementById('copy-link-btn');
+
+        function showShareModal() {
+            if (!shareModal) return;
+
+            // Generate URL
+            const fullUrl = `${window.location.origin}${window.location.pathname.replace('editor.html', 'view.html')}?id=${projectId}`;
+            shareUrlInput.value = fullUrl;
+
+            // Generate QR
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: fullUrl,
+                width: 140,
+                height: 140,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Dynamic Background (Luxury Effect)
+            const heroPreview = document.getElementById('hero-preview');
+            const modalBg = document.getElementById('share-modal-bg');
+            if (heroPreview && modalBg && !heroPreview.classList.contains('hidden')) {
+                modalBg.style.backgroundImage = `url(${heroPreview.src})`;
+            } else {
+                modalBg.style.backgroundImage = 'none';
+            }
+
+            // Show UI
+            shareModal.classList.remove('hidden');
+            setTimeout(() => shareModal.classList.remove('opacity-0'), 10);
+        }
+
+        if (closeShareModalBtn) {
+            closeShareModalBtn.addEventListener('click', () => {
+                shareModal.classList.add('opacity-0');
+                setTimeout(() => shareModal.classList.add('hidden'), 500);
+            });
+        }
+
+        if (copyLinkBtn) {
+            copyLinkBtn.addEventListener('click', () => {
+                shareUrlInput.select();
+                document.execCommand('copy');
+                copyLinkBtn.textContent = "Copied!";
+                setTimeout(() => copyLinkBtn.textContent = "Copy", 2000);
+            });
+        }
+
+        // Hijack Manual Save Button
+        const manualBtn = document.getElementById('manual-save-btn');
+        // Remove old listener by cloning (simplest way without reference)
+        const newManualBtn = manualBtn.cloneNode(true);
+        manualBtn.parentNode.replaceChild(newManualBtn, manualBtn);
+
+        newManualBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const originalText = newManualBtn.innerHTML;
+            newManualBtn.innerHTML = `<span>Saving...</span>`;
+            newManualBtn.disabled = true;
+
+            try {
+                await triggerSave(); // Assume global function
+                // Success Modal
+                showShareModal();
+            } catch (err) {
+                console.error("Save error:", err);
+                alert("Failed to save.");
+            } finally {
+                newManualBtn.innerHTML = originalText;
+                newManualBtn.disabled = false;
+            }
+        });
+
+    </script>
+
+    <!-- SHARE SUCCESS MODAL (HAND-CRAFTED LUXURY EDITION) -->
+    <style>
+        .gold-gradient-text {
+            background: linear-gradient(to bottom, #cfc09f 22%, #634f2c 24%, #cfc09f 26%, #cfc09f 27%, #ffecb3 40%, #3a2c0f 78%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-frame-border {
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .luxury-shadow {
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+        }
+    </style>
+
+    <div id="share-modal"
+        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 hidden opacity-0 transition-opacity duration-500 backdrop-blur-xl">
+
+        <!-- Main Container -->
+        <div class="relative w-full max-w-sm mx-4 transform scale-95 transition-transform duration-500"
+            id="share-modal-content">
+
+            <!-- Close Button -->
+            <button id="close-share-modal"
+                class="absolute -top-12 right-0 z-50 text-white/50 hover:text-white transition-colors bg-white/5 hover:bg-white/10 rounded-full p-2 backdrop-blur-sm border border-white/10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <!-- THE FRAME -->
+            <div class="relative bg-black/80 rounded-sm p-4 gold-frame-border luxury-shadow overflow-hidden">
+
+                <!-- Dynamic Background (Blurred) -->
+                <div id="share-modal-bg"
+                    class="absolute inset-0 bg-cover bg-center opacity-40 blur-sm brightness-50 mix-blend-overlay">
+                </div>
+
+                <!-- Inner Border (Thin Gold) -->
+                <div class="relative border border-[#cfc09f]/30 p-6 h-full flex flex-col items-center justify-center">
+
+                    <!-- Corner Ornaments (SVG) -->
+                    <svg class="absolute top-2 left-2 w-8 h-8 text-[#bf953f] opacity-80" viewBox="0 0 100 100"
+                        fill="currentColor">
+                        <path d="M0,0 v40 h10 v-30 h30 v-10 z" />
+                    </svg>
+                    <svg class="absolute top-2 right-2 w-8 h-8 text-[#bf953f] opacity-80 rotate-90"
+                        viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M0,0 v40 h10 v-30 h30 v-10 z" />
+                    </svg>
+                    <svg class="absolute bottom-2 right-2 w-8 h-8 text-[#bf953f] opacity-80 rotate-180"
+                        viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M0,0 v40 h10 v-30 h30 v-10 z" />
+                    </svg>
+                    <svg class="absolute bottom-2 left-2 w-8 h-8 text-[#bf953f] opacity-80 -rotate-90"
+                        viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M0,0 v40 h10 v-30 h30 v-10 z" />
+                    </svg>
+
+                    <!-- Icon -->
+                    <div
+                        class="w-12 h-12 mb-4 rounded-full bg-gradient-to-b from-[#bf953f] to-[#aa771c] flex items-center justify-center shadow-lg border border-[#fcf6ba]">
+                        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+
+                    <!-- Texts -->
+                    <h2 class="text-3xl font-serif font-bold mb-2 gold-gradient-text">Memory Saved</h2>
+                    <p class="text-[#cfc09f] text-xs uppercase tracking-widest mb-8 opacity-80">Ready for the World</p>
+
+                    <!-- QR Display (Framed) -->
+                    <div
+                        class="p-2 gold-frame-border rounded-lg shadow-2xl mb-8 transform hover:scale-105 transition-transform duration-500 bg-white">
+                        <div id="qr-code-container" class="opacity-100"></div>
+                    </div>
+
+                    <!-- Link Box -->
+                    <div
+                        class="w-full flex items-center gap-2 bg-black/40 backdrop-blur-md p-1.5 rounded border border-[#cfc09f]/20 hover:border-[#cfc09f]/50 transition-colors">
+                        <input type="text" id="share-url-input" readonly
+                            class="flex-1 bg-transparent border-none text-[10px] text-[#fcf6ba]/80 focus:ring-0 px-2 font-mono tracking-wide"
+                            value="...">
+                        <button id="copy-link-btn"
+                            class="px-3 py-1.5 bg-gradient-to-b from-[#bf953f] to-[#aa771c] text-black shadow rounded text-[10px] font-bold hover:brightness-110 transition-all uppercase tracking-wider">
+                            Copy
+                        </button>
+                    </div>
+
+                    <!-- Bottom Branding -->
+                    <div class="mt-6 opacity-30 select-none pointer-events-none">
+                        <div class="flex items-center justify-center gap-1.5 grayscale invert">
+                            <span class="text-lg">✨</span>
+                            <span class="font-serif font-bold text-sm tracking-tight text-white">Memory Frame</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>

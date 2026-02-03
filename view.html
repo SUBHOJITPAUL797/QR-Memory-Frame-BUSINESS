@@ -5,56 +5,762 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Memory Frame</title>
+    <!-- YouTube API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&family=Montserrat:wght@400;600&family=Pacifico&family=Cinzel:wght@400;700&family=Lato:wght@300;400&family=Quicksand:wght@400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500&family=Cinzel:wght@400;700&family=Pacifico&display=swap"
         rel="stylesheet">
-
-    <!-- CSS -->
-    <!-- Loaded via CDN for Zero-Build Stability -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
+                        warm: { 50: '#fdfcfb', 100: '#fcfbf9', 900: '#1c1917' },
                         gold: {
-                            500: '#C5A059',
-                            600: '#B08D55',
+                            300: '#d4af37',
+                            500: 'var(--gold-500, #C5A059)',
+                            600: 'var(--gold-600, #B08D55)'
                         },
-                        warm: {
-                            50: '#FDFBF7',
-                            900: '#2C241B',
+                        hero: {
+                            DEFAULT: 'var(--hero-color, #ffffff)'
                         }
                     },
                     fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
                         serif: ['Playfair Display', 'serif'],
-                        sans: ['Inter', 'sans-serif'],
                         script: ['Great Vibes', 'cursive'],
+                        cinzel: ['Cinzel', 'serif'],
+                        pacifico: ['Pacifico', 'cursive'],
                     }
                 }
             }
         }
     </script>
-    <link rel="stylesheet" href="./styles.css">
+    <style>
+        /* Base Animations */
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
 
-    <!-- GSAP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    <!-- Favicon -->
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+        @keyframes zoom-in {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .writing-vertical {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
+        /* Frame Styles */
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+
+        /* Hide scrollbar for seamless App-like feel */
+        html {
+            scrollbar-width: none;
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Loading Screen Animations */
+        @keyframes fade-out {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        .fade-out {
+            animation: fade-out 0.8s ease-out forwards;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        .loading-shimmer {
+            background: linear-gradient(90deg, #C5A059 0%, #d4af37 50%, #C5A059 100%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+        }
+    </style>
 </head>
 
-<body class="antialiased">
-    <div id="app"></div>
+<body class="bg-warm-50 text-warm-900 transition-colors duration-1000">
 
-    <script type="module" src="./main.js"></script>
+    <!-- Loading Screen -->
+    <div id="loading-screen"
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-black via-zinc-900 to-black text-white">
+
+        <!-- Logo/Title -->
+        <div class="text-center mb-12 animate-[fade-in_1s_ease-out]">
+            <h1 id="loading-title" class="font-serif text-4xl md:text-5xl mb-2 tracking-wider">
+                <span class="loading-shimmer bg-clip-text text-transparent">Loading Memory</span>
+            </h1>
+            <p class="text-sm text-gray-400 tracking-widest uppercase">Please wait...</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-80 md:w-96 mb-8">
+            <div class="h-2 bg-gray-800 rounded-full overflow-hidden shadow-inner">
+                <div id="loading-bar"
+                    class="h-full bg-gradient-to-r from-gold-500 to-gold-300 transition-all duration-300 ease-out"
+                    style="width: 0%"></div>
+            </div>
+            <p id="loading-text" class="text-center text-sm text-gray-400 mt-3 font-mono">0%</p>
+        </div>
+
+        <!-- Start Button (Initially hidden) -->
+        <button id="start-btn"
+            class="opacity-0 pointer-events-none mt-8 px-10 py-4 bg-gradient-to-r from-gold-500 to-gold-600 text-black rounded-full font-bold text-lg shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-gold-500/50"
+            disabled>
+            <span class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                        clip-rule="evenodd" />
+                </svg>
+                Start Experience
+            </span>
+        </button>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app" class="opacity-0 transition-opacity duration-1000">
+        <!-- Components injected here -->
+    </div>
+
+    <!-- AUDIO ELEMENT -->
+    <audio id="bg-audio" loop></audio>
+    <div id="hidden-yt-player" class="hidden pointer-events-none w-0 h-0 opacity-0 overflow-hidden"></div>
+    <div id="section-yt-player" class="hidden pointer-events-none w-0 h-0 opacity-0 overflow-hidden"></div>
+    <button id="audio-toggle"
+        class="fixed bottom-6 right-6 z-50 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white shadow-xl hover:scale-110 transition-transform hidden">
+        <span id="audio-icon">�</span>
+    </button>
+
+    <!-- LOGIC -->
+    <script type="module">
+        // FORCE SCROLL TO TOP ON LOAD
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        import { app, db } from './js/firebase-config.js'; // Simple config import
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Import Renderers
+        import { renderHero } from './components/hero.js';
+        import { renderGallery, initGallery } from './components/gallery.js';
+
+        // Helper to extract YouTube ID
+        function getYoutubeId(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        // --- MEDIA PRELOAD ---
+        async function preloadMedia(config) {
+            const loadingBar = document.getElementById('loading-bar');
+            const loadingText = document.getElementById('loading-text');
+            const loadingTitle = document.getElementById('loading-title');
+            const startBtn = document.getElementById('start-btn');
+
+            // Collect all media URLs
+            const mediaItems = [];
+
+            if (config.heroImage) mediaItems.push({ url: config.heroImage, type: 'image' });
+            if (config.video) mediaItems.push({ url: config.video, type: 'video' });
+            if (config.gallery && Array.isArray(config.gallery)) {
+                config.gallery.forEach(url => {
+                    if (url) mediaItems.push({ url, type: 'image' });
+                });
+            }
+
+            if (mediaItems.length === 0) {
+                // No media to load, enable button immediately
+                enableStartButton();
+                return;
+            }
+
+            let loaded = 0;
+            const total = mediaItems.length;
+
+            for (const item of mediaItems) {
+                try {
+                    if (item.type === 'video') {
+                        // Preload video metadata
+                        const video = document.createElement('video');
+                        video.src = item.url;
+                        video.preload = 'metadata';
+                        await new Promise((resolve) => {
+                            video.onloadedmetadata = resolve;
+                            video.onerror = resolve; // Continue even if error
+                            setTimeout(resolve, 3000); // Timeout after 3 seconds
+                        });
+                    } else {
+                        // Preload image
+                        const img = new Image();
+                        img.src = item.url;
+                        await new Promise((resolve) => {
+                            img.onload = resolve;
+                            img.onerror = resolve; // Continue even if error
+                            setTimeout(resolve, 3000); // Timeout after 3 seconds
+                        });
+                    }
+                } catch (e) {
+                    console.warn('Preload failed for:', item.url, e);
+                }
+
+                loaded++;
+                const percent = Math.round((loaded / total) * 100);
+                loadingBar.style.width = `${percent}%`;
+                loadingText.textContent = `${percent}%`;
+            }
+
+            // All media loaded - enable start button
+            enableStartButton();
+
+            function enableStartButton() {
+                loadingTitle.querySelector('span').textContent = 'Ready to Begin!';
+                // Update subtitle text to confirm download complete
+                const subtitle = loadingTitle.nextElementSibling;
+                if (subtitle) subtitle.textContent = 'Experience Loaded';
+
+                loadingBar.style.width = '100%';
+                loadingText.textContent = '100%';
+
+                setTimeout(() => {
+                    startBtn.disabled = false;
+                    startBtn.classList.remove('opacity-0', 'pointer-events-none');
+                    startBtn.classList.add('opacity-100', 'animate-pulse');
+                }, 300);
+            }
+        }
+
+        // --- STORY FLOW CONTROLLER ---
+        class StoryFlowController {
+            constructor(config, mainPlayer) {
+                this.config = config;
+                this.mainPlayer = mainPlayer; // Can be <audio> element or YT.Player instance
+                this.currentSection = 0;
+
+                const defaultOrder = ['hero', 'gallery', 'message', 'video'];
+                const rawOrder = (config.visuals?.sectionOrder ? config.visuals.sectionOrder.split(',') : defaultOrder);
+
+                this.sections = rawOrder.filter(s => {
+                    if (s === 'hero') return true;
+                    if (s === 'gallery') return !!(config.gallery && config.gallery.length > 0);
+                    if (s === 'message') return !!(config.messageBody || config.message);
+                    if (s === 'video') return !!config.video;
+                    return false;
+                });
+
+                this.heroDuration = (config.visuals?.heroDuration || 5) * 1000;
+                this.messageDuration = (config.visuals?.messageDuration || 8) * 1000;
+                this.galleryMode = config.visuals?.galleryMode || 'auto';
+                this.gallerySpeed = (config.visuals?.gallerySpeed || 4) * 1000;
+                this.autoScroll = config.visuals?.autoScroll !== false;
+
+                this.sectionMusicPlayer = null;
+            }
+
+            async start() {
+                if (!this.autoScroll || this.sections.length <= 1) return;
+
+                // Pre-init section music if exists
+                if (this.config.visuals?.messageMusic) {
+                    const mid = getYoutubeId(this.config.visuals.messageMusic);
+                    if (mid) {
+                        this.sectionMusicPlayer = new YT.Player('section-yt-player', {
+                            height: '0', width: '0', videoId: mid,
+                            playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 0 },
+                            events: {
+                                'onReady': () => {
+                                    if (this.sectionMusicPlayer.setVolume) this.sectionMusicPlayer.setVolume(0);
+                                }
+                            }
+                        });
+                    }
+                }
+
+                for (let i = 0; i < this.sections.length - 1; i++) {
+                    const currentSection = this.sections[i];
+                    const nextSection = this.sections[i + 1];
+
+                    // Section durations
+                    if (currentSection === 'hero') await this.delay(this.heroDuration);
+                    else if (currentSection === 'gallery') await this.delay(this.galleryMode === 'auto' ? (this.config.gallery.length * this.gallerySpeed) : 10000);
+                    else if (currentSection === 'message') await this.delay(this.messageDuration);
+
+                    // --- TRANSITION TO NEXT SECTION ---
+
+                    // If moving TO message section and has section music
+                    if (nextSection === 'message' && this.sectionMusicPlayer) {
+                        await this.fadePlayer(this.mainPlayer, 0, 1000); // Fade out main
+                        if (this.sectionMusicPlayer.playVideo) {
+                            this.sectionMusicPlayer.playVideo();
+                            await this.fadePlayer(this.sectionMusicPlayer, 100, 1000); // Fade in section
+                        }
+                    }
+
+                    // If moving FROM message section and had section music
+                    if (currentSection === 'message' && this.sectionMusicPlayer) {
+                        await this.fadePlayer(this.sectionMusicPlayer, 0, 1000); // Fade out section
+                        if (this.sectionMusicPlayer.pauseVideo) this.sectionMusicPlayer.pauseVideo();
+
+                        // If next is NOT video (which has its own fadeout), resume main
+                        if (nextSection !== 'video') {
+                            await this.fadePlayer(this.mainPlayer, 100, 1000); // Fade in main
+                        }
+                    }
+
+                    this.scrollToSection(nextSection);
+
+                    if (nextSection === 'video') {
+                        // Special fade out for video entrance
+                        await this.fadePlayer(this.mainPlayer, 0, 1500);
+                        this.autoplayVideo();
+                    }
+                }
+            }
+
+            // Unified Fading Logic
+            async fadePlayer(player, targetVolume, duration = 1000) {
+                if (!player) return;
+                const steps = 10;
+                const interval = duration / steps;
+
+                // Determine current volume
+                let currentVol = 0;
+                const isYT = player.getVolume !== undefined;
+
+                if (isYT) {
+                    currentVol = player.getVolume();
+                } else {
+                    currentVol = player.volume * 100;
+                }
+
+                const volDiff = targetVolume - currentVol;
+                const volStep = volDiff / steps;
+
+                for (let i = 0; i < steps; i++) {
+                    currentVol += volStep;
+                    if (isYT) {
+                        player.setVolume(Math.max(0, Math.min(100, currentVol)));
+                    } else {
+                        player.volume = Math.max(0, Math.min(100, currentVol)) / 100;
+                    }
+                    await this.delay(interval);
+                }
+
+                // Final set to avoid floating point issues
+                if (isYT) player.setVolume(targetVolume);
+                else player.volume = targetVolume / 100;
+            }
+
+            scrollToSection(id) {
+                const el = document.getElementById(id + '-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            autoplayVideo() {
+                const videoElement = document.querySelector('#video-section video');
+                const ytIframe = document.getElementById('yt-player');
+                if (ytIframe) {
+                    ytIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                } else if (videoElement) {
+                    videoElement.play().catch(e => console.warn("Video autoplay failed", e));
+                }
+            }
+
+            delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+        }
+
+        // --- 1. FETCH CONFIG ---
+        async function loadMemory() {
+            const urlParams = new URLSearchParams(window.location.search);
+            // Support ?id=FIREBASE_ID OR ?template=TEMPLATE_FILE (for demos)
+            const projectId = urlParams.get('id');
+            const templateFile = urlParams.get('template');
+
+            let config = null;
+
+            try {
+                if (urlParams.get('preview') === 'true') {
+                    // Fetch from LocalStorage for Live Preview
+                    const previewData = localStorage.getItem('preview_config');
+                    if (previewData) {
+                        config = JSON.parse(previewData);
+                        document.title = "Preview - Memory Frame";
+                    } else {
+                        throw new Error("Preview data not found");
+                    }
+                } else if (projectId) {
+                    // Fetch from Firestore
+                    const docRef = doc(db, "projects", projectId);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+
+                        // CHECK STATUS
+                        if (data.status === 'paused') {
+                            const err = new Error("This memory has been paused by the administrator.");
+                            err.name = "ProjectPaused";
+                            throw err;
+                        }
+
+                        config = data.config;
+                        document.title = data.title + " - Memory Frame";
+                    } else {
+                        const err = new Error("This memory no longer exists or has been deleted.");
+                        err.name = "NotFound";
+                        throw err;
+                    }
+                } else if (templateFile) {
+                    // Fetch Static Demo
+                    const res = await fetch(`clients/${templateFile}`);
+                    if (!res.ok) throw new Error("Template not found");
+                    config = await res.json();
+                } else {
+                    // Fallback / Landing
+                    throw new Error("No memory specified");
+                }
+
+                // --- 2. RENDER APP ---
+                if (config) {
+                    renderApp(config);
+                }
+
+            } catch (e) {
+                console.error(e);
+                const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+
+                let title = "Memory Not Found";
+                let message = e.message || "Something went wrong loading this memory.";
+                let action = `<a href="index.html" class="mt-8 inline-block px-6 py-2 border border-white/30 rounded-full hover:bg-white hover:text-black transition-colors">Create Your Own</a>`;
+
+                if (isPreview) {
+                    title = "Preview Error";
+                } else if (e.name === "ProjectPaused") {
+                    title = "Project Paused";
+                    action = `<a href="mailto:support@qrmemory.com" class="mt-8 inline-block px-6 py-2 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition-colors">Contact Support</a>`;
+                }
+
+                document.getElementById('loading-screen').innerHTML = `
+                    <div class="text-center px-6">
+                        <h1 class="text-3xl font-serif text-red-500 mb-4">${title}</h1>
+                        <p class="text-zinc-400">${message}</p>
+                        ${action}
+                    </div>
+                `;
+            }
+        }
+
+        // --- 3. RENDER LOGIC ---
+        function renderApp(client) {
+            const appDiv = document.getElementById('app');
+            const loadingScreen = document.getElementById('loading-screen');
+
+            // 1. Apply Theme Global Styles
+            if (client.visuals?.themeColor) {
+                document.documentElement.style.setProperty('--gold-500', client.visuals.themeColor);
+                document.documentElement.style.setProperty('--gold-600', client.visuals.themeColor); // Fallback to same color or darken if needed
+            }
+            if (client.visuals?.heroTextColor) {
+                document.documentElement.style.setProperty('--hero-color', client.visuals.heroTextColor);
+            }
+            if (client.visuals?.fontTheme) {
+                if (client.visuals.fontTheme === 'modern') document.body.style.fontFamily = "'Montserrat', sans-serif";
+                if (client.visuals.fontTheme === 'romantic') document.body.style.fontFamily = "'Great Vibes', cursive";
+            }
+            if (client.visuals?.heroFont) {
+                // We'll apply this to a specific hero container in hero.js
+                document.documentElement.style.setProperty('--hero-font', client.visuals.heroFont);
+            }
+
+            // 2. Build Main HTML (Hidden initially)
+            const defaultOrder = ['hero', 'gallery', 'message', 'video'];
+            const userOrder = (client.visuals?.sectionOrder ? client.visuals.sectionOrder.split(',') : defaultOrder);
+
+            let html = '';
+
+            userOrder.forEach(section => {
+                if (section === 'hero') {
+                    html += renderHero(client);
+                }
+                else if (section === 'gallery') {
+                    html += renderGallery(client);
+                }
+                else if (section === 'message' && (client.messageBody || client.message)) {
+                    const body = client.messageBody || client.message;
+                    html += `
+                        <section id="message-section" class="py-24 px-6 bg-white text-center relative z-10 scroll-mt-20 opacity-0 reveal-on-scroll">
+                            <div class="max-w-2xl mx-auto px-4">
+                                <h3 class="font-script text-4xl mb-8 text-gold-600 break-words">${client.messageTitle || 'A Message'}</h3>
+                                <p class="font-serif text-xl leading-relaxed italic text-zinc-600 mb-12 whitespace-pre-wrap break-words">
+                                    "${body}"
+                                </p>
+                                 <p class="font-sans text-xs uppercase tracking-widest text-zinc-400">
+                                    With Love, ${client.messageSignOff || 'Us'}
+                                </p>
+                            </div>
+                        </section>
+                    `;
+                }
+                else if (section === 'video' && client.video) {
+                    const ytId = getYoutubeId(client.video);
+                    if (ytId) {
+                        html += `
+                            <section id="video-section" class="py-12 px-6 bg-black flex justify-center scroll-mt-20">
+                                <div class="max-w-4xl w-full border border-white/20 rounded-2xl overflow-hidden shadow-2xl aspect-video bg-zinc-900">
+                                    <iframe 
+                                        id="yt-player"
+                                        class="w-full h-full"
+                                        src="https://www.youtube.com/embed/${ytId}?enablejsapi=1&rel=0&modestbranding=1"
+                                        title="Memory Video"
+                                        frameborder="0" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>
+                            </section>
+                        `;
+                    } else {
+                        html += `
+                            <section id="video-section" class="py-12 px-6 bg-black flex justify-center scroll-mt-20">
+                                <div class="max-w-4xl w-full border border-white/20 rounded-2xl overflow-hidden shadow-2xl">
+                                    <video controls class="w-full" playsinline>
+                                        <source src="${client.video}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </section>
+                        `;
+                    }
+                }
+            });
+
+            html += `
+                <footer class="bg-black text-white/40 text-center py-12 text-xs tracking-widest uppercase">
+                    <p>${client.footerQuote || 'Forever & Always'}</p>
+                    <div class="mt-4 opacity-30 scale-75">
+                         Generated by QR Memory Frame
+                    </div>
+                </footer>
+            `;
+
+            appDiv.innerHTML = html;
+
+            // Init Gallery Logic (Slideshows)
+            initGallery(client);
+
+            // 3. Setup Audio
+            const audio = document.getElementById('bg-audio');
+            const audioBtn = document.getElementById('audio-toggle');
+            const audioIcon = document.getElementById('audio-icon');
+            let ytPlayer = null;
+            let hasAudio = false;
+            let isYT = false;
+
+            function playAudio() {
+                if (isYT && ytPlayer && ytPlayer.playVideo) {
+                    ytPlayer.playVideo();
+                    audioIcon.innerText = "🔊";
+                } else if (hasAudio) {
+                    audio.play();
+                    audioIcon.innerText = "🔊";
+                }
+            }
+
+            function pauseAudio() {
+                if (isYT && ytPlayer && ytPlayer.pauseVideo) {
+                    ytPlayer.pauseVideo();
+                    audioIcon.innerText = "🔇";
+                } else if (hasAudio) {
+                    audio.pause();
+                    audioIcon.innerText = "🔇";
+                }
+            }
+
+            function toggleAudio() {
+                if (isYT && ytPlayer) {
+                    const state = ytPlayer.getPlayerState();
+                    if (state === 1) pauseAudio(); else playAudio();
+                } else if (hasAudio) {
+                    if (audio.paused) playAudio(); else pauseAudio();
+                }
+            }
+
+            const ytId = getYoutubeId(client.music);
+            if (ytId) {
+                isYT = true;
+                window.onYouTubeIframeAPIReady = () => {
+                    ytPlayer = new YT.Player('hidden-yt-player', {
+                        height: '0',
+                        width: '0',
+                        videoId: ytId,
+                        playerVars: {
+                            'autoplay': 0,
+                            'controls': 0,
+                            'loop': 1,
+                            'playlist': ytId
+                        },
+                        events: {
+                            'onReady': (event) => {
+                                console.log("YouTube Background Player Ready");
+                                hasAudio = true;
+                            },
+                            'onStateChange': (event) => {
+                                // Sync icon if YT changes independently
+                                if (event.data === 1) audioIcon.innerText = "🔊";
+                                else if (event.data === 2) audioIcon.innerText = "🔇";
+                            }
+                        }
+                    });
+                };
+                // If API already loaded (pre-nav or fast load)
+                if (window.YT && window.YT.Player) window.onYouTubeIframeAPIReady();
+
+                audioBtn.addEventListener('click', toggleAudio);
+            } else if (client.music) {
+                audio.src = client.music;
+                audio.preload = 'auto';
+                audio.volume = 1.0;
+                hasAudio = true;
+                audioBtn.addEventListener('click', toggleAudio);
+            }
+
+            // 4. Preload Media & Setup Start Button
+            preloadMedia(client).then(() => {
+                document.getElementById('start-btn').addEventListener('click', () => {
+                    // Play Audio (mobile-safe)
+                    if (hasAudio || isYT) {
+                        playAudio();
+                        audioBtn.classList.remove('hidden');
+                    }
+
+                    // Fade out loading screen
+                    const loadingScreen = document.getElementById('loading-screen');
+                    if (loadingScreen) {
+                        loadingScreen.classList.add('fade-out');
+                        setTimeout(() => loadingScreen.remove(), 800);
+                    }
+
+                    // Reveal App & Force Top Position
+                    appDiv.classList.remove('opacity-0');
+                    window.scrollTo(0, 0);
+
+                    // Init Scroll Animations
+                    initAnimations();
+
+                    // Start Story Flow Controller
+                    const storyFlow = new StoryFlowController(client, isYT ? ytPlayer : audio);
+                    storyFlow.start();
+                });
+            });
+        }
+
+        // --- 4. ANIMATION LOGIC ---
+        function initAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.remove('opacity-0');
+                        entry.target.classList.add('animate-[fade-in-up_1s_ease-out_forwards]');
+                        // Special handling for the header line
+                        const line = entry.target.querySelector('.grow-line');
+                        if (line) line.style.height = '6rem';
+
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all items
+            document.querySelectorAll('.gallery-item, .gallery-header, .reveal-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Init
+        loadMemory().then(() => {
+            // Short delay to ensure DOM is ready before observing
+            setTimeout(initAnimations, 100);
+        });
+
+        // Live Preview Listener
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'configUpdate') {
+                localStorage.setItem('preview_config', JSON.stringify(event.data.config));
+                window.location.reload();
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -1,25 +1,31 @@
 {
     "title": "Milestone Unlocked",
-    "subtitle": "Celebrating Success",
+    "subtitle": "A Journey of Hard Work & Success",
     "eventType": "Achievement",
-    "dedication": "Hard work pays off.",
-    "footerQuote": "The sky is the limit",
-    "loadingTitle": "Generating Success",
+    "dedication": "Dedicated to the hustle.",
+    "footerQuote": "Dream big, work hard, stay humble.",
+    "loadingTitle": "Compiling Success",
     "loadingSubtitle": "Loading Achievements...",
     "enterButtonText": "View Journey",
-    "messageTitle": "Journey to Success",
-    "messageBody": "Every step was worth it. Grateful for the support and looking forward to new heights.",
-    "messageSignOff": "Sincerely,",
-    "heroImage": "https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&q=80",
+    "messageTitle": "The Road to Success",
+    "messageBody": "This achievement is not just a destination, but a reflection of the late nights, the challenges overcome, and the unwavering belief in the vision. Thank you to everyone who supported this journey.",
+    "messageSignOff": "Gratefully,",
+    "heroImage": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80",
     "photoCount": 8,
     "captions": {
         "1": "The Beginning",
-        "2": "The Win"
+        "2": "The Grind",
+        "3": "Turning Point",
+        "4": "The Team",
+        "5": "Execution",
+        "6": "Breakthrough",
+        "7": "The Result",
+        "8": "Victory"
     },
     "visuals": {
-        "interactionMode": "auto",
-        "transitionEffect": "slide",
-        "photoDuration": 4,
-        "themeColor": "#16A34A"
+        "themeColor": "#0f172a",
+        "fontTheme": "modern",
+        "frameStyle": "modern",
+        "bgPattern": "geometric"
     }
 }

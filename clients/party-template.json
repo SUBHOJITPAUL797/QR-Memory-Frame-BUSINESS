@@ -1,25 +1,33 @@
 {
     "title": "Let's Party!",
-    "subtitle": "Night to Remember",
+    "subtitle": "A Night to Remember",
     "eventType": "Party",
-    "dedication": "Eat, Drink, Dance",
-    "footerQuote": "Good Vibes Only",
-    "loadingTitle": "Mixing Drinks...",
-    "loadingSubtitle": "Dropping the Beat",
-    "enterButtonText": "Join the Floor",
-    "messageTitle": "Party Time",
-    "messageBody": "Thanks for making the night unforgettable. Let's do it again soon!",
+    "dedication": "Eat, drink, and be merry.",
+    "footerQuote": "Life is a party, dress like it.",
+    "loadingTitle": "Pumping the Bass",
+    "loadingSubtitle": "Mixing Drinks...",
+    "enterButtonText": "Join the Fun",
+    "messageTitle": "Cheers to Us",
+    "messageBody": "Tonight we celebrate life, friendship, and the good times. Let's make memories that some of us might forget, but none of us will regret!",
     "messageSignOff": "Cheers,",
     "heroImage": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80",
-    "photoCount": 20,
+    "photoCount": 15,
     "captions": {
-        "1": "Dance Floor",
-        "2": "Crew"
+        "1": "Pre-Game",
+        "2": "The Setup",
+        "3": "Guests Arriving",
+        "4": "Drink of Choice",
+        "5": "The DJ",
+        "6": "Dance Floor Heat",
+        "7": "Group Selfie",
+        "8": "Wild Moments",
+        "9": "Late Night Snacks",
+        "10": "The Afterparty"
     },
     "visuals": {
-        "interactionMode": "auto",
-        "transitionEffect": "elastic",
-        "photoDuration": 3,
-        "themeColor": "#7C3AED"
+        "themeColor": "#8b5cf6",
+        "fontTheme": "modern",
+        "frameStyle": "polaroid",
+        "bgPattern": "confetti"
     }
 }

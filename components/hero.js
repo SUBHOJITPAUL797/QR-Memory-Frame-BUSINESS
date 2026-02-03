@@ -1,6 +1,18 @@
 export function renderHero(client) {
+  // Map font theme to Tailwind classes
+  const fontClassMap = {
+    'script': 'font-script',
+    'serif': 'font-serif',
+    'sans': 'font-sans',
+    'cinzel': 'font-cinzel',
+    'pacifico': 'font-pacifico'
+  };
+
+  const titleFontClass = fontClassMap[client.visuals?.heroFont] || 'font-script';
+  const heroQuote = client.footerQuote || 'Every love story is beautiful, but ours is my favorite.';
+
   return `
-      <section class="relative h-screen w-full flex flex-col items-center justify-center text-center text-warm-50 overflow-hidden">
+      <section id="hero-section" class="relative h-screen w-full flex flex-col items-center justify-center text-center text-warm-50 overflow-hidden">
         <div class="absolute inset-0 z-0">
           <!-- Image: Crystal clear, no breathing, no scaling, full opacity -->
           <img src="${client.heroImage}" alt="${client.title}" class="w-full h-full object-cover brightness-105" />
@@ -28,7 +40,7 @@ export function renderHero(client) {
                 </h2>
                 
                 <!-- Main Title: Massive, Calligraphic, "Magazine Cover" feel -->
-                <h1 class="font-script text-7xl md:text-[10rem] text-white drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] opacity-0 animate-[zoom-in_1.2s_ease-out_0.2s_forwards] leading-[0.8]">
+                <h1 class="${titleFontClass} text-7xl md:text-[10rem] text-hero drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] opacity-0 animate-[zoom-in_1.2s_ease-out_0.2s_forwards] leading-[0.8] break-words px-4">
                     ${client.title.replace('&', '<span class="block text-gold-500 text-4xl md:text-6xl font-serif my-4 opacity-80">&</span>')}
                 </h1>
 
@@ -40,13 +52,13 @@ export function renderHero(client) {
                 </div>
                 
                 <!-- Subtitle / Date -->
-                <p class="font-serif text-sm md:text-lg italic tracking-[0.1em] text-warm-100/90 mb-10 opacity-0 animate-[fade-in-up_1s_ease-out_0.8s_forwards]">
+                <p class="font-serif text-sm md:text-lg italic tracking-[0.1em] text-hero opacity-90 mb-10 animate-[fade-in-up_1s_ease-out_0.8s_forwards] break-words px-6">
                     ${client.subtitle}
                 </p>
                 
                 <!-- Quote: Subtle, minimal, elegant -->
-                <p class="font-sans text-[10px] md:text-xs text-gold-200/60 tracking-[0.2em] uppercase max-w-lg leading-relaxed opacity-0 animate-[fade-in_2s_ease-out_1.5s_forwards]">
-                    "${client.footerQuote || 'Every love story is beautiful, but ours is my favorite.'}"
+                <p class="font-sans text-[10px] md:text-xs text-gold-200/60 tracking-[0.2em] uppercase max-w-lg leading-relaxed opacity-0 animate-[fade-in_2s_ease-out_1.5s_forwards] break-words px-8">
+                    "${heroQuote}"
                 </p>
 
             </div>

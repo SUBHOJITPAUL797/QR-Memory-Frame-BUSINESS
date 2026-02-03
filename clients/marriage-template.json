@@ -1,25 +1,31 @@
 {
-    "title": "The Wedding",
-    "subtitle": "A Celebration of Love",
-    "eventType": "Marriage",
-    "dedication": "Bound by Love",
-    "footerQuote": "Happily Ever After",
-    "loadingTitle": "Wedding Bells",
-    "loadingSubtitle": "The Big Day",
-    "enterButtonText": "Enter Wedding Hall",
-    "messageTitle": "Our Vows",
-    "messageBody": "Two souls became one today. Thank you for being part of our journey.",
-    "messageSignOff": "With Love,",
-    "heroImage": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80",
-    "photoCount": 20,
+    "title": "Marry Me?",
+    "subtitle": "The Start of Forever",
+    "eventType": "Marriage Proposal",
+    "dedication": "Will you make me the happiest person alive?",
+    "footerQuote": "Two hearts, one soul.",
+    "loadingTitle": "A Special Question",
+    "loadingSubtitle": "Wait for it...",
+    "enterButtonText": "See My Heart",
+    "messageTitle": "My Vow to You",
+    "messageBody": "Life with you is a beautiful adventure. I want to wake up next to you every morning and fall asleep next to you every night. Let's build a lifetime of memories together.",
+    "messageSignOff": "Forever Yours,",
+    "heroImage": "https://images.unsplash.com/photo-1511285560982-1351cdeb9821?auto=format&fit=crop&q=80",
+    "photoCount": 8,
     "captions": {
-        "1": "Ceremony",
-        "2": "Reception"
+        "1": "You Stole My Heart",
+        "2": "Our First Date",
+        "3": "Every Laugh Shared",
+        "4": "Through Thick and Thin",
+        "5": "My Best Friend",
+        "6": "The Ring",
+        "7": "Down on One Knee",
+        "8": "She Said Yes!"
     },
     "visuals": {
-        "interactionMode": "click",
-        "transitionEffect": "fade",
-        "photoDuration": 5,
-        "themeColor": "#CA8A04"
+        "themeColor": "#db2777",
+        "fontTheme": "romantic",
+        "frameStyle": "rose",
+        "bgPattern": "hearts"
     }
 }

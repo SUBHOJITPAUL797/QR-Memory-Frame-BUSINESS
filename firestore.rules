@@ -1,8 +1,60 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // Helper: Check if the authenticated user is a registered Admin
+    function isAdmin() {
+      return request.auth != null && 
+             request.auth.token.email in get(/databases/$(database)/documents/settings/admins).data.emails;
+    }
+
+    // Admins can manage the admin list itself (Caution: usually restricted to console)
+    match /settings/admins {
+      allow read: if request.auth != null;
+      allow write: if false; // Only manageable via Firebase Console for maximum security
+    }
+
+    // User Profiles: Public READ (for project viewing), but only owner can write
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Plans: Public READ, Admin WRITE
+    match /plans/{planId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Homepage Features: Public READ, Admin WRITE
+    match /homepage_features/{featureId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Settings: Public READ (some settings needed by app), Admin WRITE
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // PROJECTS:
+    // 1. Create: Any logged-in user can create a project
+    // 2. Read: Public access for viewers
+    // 3. Update/Delete: Owner OR Admin
+    match /projects/{projectId} {
+      allow create: if request.auth != null;
+      allow read: if true; 
+      allow update, delete: if request.auth != null && (
+        request.auth.uid == resource.data.userId || isAdmin()
+      );
+    }
+    
+    // Global Fallback: Authenticated users can read/write their own data in other collections
     match /{document=**} {
-      allow read, write: if false;
+       allow read, write: if request.auth != null && (
+         request.auth.uid == resource.data.userId || isAdmin()
+       );
     }
   }
 }

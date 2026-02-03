@@ -1,0 +1,12 @@
+name = "qr-memory-uploader"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Bindings
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "qr-memory-photos" # Replace with your actual R2 bucket name
+
+[vars]
+ALLOWED_ORIGIN = "*" # Replace with your domain for security later
+# AUTH_SECRET should be set via `wrangler secret put AUTH_SECRET` or Dashboard

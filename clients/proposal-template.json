@@ -1,25 +1,29 @@
 {
-    "title": "Will You...",
+    "title": "Will You?",
     "subtitle": "A Question of a Lifetime",
     "eventType": "Proposal",
-    "dedication": "To my soulmate.",
-    "footerQuote": "Say Yes",
-    "loadingTitle": "A Special Moment",
-    "loadingSubtitle": "Holding Breath...",
-    "enterButtonText": "Open My Heart",
-    "messageTitle": "My Promise",
-    "messageBody": "I promise to stand by your side, to love you unconditionally, and to build a life full of joy with you.",
-    "messageSignOff": "Marry Me?",
+    "dedication": "For the one who holds my heart.",
+    "footerQuote": "Say Yes.",
+    "loadingTitle": "A Surprise awaits...",
+    "loadingSubtitle": "Heart beating fast...",
+    "enterButtonText": "Reveal the Question",
+    "messageTitle": "My Promise to You",
+    "messageBody": "I've waited my whole life to find you. You are my dream come true, my today and all of my tomorrows. I promise to love you, cherish you, and stand by you forever.",
+    "messageSignOff": "Me,",
     "heroImage": "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80",
-    "photoCount": 12,
+    "photoCount": 6,
     "captions": {
-        "1": "The Ring",
-        "2": "She Said Yes!"
+        "1": "The Moment We Met",
+        "2": "Falling in Love",
+        "3": "Adventures Together",
+        "4": "My Favorite Smile",
+        "5": "Why I Love You",
+        "6": "Will You Marry Me?"
     },
     "visuals": {
-        "interactionMode": "click",
-        "transitionEffect": "zoom",
-        "photoDuration": 5,
-        "themeColor": "#0EA5E9"
+        "themeColor": "#a855f7",
+        "fontTheme": "romantic",
+        "frameStyle": "polaroid",
+        "bgPattern": "stars"
     }
 }

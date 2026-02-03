@@ -26,6 +26,16 @@
             }
         }
     </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 </head>
 
 <body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased">
@@ -57,121 +67,544 @@
             class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(197,160,89,0.1),transparent_50%)]">
         </div>
 
-        <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
-            <span
-                class="inline-block py-1 px-3 rounded-full bg-gold-500/10 text-gold-600 text-xs font-bold tracking-wider mb-6 border border-gold-500/20">THE
-                NEXT GEN DIGITAL ALBUM</span>
-            <h1 class="font-serif text-5xl md:text-7xl font-bold leading-tight mb-8">
-                Turn Memories into <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-500 to-amber-700">Timeless Digital
-                    Art</span>
-            </h1>
-            <p class="text-lg text-zinc-500 dark:text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Upload your photos, pick a premium template, and get a unique QR Code.
-                Perfect for Weddings, Birthdays, and Anniversaries.
-            </p>
-            <div class="flex flex-col md:flex-row items-center justify-center gap-4">
-                <a href="dashboard.html"
-                    class="w-full md:w-auto px-8 py-4 bg-gold-500 hover:bg-gold-600 text-white rounded-xl font-medium shadow-lg shadow-gold-500/25 hover:scale-105 transition-transform">Create
-                    My Frame</a>
-                <a href="view.html" target="_blank"
-                    class="w-full md:w-auto px-8 py-4 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-xl font-medium transition-colors">View
-                    Demo</a>
+        <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
+            <!-- Left Column: Text -->
+            <div class="text-center md:text-left">
+                <span
+                    class="inline-block py-1 px-3 rounded-full bg-gold-500/10 text-gold-600 text-xs font-bold tracking-wider mb-6 border border-gold-500/20">THE
+                    NEXT GEN DIGITAL ALBUM</span>
+                <h1 class="font-serif text-5xl md:text-7xl font-bold leading-tight mb-8">
+                    Turn Memories into <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-500 to-amber-700">Timeless
+                        Digital
+                        Art</span>
+                </h1>
+                <p class="text-lg text-zinc-500 dark:text-zinc-400 mb-10 max-w-lg leading-relaxed mx-auto md:mx-0">
+                    Upload your photos, pick a premium template, and get a unique QR Code.
+                    Perfect for Weddings, Birthdays, and Anniversaries.
+                </p>
+                <div class="hidden md:flex gap-4">
+                    <a href="#features"
+                        class="text-sm font-bold text-zinc-500 hover:text-gold-500 transition-colors">See Features ↓</a>
+                </div>
+            </div>
+
+            <!-- Right Column: Auth Form -->
+            <div
+                class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/20 dark:border-zinc-800 p-8 rounded-3xl shadow-2xl relative">
+                <!-- Auth Tabs -->
+                <div class="flex border-b border-zinc-200 dark:border-zinc-800 mb-6">
+                    <button id="tab-login"
+                        class="flex-1 pb-3 text-sm font-bold text-zinc-900 dark:text-white border-b-2 border-gold-500 transition-colors">Login</button>
+                    <button id="tab-signup"
+                        class="flex-1 pb-3 text-sm font-bold text-zinc-400 hover:text-zinc-600 border-b-2 border-transparent transition-colors">Sign
+                        Up</button>
+                </div>
+
+                <form id="auth-form" class="space-y-4">
+                    <!-- Signup Fields (Hidden) -->
+                    <div id="signup-fields" class="space-y-4 hidden">
+                        <input type="text" id="auth-name" placeholder="Full Name"
+                            class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
+                        <input type="tel" id="auth-mobile" placeholder="Mobile Number"
+                            class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
+                    </div>
+
+                    <!-- Common Fields -->
+                    <input type="email" id="auth-email" required placeholder="Email Address"
+                        class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
+                    <input type="password" id="auth-password" required placeholder="Password"
+                        class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
+
+                    <button type="submit" id="auth-submit-btn"
+                        class="w-full bg-gold-500 hover:bg-gold-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-gold-500/20 transition-transform active:scale-95">
+                        Log In
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800 text-center">
+                    <p class="text-xs text-zinc-400 mb-4">Or continue with</p>
+                    <button id="google-login-btn"
+                        class="flex items-center justify-center gap-2 w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 py-3 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
+                        <span class="text-sm font-medium">Google</span>
+                    </button>
+                </div>
+
+                <p id="auth-error"
+                    class="hidden mt-4 text-xs text-red-500 bg-red-50 dark:bg-red-900/10 p-3 rounded-lg text-center">
+                </p>
+
             </div>
         </div>
     </section>
+
+    <!-- FIREBASE AUTH LOGIC -->
+    <script type="module">
+        import { app, auth, db } from './js/firebase-config.js';
+        import {
+            GoogleAuthProvider,
+            signInWithPopup,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            onAuthStateChanged
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import {
+            doc,
+            setDoc,
+            serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // DOM Elements
+        const tabLogin = document.getElementById('tab-login');
+        const tabSignup = document.getElementById('tab-signup');
+        const signupFields = document.getElementById('signup-fields');
+        const authForm = document.getElementById('auth-form');
+        const authName = document.getElementById('auth-name');
+        const authMobile = document.getElementById('auth-mobile');
+        const authEmail = document.getElementById('auth-email');
+        const authPassword = document.getElementById('auth-password');
+        const submitBtn = document.getElementById('auth-submit-btn');
+        const errorMsg = document.getElementById('auth-error');
+        const googleBtn = document.getElementById('google-login-btn');
+
+        let isSignup = false;
+        let isProcessingAuth = false; // Flag to prevent race conditions
+
+        // 1. Check Auth State & Update UI
+        onAuthStateChanged(auth, (user) => {
+            const navLoginBtn = document.querySelector('nav a[href="dashboard.html"]');
+
+            if (user) {
+                // User is logged in:
+                // 1. Change Nav Button to "Go to Dashboard"
+                if (navLoginBtn) {
+                    navLoginBtn.textContent = "Go to Dashboard";
+                    navLoginBtn.href = "dashboard.html"; // Ensure it points to dashboard
+                }
+
+                // 2. If user clicks "Login" tab/button while already logged in, we can optionally redirect them
+                // But generally, we just let them browse. 
+                // We DO NOT force redirect here anymore.
+
+                console.log("User logged in:", user.email);
+            } else {
+                // User is logged out
+                if (navLoginBtn) {
+                    navLoginBtn.textContent = "Login / Sign Up";
+                }
+            }
+        });
+
+        // 2. Tab Switching
+        function toggleMode(signup) {
+            isSignup = signup;
+            errorMsg.classList.add('hidden');
+
+            if (isSignup) {
+                // Signup UI
+                signupFields.classList.remove('hidden');
+                authName.setAttribute('required', 'true');
+                authMobile.setAttribute('required', 'true');
+                submitBtn.textContent = "Create Account";
+
+                tabSignup.classList.add('text-zinc-900', 'dark:text-white', 'border-gold-500');
+                tabSignup.classList.remove('text-zinc-400', 'border-transparent');
+
+                tabLogin.classList.remove('text-zinc-900', 'dark:text-white', 'border-gold-500');
+                tabLogin.classList.add('text-zinc-400', 'border-transparent');
+            } else {
+                // Login UI
+                signupFields.classList.add('hidden');
+                authName.removeAttribute('required');
+                authMobile.removeAttribute('required');
+                submitBtn.textContent = "Log In";
+
+                tabLogin.classList.add('text-zinc-900', 'dark:text-white', 'border-gold-500');
+                tabLogin.classList.remove('text-zinc-400', 'border-transparent');
+
+                tabSignup.classList.remove('text-zinc-900', 'dark:text-white', 'border-gold-500');
+                tabSignup.classList.add('text-zinc-400', 'border-transparent');
+            }
+        }
+
+        tabLogin.addEventListener('click', () => toggleMode(false));
+        tabSignup.addEventListener('click', () => toggleMode(true));
+
+        // 3. Form Submit
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMsg.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Processing...";
+            isProcessingAuth = true; // Block auto-redirect
+
+            const email = authEmail.value.toLowerCase().trim();
+            const password = authPassword.value;
+
+            try {
+                if (isSignup) {
+                    const cred = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = cred.user;
+
+                    // Create Profile - NOW GUARANTEED SINCERE
+                    // We await this BEFORE any redirect happens
+                    await setDoc(doc(db, "users", user.uid), {
+                        name: authName.value,
+                        mobile: authMobile.value,
+                        email: email,
+                        createdAt: serverTimestamp(),
+                        role: 'client'
+                    });
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+                // Manual Redirect after successful DB write/login
+                window.location.href = 'dashboard.html';
+            } catch (err) {
+                console.error(err);
+                isProcessingAuth = false; // Reset on error
+                let msg = err.message;
+                if (msg.includes('email-already-in-use')) msg = "Email already registered.";
+                if (msg.includes('invalid-credential')) msg = "Invalid email or password.";
+                errorMsg.textContent = msg.replace('Firebase: ', '');
+                errorMsg.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = isSignup ? "Create Account" : "Log In";
+            }
+        });
+
+        import { getAdditionalUserInfo } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // 4. Google Login
+        googleBtn.addEventListener('click', async () => {
+            if (googleBtn.disabled) return; // Prevent double clicks
+
+            const provider = new GoogleAuthProvider();
+            isProcessingAuth = true; // Block auto-redirect
+            googleBtn.disabled = true;
+            googleBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                const { isNewUser } = getAdditionalUserInfo(result);
+
+                if (isNewUser) {
+                    // Create Profile for Google User
+                    await setDoc(doc(db, "users", user.uid), {
+                        name: user.displayName || "User",
+                        mobile: "", // Google doesn't provide mobile usually
+                        email: user.email,
+                        createdAt: serverTimestamp(),
+                        role: 'client'
+                    });
+                }
+
+                window.location.href = 'dashboard.html';
+
+            } catch (err) {
+                console.error(err);
+                isProcessingAuth = false;
+
+                // Handle Popup/Cancel Errors Gracefully
+                if (err.code === 'auth/cancelled-popup-request' || err.code === 'auth/popup-closed-by-user') {
+                    errorMsg.textContent = "Login cancelled.";
+                    // Don't show error for simple cancellations unless you want to
+                    errorMsg.classList.remove('hidden');
+                } else {
+                    errorMsg.textContent = "Google Login Failed: " + err.message;
+                    errorMsg.classList.remove('hidden');
+                }
+            } finally {
+                googleBtn.disabled = false;
+                googleBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
+    </script>
 
     <!-- Template Showcase -->
     <section class="py-24 bg-white dark:bg-zinc-950/50">
         <div class="max-w-7xl mx-auto px-6 text-center">
-            <h2 class="font-serif text-3xl font-bold mb-12">Pick Your Perfect Style</h2>
+            <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4">Pick Your Perfect Style</h2>
+            <p class="text-zinc-500 mb-12 max-w-2xl mx-auto">Scroll through our collection of premium, handcrafted
+                templates for every occasion.</p>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Wedding Card -->
-                <div class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80"
-                        class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
-                        <h3 class="text-white font-serif text-2xl font-bold mb-2">Royal Wedding</h3>
-                        <p class="text-zinc-300 text-sm mb-6">Elegant animations with gold accents.</p>
-                        <a href="view.html?template=wedding-template.json" target="_blank"
-                            class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                            Demo</a>
+            <div class="relative group/gallery">
+                <!-- Navigation Arrows (Hidden on Mobile) -->
+                <button id="scroll-left"
+                    class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 z-10 w-12 h-12 bg-white dark:bg-zinc-900 shadow-xl rounded-full flex items-center justify-center text-zinc-400 hover:text-gold-500 transition-all opacity-0 group-hover/gallery:opacity-100 group-hover/gallery:translate-x-0 cursor-pointer hidden md:flex">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button id="scroll-right"
+                    class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-10 w-12 h-12 bg-white dark:bg-zinc-900 shadow-xl rounded-full flex items-center justify-center text-zinc-400 hover:text-gold-500 transition-all opacity-0 group-hover/gallery:opacity-100 group-hover/gallery:translate-x-0 cursor-pointer hidden md:flex">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+
+                <div id="template-scroll-container"
+                    class="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 no-scrollbar scroll-smooth">
+                    <!-- 1. Wedding -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Wedding</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Elegant animations with gold accents.</p>
+                                <a href="view.html?template=wedding-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Birthday Card -->
-                <div class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1530103862676-de3c9a59af38?auto=format&fit=crop&q=80"
-                        class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
-                        <h3 class="text-white font-serif text-2xl font-bold mb-2">Fun Birthday</h3>
-                        <p class="text-zinc-300 text-sm mb-6">Playful confetti and pop effects.</p>
-                        <a href="view.html?template=birthday-template.json" target="_blank"
-                            class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                            Demo</a>
+                    <!-- 2. Birthday Bash -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Birthday</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Playful confetti and pop effects.</p>
+                                <a href="view.html?template=birthday-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Rice Ceremony Card -->
-                <div class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?auto=format&fit=crop&q=80"
-                        class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
-                        <h3 class="text-white font-serif text-2xl font-bold mb-2">Rice Ceremony</h3>
-                        <p class="text-zinc-300 text-sm mb-6">Traditional warmth for cultural events.</p>
-                        <a href="view.html?template=bhujono-template.json" target="_blank"
-                            class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                            Demo</a>
+                    <!-- 3. Rice Ceremony -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1519689689378-43091448645b?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Rice Ceremony</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Traditional warmth for cultural events.</p>
+                                <a href="view.html?template=bhujono-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Anniversary -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1510076857177-7470076d4098?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Anniversary</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Romantic, timeless & cinematic experience.</p>
+                                <a href="view.html?template=anniversary-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Achievement -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Achievement</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Graduation, career success & milestones.</p>
+                                <a href="view.html?template=achievement-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Proposal -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Proposal</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Intimate, magical moments to remember.</p>
+                                <a href="view.html?template=proposal-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. Love Letter -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1516589174184-c685bcd05f2c?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Love Letter</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Handwritten vibes with paper textures.</p>
+                                <a href="view.html?template=loveletter-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 8. Festival -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Festival</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Celebration & vibrant lights for every fest.</p>
+                                <a href="view.html?template=festival-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 9. Portfolio -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Portfolio</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Minimal & professional digital presence.</p>
+                                <a href="view.html?template=portfolio-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 10. Birthday Wish -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1549462980-6a013a2bc0b2?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Birthday Wish</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Warm wishes & soft colors for loved ones.</p>
+                                <a href="view.html?template=birthday-wish-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 11. Marriage -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Marriage</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Classic & timeless union for a lifetime.</p>
+                                <a href="view.html?template=marriage-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 12. Party Mode -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Party Mode</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Nightlife & high energy for your wildest events.
+                                </p>
+                                <a href="view.html?template=party-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 13. Custom -->
+                    <div class="flex-none w-[85vw] md:w-[350px] snap-center">
+                        <div
+                            class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
+                            <img src="https://images.unsplash.com/photo-1513530534585-c7b1394c6d51?auto=format&fit=crop&q=80"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
+                                <h3 class="text-white font-serif text-2xl font-bold mb-2">Custom</h3>
+                                <p class="text-zinc-300 text-sm mb-6">Your unique idea, our premium frame.</p>
+                                <a href="view.html?template=custom-template.json" target="_blank"
+                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
+                                    Demo</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="mt-12">
-                <a href="dashboard.html"
-                    class="text-gold-600 font-medium hover:text-gold-500 underline underline-offset-4">See all 12+
-                    Templates inside Dashboard -></a>
-            </div>
+        </div>
+
+        <div class="mt-12 text-center">
+            <a href="templates.html"
+                class="text-gold-600 font-medium hover:text-gold-500 underline underline-offset-4">See all 12+
+                Templates -></a>
+        </div>
         </div>
     </section>
 
     <!-- Features Grid -->
-    <section id="features" class="py-24 bg-white dark:bg-black">
-        <div class="max-w-7xl mx-auto px-6">
+    <section id="features" class="py-24 bg-white dark:bg-black relative overflow-hidden">
+        <!-- Background Decor -->
+        <div
+            class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_0%_0%,rgba(197,160,89,0.05),transparent_50%)]">
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
             <div class="text-center mb-16">
-                <h2 class="font-serif text-3xl font-bold mb-4">Why Choose QR Memory Frame?</h2>
-                <p class="text-zinc-500">Premium features for your premium moments.</p>
+                <span class="text-gold-500 font-bold tracking-widest text-xs uppercase mb-2 block">Premium
+                    Experience</span>
+                <h2 class="font-serif text-4xl font-bold mb-4 text-slate-900 dark:text-white">Why Choose QR Memory
+                    Frame?</h2>
+                <p class="text-zinc-500 dark:text-zinc-400 max-w-xl mx-auto">We combine cutting-edge cloud technology
+                    with timeless design to ensure your memories last forever.</p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
+            <div id="homepage-features-grid" class="grid md:grid-cols-3 gap-8">
+                <!-- Loading State -->
+                <div class="col-span-full text-center py-12">
                     <div
-                        class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 mb-6 text-xl">
-                        ☁️</div>
-                    <h3 class="font-bold text-xl mb-3">Cloud Storage</h3>
-                    <p class="text-zinc-500 text-sm">Your photos are stored securely in the cloud (R2). No quality loss,
-                        instant loading.</p>
-                </div>
-                <!-- Feature 2 -->
-                <div class="p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
-                    <div
-                        class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center text-purple-600 mb-6 text-xl">
-                        🎨</div>
-                    <h3 class="font-bold text-xl mb-3">Premium Templates</h3>
-                    <p class="text-zinc-500 text-sm">Choose from Gold, Royal, or Playful themes. Customize fonts, music,
-                        and animations.</p>
-                </div>
-                <!-- Feature 3 -->
-                <div class="p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
-                    <div
-                        class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center text-green-600 mb-6 text-xl">
-                        📱</div>
-                    <h3 class="font-bold text-xl mb-3">QR Code Sharing</h3>
-                    <p class="text-zinc-500 text-sm">Get a unique QR code for your event. Guests scan and view the magic
-                        instantly.</p>
+                        class="inline-block w-8 h-8 border-4 border-gold-500 border-t-transparent rounded-full animate-spin">
+                    </div>
+                    <p class="text-zinc-500 mt-4">Loading features...</p>
                 </div>
             </div>
         </div>
@@ -185,52 +618,13 @@
                 <p class="text-zinc-500">Choose the duration that fits your event.</p>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <!-- Plan 1 -->
-                <div
-                    class="p-8 rounded-3xl bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 hover:border-gold-500 transition-colors relative overflow-hidden group">
-                    <h3 class="font-serif text-2xl font-bold mb-2">Short Term</h3>
-                    <div class="flex items-baseline gap-1 mb-6">
-                        <span class="text-4xl font-bold">₹199</span>
-                        <span class="text-zinc-500">/ 5 months</span>
-                    </div>
-                    <ul class="space-y-4 mb-8 text-zinc-600 dark:text-zinc-400 text-sm">
-                        <li class="flex items-center gap-3"><span class="text-green-500">✓</span> 5 Months Validity</li>
-                        <li class="flex items-center gap-3"><span class="text-green-500">✓</span> Standard Templates
-                        </li>
-                        <li class="flex items-center gap-3"><span class="text-green-500">✓</span> Up to 20 Photos</li>
-                        <li class="flex items-center gap-3"><span class="text-green-500">✓</span> QR Code Generation
-                        </li>
-                    </ul>
-                    <a href="dashboard.html"
-                        class="block w-full py-3 text-center rounded-xl bg-zinc-100 dark:bg-zinc-900 font-medium hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">Start
-                        Standard</a>
-                </div>
-
-                <!-- Plan 2 (Premium) -->
-                <div
-                    class="p-8 rounded-3xl bg-black dark:bg-zinc-900 text-white border border-gold-500 shadow-2xl shadow-gold-500/10 relative overflow-hidden">
+            <div id="pricing-grid" class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Loading State -->
+                <div class="col-span-2 text-center py-12">
                     <div
-                        class="absolute top-0 right-0 bg-gold-500 text-black text-xs font-bold px-3 py-1 rounded-bl-lg">
-                        POPULAR</div>
-                    <h3 class="font-serif text-2xl font-bold mb-2 text-gold-500">Premium Year</h3>
-                    <div class="flex items-baseline gap-1 mb-6">
-                        <span class="text-4xl font-bold">₹499</span>
-                        <span class="text-zinc-400">/ 1 year</span>
+                        class="inline-block w-8 h-8 border-4 border-gold-500 border-t-transparent rounded-full animate-spin">
                     </div>
-                    <ul class="space-y-4 mb-8 text-zinc-300 text-sm">
-                        <li class="flex items-center gap-3"><span class="text-gold-500">✓</span> 1 Full Year Validity
-                        </li>
-                        <li class="flex items-center gap-3"><span class="text-gold-500">✓</span> All Premium Templates
-                            (Royal/Gold)</li>
-                        <li class="flex items-center gap-3"><span class="text-gold-500">✓</span> Unlimited Photos (Cloud
-                            R2)</li>
-                        <li class="flex items-center gap-3"><span class="text-gold-500">✓</span> Custom Background Music
-                        </li>
-                    </ul>
-                    <a href="dashboard.html"
-                        class="block w-full py-3 text-center rounded-xl bg-gold-500 text-black font-bold hover:bg-gold-400 transition-colors">Start
-                        Premium</a>
+                    <p class="text-zinc-500 mt-4">Loading plans...</p>
                 </div>
             </div>
         </div>
@@ -241,6 +635,167 @@
         <p class="text-zinc-500 text-sm">© 2024 QR Memory Frame. Built for Memories.</p>
     </footer>
 
+    <script type="module">
+        import { db } from './js/firebase-config.js';
+        import { collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        async function fetchPlans() {
+            const grid = document.getElementById('pricing-grid');
+            try {
+                const q = query(collection(db, "plans"), orderBy("price", "asc"));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    grid.innerHTML = `<p class="col-span-2 text-center text-zinc-500">No active plans available.</p>`;
+                    return;
+                }
+
+                grid.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const plan = doc.data();
+                    const isPopular = plan.isPopular;
+
+                    const card = document.createElement('div');
+                    // Glassmorphism & Gold Gradient Logic
+                    card.className = isPopular
+                        ? "relative p-8 rounded-3xl bg-black dark:bg-zinc-900 text-white border border-gold-500 shadow-2xl shadow-gold-500/20 flex flex-col transform hover:-translate-y-1 transition-all duration-300"
+                        : "relative p-8 rounded-3xl bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 hover:border-gold-500/50 flex flex-col transform hover:-translate-y-1 transition-all duration-300 group";
+
+                    const featuresList = plan.features || [];
+                    let featuresHtml = `<ul class="space-y-4 mb-8 ${isPopular ? 'text-zinc-300' : 'text-zinc-600 dark:text-zinc-400'} text-sm flex-1">`;
+
+                    // Add Limits to Features visually if important
+                    if (plan.projectLimit > 0) featuresHtml += `<li class="flex items-center gap-3"><span class="${isPopular ? 'text-gold-500' : 'text-green-500'}">✓</span> ${plan.projectLimit} Projects</li>`;
+                    if (plan.storageLimit > 0) featuresHtml += `<li class="flex items-center gap-3"><span class="${isPopular ? 'text-gold-500' : 'text-green-500'}">✓</span> ${plan.storageLimit} Photos per Project</li>`;
+
+                    featuresList.forEach(feature => {
+                        featuresHtml += `<li class="flex items-center gap-3"><span class="${isPopular ? 'text-gold-500' : 'text-green-500'}">✓</span> ${feature}</li>`;
+                    });
+                    featuresHtml += `</ul>`;
+
+                    card.innerHTML = `
+                        ${isPopular ? '<div class="absolute top-0 right-0 bg-gradient-to-r from-gold-500 to-amber-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl shadow-lg">MOST POPULAR</div>' : ''}
+                        
+                        <div class="mb-6">
+                            <h3 class="font-serif text-2xl font-bold mb-2 ${isPopular ? 'text-gold-500' : 'text-zinc-900 dark:text-white'}">${plan.name}</h3>
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-4xl font-bold ${isPopular ? 'text-white' : 'text-zinc-900 dark:text-white'}">₹${plan.price}</span>
+                                <span class="${isPopular ? 'text-zinc-400' : 'text-zinc-500'} text-sm font-medium">/ ${plan.duration}</span>
+                            </div>
+                        </div>
+
+                        ${featuresHtml}
+                        
+                        <a href="dashboard.html"
+                            class="block w-full py-4 text-center rounded-xl font-bold tracking-wide transition-all ${isPopular ? 'bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-black shadow-lg shadow-gold-500/20' : 'bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white'}">
+                            ${plan.price === 0 ? 'Get Started' : 'Subscribe Now'}
+                        </a>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (e) {
+                console.error("Error loading plans", e);
+                grid.innerHTML = `<p class="col-span-2 text-center text-red-500">Failed to load pricing.</p>`;
+            }
+        }
+
+        // --- DYNAMIC HOMEPAGE FEATURES ---
+        async function fetchHomepageFeatures() {
+            const grid = document.getElementById('homepage-features-grid');
+            try {
+                // 1. Get Free Plan Limit for Placeholders
+                let freeLimit = 3; // Default
+                try {
+                    const plansQ = query(collection(db, "plans"));
+                    const plansSnap = await getDocs(plansQ);
+                    plansSnap.forEach(doc => {
+                        const p = doc.data();
+                        if (p.price === 0) freeLimit = p.projectLimit || freeLimit;
+                    });
+                } catch (e) { console.warn("Could not fetch free limit", e); }
+
+                // 2. Fetch Features
+                const q = query(collection(db, "homepage_features"), orderBy("order", "asc"));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    // Fallback to static if empty? Or show message? 
+                    // Let's show a "Comming Soon" or just hide the loader.
+                    grid.innerHTML = `<p class="col-span-full text-center text-zinc-500">Upgrade to see features.</p>`;
+                    return;
+                }
+
+                grid.innerHTML = '';
+                snapshot.forEach((doc, index) => {
+                    const data = doc.data();
+                    const title = data.title;
+                    // Replace Placeholder
+                    const desc = (data.description || "").replace('{{free_projects}}', freeLimit);
+                    const icon = data.icon || '✨';
+
+                    // Ultra-Premium Feature Card Redesign
+                    const div = document.createElement('div');
+                    div.className = "group relative p-10 rounded-[2.5rem] bg-white dark:bg-zinc-900/40 backdrop-blur-2xl border border-zinc-200/50 dark:border-zinc-700/30 hover:border-gold-500/50 transition-all duration-700 hover:-translate-y-3 shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:shadow-gold-500/20 overflow-hidden";
+
+                    // Delay animation for stagger effect
+                    div.style.animationDelay = `${index * 150}ms`;
+
+                    div.innerHTML = `
+                        <!-- Subtle background glow -->
+                         <div class="absolute inset-0 bg-gradient-to-br from-gold-500/0 via-transparent to-gold-500/0 group-hover:from-gold-500/5 group-hover:to-gold-500/10 transition-opacity duration-700 opacity-0 group-hover:opacity-100"></div>
+                        
+                        <!-- Premium Icon Container -->
+                        <div class="w-20 h-20 bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-800 dark:to-zinc-900 rounded-3xl flex items-center justify-center text-4xl mb-8 shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] dark:shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)] border border-zinc-100 dark:border-zinc-800 group-hover:scale-110 group-hover:rotate-3 transition-all duration-700 relative z-10">
+                            <div class="absolute inset-0 rounded-3xl bg-gold-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl"></div>
+                            <span class="relative z-20">${icon}</span>
+                        </div>
+                        
+                        <!-- Elegant Typography -->
+                        <h3 class="font-serif text-2xl font-bold mb-4 text-slate-900 dark:text-white relative z-10 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-500">${title}</h3>
+                        
+                        <p class="text-zinc-500 dark:text-zinc-400 text-[15px] leading-relaxed relative z-10 font-medium opacity-90 group-hover:opacity-100 transition-opacity duration-500">
+                            ${desc}
+                        </p>
+
+                        <!-- Decorative Bottom Line -->
+                        <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 group-hover:w-full transition-all duration-700 ease-out"></div>
+                    `;
+                    grid.appendChild(div);
+                });
+
+            } catch (e) {
+                console.error("Error loading features", e);
+                grid.innerHTML = `<p class="col-span-full text-center text-red-500">Failed to load content.</p>`;
+            }
+        }
+
+        fetchHomepageFeatures();
+        fetchPlans();
+    </script>
+
+    <script>
+        const container = document.getElementById('template-scroll-container');
+        const leftBtn = document.getElementById('scroll-left');
+        const rightBtn = document.getElementById('scroll-right');
+
+        if (container && leftBtn && rightBtn) {
+            const scrollAmount = 400;
+
+            leftBtn.addEventListener('click', () => {
+                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            });
+
+            rightBtn.addEventListener('click', () => {
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            });
+
+            // Optional: Hide arrows if at start/end
+            container.addEventListener('scroll', () => {
+                leftBtn.style.opacity = container.scrollLeft <= 0 ? '0' : '100';
+                rightBtn.style.opacity = container.scrollLeft + container.clientWidth >= container.scrollWidth - 1 ? '0' : '100';
+            });
+        }
+    </script>
 </body>
 
 </html>

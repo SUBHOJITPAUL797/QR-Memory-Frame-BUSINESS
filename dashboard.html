@@ -26,128 +26,775 @@
             }
         }
     </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .glass-panel {
-                @apply bg-white/80 dark:bg-black/80 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-xl;
-            }
-        }
-    </style>
+
 </head>
 
 <body class="bg-slate-50 dark:bg-zinc-950 text-slate-800 dark:text-slate-200 transition-colors duration-500">
+    <!-- HIDDEN CONFIGS -->
+    <input type="hidden" id="worker-url" value="https://qr-memory-uploader.subhojit.workers.dev">
+    <input type="hidden" id="worker-secret" value="qr-admin-secret-2024">
+    <input type="hidden" id="r2-domain" value="https://pub-09b0269178c944e19a7f4bad3d3add30.r2.dev">
 
-    <!-- LOGIN SCREEN -->
-    <div id="login-view"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-zinc-950 transition-opacity duration-500">
-        <div class="text-center">
-            <div
-                class="inline-block w-20 h-20 bg-gold-500/10 rounded-full flex items-center justify-center mb-8 mx-auto">
-                <span class="text-4xl">✨</span>
-            </div>
-            <h1 class="font-serif text-4xl mb-4">QR Memory Frame</h1>
-            <p class="text-slate-500 dark:text-slate-400 mb-8 max-w-sm mx-auto">Create beautiful, timeless digital
-                memories for your special moments.</p>
-
-            <button id="google-login-btn"
-                class="flex items-center justify-center gap-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl px-8 py-4 shadow-lg hover:scale-105 transition-transform mx-auto">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6">
-                <span class="font-medium">Sign in with Google</span>
-            </button>
-        </div>
-    </div>
+    <!-- No Login View (Handled by index.html) -->
 
     <!-- DASHBOARD VIEW (Hidden Setup) -->
-    <div id="dashboard-view" class="hidden min-h-screen">
+    <div id="dashboard-view" class="hidden md:flex min-h-screen">
+        <!-- The 'hidden' above is toggled by script. We need it to be flex when visible. -->
+
+        <!-- Mobile Header Toggle (Only on Small screens) -->
+        <header
+            class="md:hidden sticky top-0 z-40 bg-white dark:bg-black border-b border-slate-200 dark:border-zinc-800 p-4 flex justify-between items-center w-full">
+            <div class="flex items-center gap-2">
+                <span class="text-xl">✨</span>
+                <span class="font-serif font-bold text-gold-500">Memory Frame</span>
+            </div>
+            <button id="mobile-sidebar-toggle" class="p-2 text-slate-600 dark:text-slate-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </header>
+
+        <!-- Sidebar Overlay -->
+        <div id="sidebar-overlay"
+            class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
+
         <!-- Sidebar -->
-        <aside
-            class="fixed w-64 h-full bg-white dark:bg-black border-r border-slate-200 dark:border-zinc-800 hidden md:block">
-            <div class="p-8">
-                <h2 class="font-serif text-xl font-bold text-gold-500 mb-8">Memory Frame</h2>
-                <nav class="space-y-4">
-                    <a href="#"
-                        class="block px-4 py-3 bg-slate-100 dark:bg-zinc-900 rounded-lg text-slate-900 dark:text-white font-medium">My
-                        Memories</a>
-                    <a href="#"
-                        class="block px-4 py-3 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">Settings</a>
-                    <button id="logout-btn"
-                        class="block w-full text-left px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-zinc-900 rounded-lg transition-colors mt-8">Sign
-                        Out</button>
+        <aside id="sidebar-menu"
+            class="fixed left-0 top-0 w-64 h-screen bg-white dark:bg-black border-r border-slate-200 dark:border-zinc-800 z-50 transform -translate-x-full transition-transform duration-300 md:translate-x-0 md:block shrink-0">
+            <div class="p-8 flex flex-col h-full">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="font-serif text-xl font-bold text-gold-500">Memory Frame</h2>
+                    <button id="close-sidebar-mobile" class="md:hidden p-2 text-slate-400 hover:text-slate-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <nav class="flex-1 flex flex-col space-y-4">
+                    <button id="nav-memories"
+                        class="w-full text-left px-4 py-3 bg-slate-100 dark:bg-zinc-900 rounded-lg text-slate-900 dark:text-white font-medium transition-colors">My
+                        Memories</button>
+                    <button id="nav-settings"
+                        class="w-full text-left px-4 py-3 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">Settings</button>
+
+                    <!-- Spacer to push Logout to the absolute bottom -->
+                    <div class="flex-1"></div>
+
+                    <div class="pt-8 mb-4">
+                        <button id="logout-btn"
+                            class="w-full flex items-center justify-center space-x-2 py-3 bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
                 </nav>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="md:ml-64 p-8">
-            <header class="flex justify-between items-center mb-12">
-                <div>
-                    <h1 class="text-3xl font-bold mb-2">My Memories</h1>
-                    <p class="text-slate-500 dark:text-slate-400">Manage your digital albums</p>
-                </div>
-                <button id="create-new-btn"
-                    class="bg-gold-500 hover:bg-gold-600 text-white px-6 py-3 rounded-xl font-medium shadow-lg shadow-gold-500/25 transition-all flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Create New
-                </button>
-            </header>
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col md:ml-64 min-h-screen">
+            <!-- Content -->
+            <main class="flex-1 p-4 md:p-8">
 
-            <!-- Projects Grid -->
-            <div id="projects-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-                <!-- Loading Skeleton -->
-                <div class="animate-pulse bg-white dark:bg-zinc-900 h-64 rounded-2xl"></div>
-                <div class="animate-pulse bg-white dark:bg-zinc-900 h-64 rounded-2xl"></div>
+                <!-- Custom Logout Confirmation Modal -->
+                <div id="logout-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+                    <!-- Modal Backdrop -->
+                    <div id="logout-modal-backdrop"
+                        class="absolute inset-0 bg-black/50 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+                    </div>
+
+                    <!-- Modal Content -->
+                    <div id="logout-modal-content"
+                        class="relative bg-white dark:bg-zinc-900 w-full max-w-sm rounded-2xl shadow-2xl border border-slate-200 dark:border-zinc-800 p-8 transform scale-95 opacity-0 transition-all duration-300">
+                        <div class="text-center">
+                            <!-- Warning Icon -->
+                            <div
+                                class="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6 text-red-600">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                            </div>
+
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Sign Out?</h3>
+                            <p class="text-slate-500 dark:text-slate-400 mb-8 text-sm">Are you sure you want to sign out
+                                of your
+                                account?</p>
+
+                            <div class="flex flex-col gap-3">
+                                <button id="confirm-logout-btn"
+                                    class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-600/20">
+                                    Yes, Sign Out
+                                </button>
+                                <button id="cancel-logout-btn"
+                                    class="w-full py-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-zinc-700 transition-all">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="memories-section">
+                    <header class="flex justify-between items-center mb-12">
+                        <div>
+                            <h1 class="text-3xl font-bold mb-2">My Memories</h1>
+                            <p class="text-slate-500 dark:text-slate-400">Manage your digital albums</p>
+                        </div>
+                        <button id="create-new-btn"
+                            class="bg-gold-500 hover:bg-gold-600 text-white px-6 py-3 rounded-xl font-medium shadow-lg shadow-gold-500/25 transition-all flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            Create New
+                        </button>
+                    </header>
+
+                    <!-- Projects Grid -->
+                    <div id="projects-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                        <!-- Loading Skeleton -->
+                        <div class="animate-pulse bg-white dark:bg-zinc-900 h-64 rounded-2xl"></div>
+                        <div class="animate-pulse bg-white dark:bg-zinc-900 h-64 rounded-2xl"></div>
+                    </div>
+                </div>
+
+                <!-- SETTINGS SECTION (Hidden) -->
+                <div id="settings-section" class="hidden">
+                    <header class="mb-12">
+                        <h1 class="text-3xl font-bold mb-2">Account Settings</h1>
+                        <p class="text-slate-500 dark:text-slate-400">Update your profile details</p>
+                    </header>
+
+                    <div
+                        class="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-slate-100 dark:border-zinc-800 p-8 max-w-2xl">
+                        <form id="profile-form" class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Full
+                                    Name</label>
+                                <input type="text" id="settings-name" placeholder="Enter your full name"
+                                    class="w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-950 focus:border-gold-500 outline-none transition-colors">
+                                <p class="text-xs text-slate-400 mt-1">This name will be used for your file folders
+                                    (e.g.
+                                    Name-12345/Project).</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Email
+                                    Address</label>
+                                <input type="email" id="settings-email" disabled
+                                    class="w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-zinc-700 bg-slate-100 dark:bg-zinc-800 text-slate-500 cursor-not-allowed outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Mobile
+                                    Number</label>
+                                <input type="tel" id="settings-mobile" placeholder="+91 9876543210"
+                                    class="w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-950 focus:border-gold-500 outline-none transition-colors">
+                            </div>
+                            <div class="pt-4">
+                                <button type="submit" id="save-profile-btn"
+                                    class="px-8 py-3 bg-gold-500 hover:bg-gold-600 text-white rounded-xl font-medium shadow-lg shadow-gold-500/25 transition-all w-full md:w-auto">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- DANGER ZONE -->
+                    <div class="mt-8 pt-8 border-t border-slate-200 dark:border-zinc-800">
+                        <div
+                            class="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-xl p-6">
+                            <h3 class="text-red-600 dark:text-red-400 font-bold mb-2 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                Danger Zone
+                            </h3>
+                            <p class="text-sm text-red-600/70 dark:text-red-400/70 mb-4">
+                                Permanently delete your account and all associated data (projects, photos, videos).
+                                <strong>This action cannot be undone.</strong>
+                            </p>
+                            <button type="button" id="delete-account-btn"
+                                class="px-4 py-2 bg-white dark:bg-red-950 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 rounded-lg text-sm font-bold hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors">
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- CREATE PROJECT MODAL -->
+    <div id="create-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden opacity-0 transition-opacity duration-300">
+        <div
+            class="bg-white dark:bg-zinc-900 w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+            <!-- Header -->
+            <div
+                class="p-6 border-b border-slate-100 dark:border-zinc-800 flex justify-between items-center bg-white dark:bg-zinc-900 sticky top-0 z-10">
+                <h2 class="text-xl font-bold font-serif">Create New Memory</h2>
+                <button id="close-modal-btn"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-colors">
+                    <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
-        </main>
+
+            <!-- Body -->
+            <div class="p-8 overflow-y-auto">
+                <!-- Step 1: Name -->
+                <div class="mb-8">
+                    <label class="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">1. Name Your
+                        Project</label>
+                    <input type="text" id="new-project-title" placeholder="e.g. Sarah's Wedding 2024"
+                        class="w-full text-2xl font-serif border-b-2 border-slate-200 dark:border-zinc-800 bg-transparent py-2 focus:border-gold-500 outline-none transition-colors placeholder:text-slate-300">
+                </div>
+
+                <!-- Step 2: Choose Template -->
+                <div>
+                    <label class="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">2. Choose a
+                        Template</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Card 1 -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="wedding-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">💍</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Wedding</h3>
+                                <p class="text-xs text-slate-500">Classic & Elegant</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+                        <!-- Card 2 -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="birthday-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">🎂</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Birthday</h3>
+                                <p class="text-xs text-slate-500">Fun & Playful</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="bhujono-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">🍚</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Rice Ceremony</h3>
+                                <p class="text-xs text-slate-500">Traditional</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+                        <!-- Card 4 -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="anniversary-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">💑</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Anniversary</h3>
+                                <p class="text-xs text-slate-500">Romantic</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+                        <!-- Card 5 -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="achievement-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">🎓</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Achievement</h3>
+                                <p class="text-xs text-slate-500">Professional</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+                        <!-- Card 6 -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="loveletter-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">💌</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Proposal</h3>
+                                <p class="text-xs text-slate-500">Magical</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div
+                class="p-6 border-t border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 flex justify-end gap-3">
+                <button id="cancel-create-btn"
+                    class="px-6 py-2 text-slate-500 hover:text-slate-800 font-medium transition-colors">Cancel</button>
+                <button id="confirm-create-btn" disabled
+                    class="px-8 py-2 bg-slate-300 text-slate-500 rounded-full font-bold uppercase tracking-wider cursor-not-allowed transition-all">Create
+                    Project</button>
+            </div>
+        </div>
     </div>
 
     <!-- FIREBASE LOGIC -->
     <script type="module">
         import { app, auth, db } from './js/firebase-config.js';
-        import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import {
+            signOut,
+            onAuthStateChanged,
+            deleteUser
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import {
+            collection,
+            addDoc,
+            serverTimestamp,
+            query,
+            where,
+            getDocs,
+            doc,
+            getDoc,
+            deleteDoc
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        const loginView = document.getElementById('login-view');
         const dashboardView = document.getElementById('dashboard-view');
-        const googleBtn = document.getElementById('google-login-btn');
         const logoutBtn = document.getElementById('logout-btn');
+
+        // Nav & Sections
+        const navMemories = document.getElementById('nav-memories');
+        const navSettings = document.getElementById('nav-settings');
+        const sectionMemories = document.getElementById('memories-section');
+        const sectionSettings = document.getElementById('settings-section');
+
+        // Settings Form Elements
+        const profileForm = document.getElementById('profile-form');
+        const settingsName = document.getElementById('settings-name');
+        const settingsEmail = document.getElementById('settings-email');
+        const settingsMobile = document.getElementById('settings-mobile');
+        const saveProfileBtn = document.getElementById('save-profile-btn');
+
+        // State
+        let selectedTemplate = null;
+
+        // --- NAVIGATION LOGIC ---
+        function switchTab(tab) {
+            if (tab === 'memories') {
+                sectionMemories.classList.remove('hidden');
+                sectionSettings.classList.add('hidden');
+                navMemories.classList.replace('text-slate-500', 'bg-slate-100');
+                navMemories.classList.replace('hover:text-slate-900', 'dark:bg-zinc-900');
+                navMemories.classList.add('text-slate-900', 'dark:text-white');
+
+                navSettings.classList.remove('bg-slate-100', 'dark:bg-zinc-900', 'text-slate-900', 'dark:text-white');
+                navSettings.classList.add('text-slate-500', 'hover:text-slate-900');
+            } else {
+                sectionMemories.classList.add('hidden');
+                sectionSettings.classList.remove('hidden');
+
+                navSettings.classList.remove('text-slate-500', 'hover:text-slate-900');
+                navSettings.classList.add('bg-slate-100', 'dark:bg-zinc-900', 'text-slate-900', 'dark:text-white');
+
+                navMemories.classList.remove('bg-slate-100', 'dark:bg-zinc-900', 'text-slate-900', 'dark:text-white');
+                navMemories.classList.add('text-slate-500', 'hover:text-slate-900');
+            }
+        }
+
+        navMemories.addEventListener('click', () => {
+            switchTab('memories');
+            if (window.innerWidth < 768) closeSidebar();
+        });
+        navSettings.addEventListener('click', () => {
+            switchTab('settings');
+            if (window.innerWidth < 768) closeSidebar();
+        });
+
+        // --- SIDEBAR TOGGLE LOGIC ---
+        const sidebar = document.getElementById('sidebar-menu');
+        const overlay = document.getElementById('sidebar-overlay');
+        const toggleBtn = document.getElementById('mobile-sidebar-toggle');
+        const closeBtn = document.getElementById('close-sidebar-mobile');
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            document.body.style.overflow = 'hidden'; // Prevent scroll
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        toggleBtn?.addEventListener('click', openSidebar);
+        closeBtn?.addEventListener('click', closeSidebar);
+        overlay?.addEventListener('click', closeSidebar);
+
+        // --- LOGOUT MODAL LOGIC ---
+        const logoutModal = document.getElementById('logout-modal');
+        const logoutBackdrop = document.getElementById('logout-modal-backdrop');
+        const logoutContent = document.getElementById('logout-modal-content');
+        const confirmLogoutBtn = document.getElementById('confirm-logout-btn');
+        const cancelLogoutBtn = document.getElementById('cancel-logout-btn');
+
+        function openLogoutModal() {
+            logoutModal.classList.remove('hidden');
+            // Trigger animation
+            setTimeout(() => {
+                logoutBackdrop.classList.replace('opacity-0', 'opacity-100');
+                logoutContent.classList.replace('opacity-0', 'opacity-100');
+                logoutContent.classList.replace('scale-95', 'scale-100');
+            }, 10);
+        }
+
+        function closeLogoutModal() {
+            logoutBackdrop.classList.replace('opacity-100', 'opacity-0');
+            logoutContent.classList.replace('opacity-100', 'opacity-0');
+            logoutContent.classList.replace('scale-100', 'scale-95');
+            setTimeout(() => {
+                logoutModal.classList.add('hidden');
+            }, 300);
+        }
+
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (window.innerWidth < 768) closeSidebar();
+            openLogoutModal();
+        });
+
+        cancelLogoutBtn.addEventListener('click', closeLogoutModal);
+        logoutBackdrop.addEventListener('click', closeLogoutModal);
+
+        confirmLogoutBtn.addEventListener('click', () => {
+            confirmLogoutBtn.disabled = true;
+            confirmLogoutBtn.textContent = "Signing Out...";
+            signOut(auth).then(() => {
+                window.location.href = 'index.html';
+            }).catch(err => {
+                console.error("Sign out failed:", err);
+                confirmLogoutBtn.disabled = false;
+                confirmLogoutBtn.textContent = "Yes, Sign Out";
+                alert("Failed to sign out. Please try again.");
+            });
+        });
+
+        import { updateDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Auth State Listener
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 // User is signed in
                 console.log("Logged in:", user.email);
-                loginView.classList.add('opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    loginView.classList.add('hidden');
-                    dashboardView.classList.remove('hidden');
-                }, 500);
+                dashboardView.classList.remove('hidden');
 
-                // Fetch User Projects
+                // Load User Projects
                 loadProjects(user.uid);
+
+                // Load Profile Data
+                settingsEmail.value = user.email;
+                try {
+                    const userDocRef = doc(db, "users", user.uid);
+                    const userDoc = await getDoc(userDocRef);
+                    console.log("Profile Doc Exists:", userDoc.exists());
+                    if (userDoc.exists()) {
+                        const d = userDoc.data();
+                        console.log("Profile Data:", d);
+
+                        // Ensure elements exist before setting values
+                        if (settingsName) settingsName.value = d.name || "";
+                        if (settingsMobile) settingsMobile.value = d.mobile || "";
+
+                        // CHECK FOR MISSING MOBILE (Google Login Case)
+                        if (!d.mobile) {
+                            const completeModal = document.getElementById('complete-profile-modal');
+                            const completeForm = document.getElementById('complete-profile-form');
+                            const completeInput = document.getElementById('complete-mobile-input');
+                            const completeBtn = document.getElementById('complete-submit-btn');
+
+                            completeModal.classList.remove('hidden');
+                            setTimeout(() => completeModal.classList.remove('opacity-0'), 100);
+
+                            completeForm.addEventListener('submit', async (ev) => {
+                                ev.preventDefault();
+                                completeBtn.textContent = "Saving...";
+                                completeBtn.disabled = true;
+
+                                try {
+                                    await setDoc(userDocRef, {
+                                        mobile: completeInput.value,
+                                        updatedAt: serverTimestamp()
+                                    }, { merge: true });
+
+                                    // Update visual state
+                                    settingsMobile.value = completeInput.value;
+
+                                    // Close Modal
+                                    completeModal.classList.add('opacity-0');
+                                    setTimeout(() => completeModal.classList.add('hidden'), 300);
+
+                                } catch (err) {
+                                    console.error("Failed to complete profile", err);
+                                    alert("Failed to save mobile. Please try again.");
+                                    completeBtn.textContent = "Save & Continue";
+                                    completeBtn.disabled = false;
+                                }
+                            }, { once: true });
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error loading profile:", e);
+                }
+
             } else {
-                // User is signed out
-                console.log("Logged out");
-                loginView.classList.remove('hidden');
-                setTimeout(() => loginView.classList.remove('opacity-0', 'pointer-events-none'), 10);
-                dashboardView.classList.add('hidden');
+                console.log("Not logged in, redirecting...");
+                window.location.href = 'index.html';
             }
         });
 
-        // Login Action
-        googleBtn.addEventListener('click', async () => {
-            const provider = new GoogleAuthProvider();
+        // --- PROFILE SAVE LOGIC ---
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const newName = settingsName.value.trim();
+            const newMobile = settingsMobile.value.trim();
+            saveProfileBtn.disabled = true;
+            saveProfileBtn.textContent = "Saving...";
+
             try {
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                console.error("Login failed", error);
-                alert("Login failed: " + error.message);
+                // Determine collision-proof folder name for feedback
+                const uidSuffix = user.uid.substring(0, 5).toLowerCase();
+                const folderName = `${newName.toLowerCase().replace(/\s+/g, '_')}-${uidSuffix}`;
+
+                await setDoc(doc(db, "users", user.uid), {
+                    name: newName,
+                    mobile: newMobile,
+                    email: user.email, // Ensure email is consistent
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+
+                alert(`Profile Saved! \nYour new projects will be stored in: ${folderName}`);
+            } catch (err) {
+                console.error("Save failed:", err);
+                alert("Failed to save profile.");
+            } finally {
+                saveProfileBtn.disabled = false;
+                saveProfileBtn.textContent = "Save Changes";
             }
         });
 
-        // Logout Action
-        logoutBtn.addEventListener('click', () => signOut(auth));
+        // Create Modal Elements
+        const createBtn = document.getElementById('create-new-btn');
+        const createModal = document.getElementById('create-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const cancelCreateBtn = document.getElementById('cancel-create-btn');
+        const confirmCreateBtn = document.getElementById('confirm-create-btn');
+        const projectTitleInput = document.getElementById('new-project-title');
+        const templateCards = document.querySelectorAll('.template-card');
+
+        // --- MODAL LOGIC ---
+        function openModal() {
+            createModal.classList.remove('hidden');
+            setTimeout(() => createModal.classList.remove('opacity-0'), 10);
+        }
+        function closeModal() {
+            createModal.classList.add('opacity-0');
+            setTimeout(() => createModal.classList.add('hidden'), 300);
+            // Reset
+            projectTitleInput.value = '';
+            selectedTemplate = null;
+            templateCards.forEach(c => c.classList.remove('ring-4', 'ring-gold-500', 'border-gold-500'));
+            validateCreate();
+        }
+
+        createBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelCreateBtn.addEventListener('click', closeModal);
+
+        // --- TEMPLATE SELECTION ---
+        templateCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Deselect all
+                templateCards.forEach(c => c.classList.remove('ring-4', 'ring-gold-500', 'border-gold-500'));
+                // Select clicked
+                card.classList.add('ring-4', 'ring-gold-500', 'border-gold-500');
+                selectedTemplate = card.dataset.template;
+                validateCreate();
+            });
+        });
+
+        projectTitleInput.addEventListener('input', validateCreate);
+
+        function validateCreate() {
+            if (projectTitleInput.value.trim() && selectedTemplate) {
+                confirmCreateBtn.disabled = false;
+                confirmCreateBtn.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
+                confirmCreateBtn.classList.add('bg-gold-500', 'text-white', 'hover:bg-gold-600', 'shadow-lg');
+            } else {
+                confirmCreateBtn.disabled = true;
+                confirmCreateBtn.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
+                confirmCreateBtn.classList.remove('bg-gold-500', 'text-white', 'hover:bg-gold-600', 'shadow-lg');
+            }
+        }
+
+        // --- CREATE PROJECT LOGIC ---
+        confirmCreateBtn.addEventListener('click', async () => {
+            if (!auth.currentUser) return;
+
+            confirmCreateBtn.textContent = "Creating...";
+            confirmCreateBtn.disabled = true;
+
+            try {
+                // 1. Fetch Template Content
+                const response = await fetch(`./clients/${selectedTemplate}`);
+                if (!response.ok) throw new Error("Failed to load template");
+                const templateData = await response.json();
+
+                // 2. Customize Title
+                templateData.title = projectTitleInput.value;
+
+                // 2.5 Fetch User Profile & Plan Details
+                let clientInfo = {
+                    clientName: "User",
+                    mobile: "",
+                    email: auth.currentUser.email
+                };
+
+                // Default Limits (Free Tier)
+                let planLimits = {
+                    projectLimit: 3,
+                    storageLimit: 6,
+                    videoDuration: 60,
+                    planId: 'free_trial'
+                };
+
+                try {
+                    const userSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
+                    if (userSnap.exists()) {
+                        const userData = userSnap.data();
+                        clientInfo = {
+                            clientName: userData.name || "User",
+                            mobile: userData.mobile || "",
+                            email: userData.email || auth.currentUser.email
+                        };
+
+                        // Check User's Plan
+                        if (userData.planId && userData.planId !== 'free_trial') {
+                            const planSnap = await getDoc(doc(db, "plans", userData.planId));
+                            if (planSnap.exists()) {
+                                const planData = planSnap.data();
+                                planLimits = {
+                                    projectLimit: planData.projectLimit || 3,
+                                    storageLimit: planData.storageLimit || 6,
+                                    videoDuration: planData.videoDuration || 60,
+                                    planId: userData.planId,
+                                    planName: planData.name
+                                };
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.warn("Failed to fetch user profile/plan", err);
+                }
+
+                // --- ENFORCE PROJECT LIMIT ---
+                const q = query(collection(db, "projects"), where("userId", "==", auth.currentUser.uid));
+                const projectSnap = await getDocs(q);
+                // Filter out 'deleted' if soft delete is used, assuming physical delete for now based on walkthrough
+                const currentCount = projectSnap.size;
+
+                if (currentCount >= planLimits.projectLimit) {
+                    alert(`Plan Limit Reached! You have used ${currentCount} / ${planLimits.projectLimit} projects.\nPlease upgrade to create more.`);
+                    closeModal();
+                    return;
+                }
+
+                // FORCE NAME UPDATE (Google Login Fix)
+                if (clientInfo.clientName === "User" && auth.currentUser.displayName) {
+                    clientInfo.clientName = auth.currentUser.displayName;
+                }
+
+                function slugify(text) {
+                    return text.toString().toLowerCase().trim()
+                        .replace(/\s+/g, '_')
+                        .replace(/[^\w\-]+/g, '')
+                        .replace(/\-\-+/g, '_');
+                }
+
+                const uidSuffix = auth.currentUser.uid.substring(0, 5).toLowerCase();
+                const clientNameSlug = `${slugify(clientInfo.clientName)}-${uidSuffix}`;
+                const projectTitleSlug = slugify(projectTitleInput.value || 'Memory');
+
+                // Calculate expiry date (default: 12 months from now, or based on plan)
+                // For now sticking to 12 months as per previous logic, or could fetch from plan.duration
+                const expiryDate = new Date();
+                expiryDate.setMonth(expiryDate.getMonth() + 12);
+
+                // 3. Save to Firestore
+                const docRef = await addDoc(collection(db, "projects"), {
+                    userId: auth.currentUser.uid,
+                    title: projectTitleInput.value,
+                    templateId: selectedTemplate,
+                    createdAt: serverTimestamp(),
+                    status: 'active',
+
+                    // Plan Snapshot (Crucial for features)
+                    planId: planLimits.planId,
+                    storageLimit: planLimits.storageLimit,
+                    videoDuration: planLimits.videoDuration,
+
+                    expiryDate: expiryDate.toISOString(),
+                    paymentStatus: 'unpaid',
+                    ...clientInfo,
+                    // Save permanent storage path prefix
+                    storagePath: `${clientNameSlug}/${projectTitleSlug}`,
+                    config: templateData
+                });
+
+                console.log("Project created with ID: ", docRef.id);
+                closeModal();
+                loadProjects(auth.currentUser.uid); // Refresh grid
+
+            } catch (e) {
+                console.error("Error creating project: ", e);
+                alert("Failed to create project: " + e.message);
+            } finally {
+                confirmCreateBtn.textContent = "Create Project";
+                confirmCreateBtn.disabled = false;
+            }
+        });
+
 
         // Load Projects
         async function loadProjects(userId) {
@@ -172,24 +819,174 @@
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     const card = document.createElement('div');
-                    card.className = "bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-zinc-800 hover:border-gold-500/50 transition-colors group";
+                    card.className = "bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-zinc-800 hover:border-gold-500/50 transition-colors group relative overflow-hidden";
+                    card.id = `project-${doc.id}`;
                     card.innerHTML = `
-                        <div class="flex justify-between items-start mb-4">
-                            <h3 class="font-serif text-xl font-bold">${data.title || 'Untitled Memory'}</h3>
-                            <span class="px-3 py-1 bg-gold-500/10 text-gold-600 text-xs font-bold rounded-full uppercase">${data.eventType || 'Event'}</span>
-                        </div>
-                        <p class="text-sm text-slate-500 mb-6 line-clamp-2">${data.subtitle || 'No description'}</p>
-                        <div class="flex gap-2">
-                             <a href="?id=${doc.id}" class="flex-1 bg-slate-100 dark:bg-zinc-800 text-center py-2 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">View</a>
-                             <button class="flex-1 border border-slate-200 dark:border-zinc-700 text-center py-2 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors">Edit</button>
-                        </div>
-                    `;
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="font-serif text-xl font-bold truncate pr-8">${data.title || 'Untitled Memory'}</h3>
+                                <span class="px-3 py-1 bg-gold-500/10 text-gold-600 text-xs font-bold rounded-full uppercase shrink-0">${data.eventType || 'Event'}</span>
+                            </div>
+                            <p class="text-sm text-slate-500 mb-6 line-clamp-1">${data.subtitle || 'No description'}</p>
+
+                            <div class="flex gap-2">
+                                <a href="view.html?id=${doc.id}" target="_blank" class="flex-1 bg-slate-100 dark:bg-zinc-800 text-center py-2.5 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">View</a>
+                                <a href="editor.html?id=${doc.id}" class="flex-1 border border-slate-200 dark:border-zinc-700 text-center py-2.5 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors">Edit</a>
+                                <button onclick="deleteProject('${doc.id}', '${data.storagePath || ''}')"
+                                    class="w-10 flex items-center justify-center border border-red-100 dark:border-red-900/30 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors"
+                                    title="Delete Project">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                            `;
                     grid.appendChild(card);
                 });
 
             } catch (e) {
                 console.error("Error loading projects:", e);
                 grid.innerHTML = `<p class="text-red-500">Failed to load projects.</p>`;
+            }
+        }
+
+        // --- ACCOUNT DELETION LOGIC (DANGER ZONE) ---
+        setTimeout(() => {
+            const deleteAccountBtn = document.getElementById('delete-account-btn');
+            if (deleteAccountBtn) {
+                deleteAccountBtn.addEventListener('click', async () => {
+                    const user = auth.currentUser;
+                    if (!user) return;
+
+                    const confirmation = prompt("TYPE 'DELETE' TO CONFIRM.\n\nThis will permanently delete your account, all your projects, and all uploaded photos/videos. This action cannot be undone.");
+
+                    if (confirmation !== 'DELETE') {
+                        if (confirmation) alert("Confirmation failed. Account was not deleted.");
+                        return;
+                    }
+
+                    deleteAccountBtn.disabled = true;
+                    deleteAccountBtn.textContent = "DELETING EVERYTHING...";
+                    deleteAccountBtn.classList.add('bg-red-600', 'text-white');
+
+                    try {
+                        // 1. Get User Profile for Root Folder Name
+                        let rootFolder = null;
+                        const userSnap = await getDoc(doc(db, "users", user.uid));
+                        if (userSnap.exists()) {
+                            const d = userSnap.data();
+                            const uidSuffix = user.uid.substring(0, 5).toLowerCase();
+
+                            // Reconstruct standard root folder name logic
+                            if (d.name) {
+                                const slug = d.name.toString().toLowerCase().trim()
+                                    .replace(/\s+/g, '_')
+                                    .replace(/[^\w\-]+/g, '')
+                                    .replace(/\-\-+/g, '_');
+                                rootFolder = `${slug}-${uidSuffix}/`;
+                            }
+                        }
+
+                        // 2. Delete All R2 Data (Recursive on Root)
+                        const workerUrl = document.getElementById('worker-url').value;
+                        const secret = document.getElementById('worker-secret').value;
+
+                        if (rootFolder && workerUrl) {
+                            console.log(`Wiping R2 Root Folder: ${rootFolder}`);
+                            await fetch(`${workerUrl}/delete-prefix?prefix=${encodeURIComponent(rootFolder)}`, {
+                                method: 'DELETE',
+                                headers: { 'X-Auth-Secret': secret }
+                            });
+                        }
+
+                        // 2b. Also delete individual project folders just in case naming changed
+                        // fetch all projects
+                        const q = query(collection(db, "projects"), where("userId", "==", user.uid));
+                        const snapshot = await getDocs(q);
+
+                        const deletePromises = [];
+                        snapshot.forEach(docSnap => {
+                            const pData = docSnap.data();
+                            // If logic ever differed, this catches stragglers
+                            if (pData.storagePath && (!rootFolder || !pData.storagePath.startsWith(rootFolder))) {
+                                deletePromises.push(
+                                    fetch(`${workerUrl}/delete-prefix?prefix=${encodeURIComponent(pData.storagePath)}`, {
+                                        method: 'DELETE',
+                                        headers: { 'X-Auth-Secret': secret }
+                                    })
+                                );
+                            }
+                            // Delete Firestore Project Doc
+                            deletePromises.push(deleteDoc(doc(db, "projects", docSnap.id)));
+                        });
+
+                        await Promise.all(deletePromises);
+
+                        // 3. Delete User Profile
+                        await deleteDoc(doc(db, "users", user.uid));
+
+                        // 4. Delete Auth Account
+                        await deleteUser(user);
+
+                        alert("Account and all data permanently deleted.");
+                        window.location.href = 'index.html';
+
+                    } catch (err) {
+                        console.error("Account deletion failed:", err);
+                        alert("Failed to delete account completely: " + err.message + "\n\nPlease contact support if issues persist.");
+                        deleteAccountBtn.disabled = false;
+                        deleteAccountBtn.textContent = "Delete Account";
+                    }
+                });
+            }
+        }, 1000);
+
+        // Global Delete Function
+        window.deleteProject = async function (id, storagePrefix) {
+            if (!confirm("Are you sure? This will PERMANENTLY delete the project and all its photos/videos from storage. This cannot be undone.")) return;
+
+            const card = document.getElementById(`project-${id}`);
+            if (card) card.style.opacity = '0.5';
+
+            try {
+                // 1. Delete from R2 (Recursive)
+                const workerUrl = document.getElementById('worker-url').value;
+                const secret = document.getElementById('worker-secret').value;
+
+                let res;
+                if (storagePrefix) {
+                    console.log(`Cleaning up R2 storage: ${storagePrefix}...`);
+                    res = await fetch(`${workerUrl}/delete-prefix?prefix=${encodeURIComponent(storagePrefix)}`, {
+                        method: 'DELETE',
+                        headers: { 'X-Auth-Secret': secret }
+                    });
+                } else {
+                    // Fallback for old projects using just ID as prefix
+                    res = await fetch(`${workerUrl}/delete-prefix?prefix=${encodeURIComponent(id)}`, {
+                        method: 'DELETE',
+                        headers: { 'X-Auth-Secret': secret }
+                    });
+                }
+
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(`R2 Cleanup Failed (${res.status}): ${errText}`);
+                }
+
+                // 2. Delete from Firestore
+                const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                await deleteDoc(doc(db, "projects", id));
+
+                // 3. UI Update
+                if (card) {
+                    card.style.transform = 'scale(0.9)';
+                    card.style.opacity = '0';
+                    setTimeout(() => card.remove(), 300);
+                }
+
+            } catch (err) {
+                console.error("Deletion failed:", err);
+                alert("Failed to delete project correctly. Some storage might remained.");
+                if (card) card.style.opacity = '1';
             }
         }
     </script>

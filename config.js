@@ -16,7 +16,7 @@ export const config = {
     "messageSignOff": "With Blessings,",
     "heroImage": "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?auto=format&fit=crop&q=80",
     "photoCount": 10,
-    "photoBaseUrl": "",
+    "photoBaseUrl": "", // Leave empty for local, or URL like "https://pub-xxx.r2.dev/my-album"
     "captions": {
         "1": "The Mehndi Ceremony",
         "2": "Candid Laughter",
