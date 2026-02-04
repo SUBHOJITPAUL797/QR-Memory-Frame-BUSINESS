@@ -68,8 +68,17 @@ export default {
             if (!key) return new Response(JSON.stringify({ error: 'Missing key' }), { status: 400, headers: corsHeaders });
 
             try {
+                // 1. Get Metadata for size
+                const object = await env.BUCKET.head(key);
+                let size = 0;
+                if (object) {
+                    size = object.size; // R2 object metadata includes size
+                }
+
+                // 2. Delete
                 await env.BUCKET.delete(key);
-                return new Response(JSON.stringify({ success: true, message: 'Deleted' }), {
+
+                return new Response(JSON.stringify({ success: true, message: 'Deleted', size: size }), {
                     status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
                 });
             } catch (e) {
@@ -85,13 +94,21 @@ export default {
 
             try {
                 const list = await env.BUCKET.list({ prefix });
+
+                // Calculate Total Size
+                let totalSize = 0;
+                list.objects.forEach(obj => {
+                    totalSize += obj.size;
+                });
+
                 const deletePromises = list.objects.map(obj => env.BUCKET.delete(obj.key));
                 await Promise.all(deletePromises);
 
                 return new Response(JSON.stringify({
                     success: true,
                     message: `Deleted folder: ${prefix}`,
-                    count: list.objects.length
+                    count: list.objects.length,
+                    totalSize: totalSize
                 }), {
                     status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
                 });

@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Memory - QR Memory Frame</title>
+    <title>QR Memory Editor</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap"
         rel="stylesheet">
@@ -47,11 +49,47 @@
         .autosave-indicator {
             transition: opacity 0.3s ease;
         }
+
+        /* GLOBAL SELECTION MODE: Hide hover actions on ALL slots when any slot is selected */
+        #gallery-container.selection-mode-active .gallery-slot .actions-overlay {
+            display: none !important;
+        }
+
+        /* Custom Scrollbar for Gallery (Fixes White Scrollbar in Dark Mode) */
+        #gallery-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #gallery-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #gallery-container::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            /* slate-300 */
+            border-radius: 4px;
+        }
+
+        .dark #gallery-container::-webkit-scrollbar-track {
+            background: #18181b;
+            /* zinc-950 (matches bg) or transparent */
+        }
+
+        .dark #gallery-container::-webkit-scrollbar-thumb {
+            background-color: #3f3f46;
+            /* zinc-700 */
+        }
+
+        .dark #gallery-container::-webkit-scrollbar-thumb:hover {
+            background-color: #52525b;
+            /* zinc-600 */
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 
-<body class="bg-slate-50 dark:bg-black text-slate-800 dark:text-white transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-black text-slate-800 dark:text-white transition-colors duration-300"
+    oncontextmenu="return false">
     <div class="flex h-screen overflow-hidden">
         <!-- Mobile Sidebar Overlay -->
         <div id="sidebar-overlay"
@@ -326,49 +364,54 @@
                         </div>
                     </div>
 
-                    <!-- Gallery Controls (New) -->
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-                        <h4 class="text-lg font-bold">Photos</h4>
-                        <div class="flex items-center gap-2 md:gap-4 flex-wrap">
+                    <!-- Gallery Controls (Sticky Header) -->
+                    <div
+                        class="sticky top-0 z-20 bg-white/95 dark:bg-black/95 backdrop-blur-md pb-4 pt-2 border-b border-slate-100 dark:border-zinc-800 mb-4 transition-all duration-200">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <h4 class="text-lg font-bold">Photos</h4>
+                            <div class="flex items-center gap-2">
+                                <div
+                                    class="flex items-center gap-2 border-r border-slate-200 dark:border-zinc-800 pr-3 mr-1">
+                                    <button type="button" id="bulk-upload-btn"
+                                        class="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow-sm transition-all hover:shadow-indigo-500/30">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                        </svg>
+                                        Bulk
+                                    </button>
+                                    <input type="file" id="bulk-upload-input" multiple accept="image/*" class="hidden">
+                                    <button type="button" id="select-all-btn"
+                                        class="text-xs font-bold text-slate-500 hover:text-indigo-600 px-1">All</button>
+                                    <button type="button" id="bulk-delete-btn"
+                                        class="hidden px-2 py-1 bg-red-100 text-red-600 rounded text-xs font-bold hover:bg-red-200 shadow-sm">Del</button>
+                                </div>
 
-                            <!-- Bulk Controls -->
-                            <div
-                                class="flex items-center gap-2 mr-2 border-r border-slate-200 dark:border-zinc-800 pr-4">
-                                <button type="button" id="bulk-upload-btn"
-                                    class="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                    </svg>
-                                    Bulk Upload
-                                </button>
-                                <input type="file" id="bulk-upload-input" multiple accept="image/*" class="hidden">
-                                <button type="button" id="select-all-btn"
-                                    class="text-xs font-bold text-slate-500 hover:text-indigo-600">Select All</button>
-                                <button type="button" id="bulk-delete-btn"
-                                    class="hidden px-2 py-1 bg-red-100 text-red-600 rounded text-xs font-bold hover:bg-red-200">Delete
-                                    (0)</button>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex items-center bg-slate-100 dark:bg-zinc-800 p-1 rounded-lg">
+                                        <span
+                                            class="text-[10px] font-bold text-slate-500 px-2 uppercase tracking-wide">Slots</span>
+                                        <input type="number" id="manual-slot-count" min="1" max="100"
+                                            class="w-12 bg-white dark:bg-zinc-900 border-none rounded-md text-center text-xs font-bold focus:ring-2 focus:ring-indigo-500 py-1"
+                                            placeholder="#">
+                                    </div>
+                                    <button type="button" id="add-photo-btn"
+                                        class="p-1.5 bg-slate-100 dark:bg-zinc-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-slate-600 dark:text-slate-400 hover:text-indigo-600 rounded-lg transition-colors"
+                                        title="Add Single Slot">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
-
-                            <div class="flex items-center gap-2 bg-slate-100 dark:bg-zinc-800 p-1 rounded-lg">
-                                <span class="text-xs font-bold text-slate-500 px-2">Set Slots:</span>
-                                <input type="number" id="manual-slot-count" min="1" max="100"
-                                    class="w-16 bg-white dark:bg-zinc-900 border-none rounded-md text-center text-sm font-bold focus:ring-2 focus:ring-indigo-500"
-                                    placeholder="#">
-                            </div>
-                            <button type="button" id="add-photo-btn"
-                                class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg hover:border-indigo-500 hover:text-indigo-500 transition-colors text-sm font-bold">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 4v16m8-8H4" />
-                                </svg>
-                                Add Slot
-                            </button>
                         </div>
                     </div>
 
-                    <!-- Gallery List -->
-                    <div id="gallery-container" class="space-y-4"></div>
+                    <!-- Gallery Grid (Scrollable Container) -->
+                    <div id="gallery-container"
+                        class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 p-1 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-zinc-700 content-start">
+                    </div>
 
                     <input type="hidden" name="photoBaseUrl" id="photoBaseUrlInput">
                     <input type="hidden" name="photoCount" id="photoCountInput">
@@ -814,7 +857,16 @@
                 if (userData.planId) {
                     const planSnap = await getDoc(doc(db, "plans", userData.planId));
                     if (planSnap.exists()) {
-                        currentUserStorageLimit = (planSnap.data().storageLimit || 100) * 1024 * 1024;
+                        const planData = planSnap.data();
+                        currentUserStorageLimit = (planData.storageLimit || 100) * 1024 * 1024;
+
+                        // NEW: Store Global Limits for other checks (Video Duration, etc.)
+                        window.projectLimits = {
+                            videoDuration: planData.videoDuration || 60,
+                            storageLimit: planData.storageLimit || 100,
+                            projectLimit: planData.projectLimit || 1
+                        };
+                        console.log("Loaded Plan Limits:", window.projectLimits);
                     }
                 }
                 console.log(`Storage: ${(currentUserStorageUsed / 1024 / 1024).toFixed(1)}MB / ${(currentUserStorageLimit / 1024 / 1024).toFixed(1)}MB`);
@@ -831,8 +883,10 @@
         }
 
         async function updateUserStorage(bytesDelta) {
-            const { increment } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+            const { increment, doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
             if (!auth.currentUser) return;
+
+            console.log(`[Storage] Updating usage by ${bytesDelta} bytes for ${auth.currentUser.uid}`);
 
             currentUserStorageUsed += bytesDelta; // Local optimist update
             try {
@@ -840,6 +894,7 @@
                 await updateDoc(userRef, {
                     storageUsed: increment(bytesDelta)
                 });
+                console.log("[Storage] Database updated successfully");
             } catch (e) { console.warn("Quota sync error", e); }
         }
 
@@ -879,40 +934,19 @@
 
         async function deleteFromR2(key) {
             try {
-                // 1. Get size before delete (HEAD request) - approximation via public URL or Worker?
-                // Worker doesn't expose HEAD easily for key. 
-                // We'll try to guess or skip precise decrement for deletions if not easy.
-                // BETTER: Try to fetch HEAD from public URL if possible.
-                // If private, we rely on generous decrement or ignoring.
-                // Public URL: PUBLIC_R2_DOMAIN + key
-
-                // Note: CORS might block HEAD on public R2 if not configured.
-                // Attempting optimist decrement if possible, otherwise we leak 'used' space (safe for business, bad for user).
-                // Let's rely on the Worker to return size on delete? No, worker is simple.
-
-                // Temporary: We will just delete. 
-                // TODO: Implement accurate size decrement. For now, we only increment.
-                // Wait, this means users verify limit but can never free space?
-                // STARTING FIX: We MUST try to get size.
-
-                let size = 0;
-                try {
-                    // Try HEAD request to Public Domain
-                    const response = await fetch(`${PUBLIC_R2_DOMAIN}/${key}`, { method: 'HEAD' });
-                    if (response.ok) {
-                        size = parseInt(response.headers.get('content-length') || 0);
-                    }
-                } catch (e) {
-                    console.log("Could not determine file size for decrement", e);
-                }
-
+                // The Worker now calculates size before delete and returns it.
+                // We trust the Worker to tell us what was removed.
                 const res = await fetch(`${WORKER_URL}/delete?key=${encodeURIComponent(key)}`, {
                     method: 'DELETE',
                     headers: { 'X-Auth-Secret': WORKER_SECRET }
                 });
 
                 if (res.ok) {
-                    if (size > 0) await updateUserStorage(-size);
+                    const data = await res.json();
+                    if (data.size && data.size > 0) {
+                        console.log(`[Storage] Freed ${data.size} bytes`);
+                        await updateUserStorage(-data.size);
+                    }
                 } else {
                     console.warn("R2 Delete failed", res.status);
                 }
@@ -923,6 +957,27 @@
 
         let currentPlan = 'free_trial';
         let STORAGE_ROOT = projectId; // Default fallback
+
+        function extractR2Key(url) {
+            if (!url) return null;
+            try {
+                // If it starts with the domain, strip it
+                if (PUBLIC_R2_DOMAIN && url.startsWith(PUBLIC_R2_DOMAIN)) {
+                    let key = url.replace(PUBLIC_R2_DOMAIN, '');
+                    if (key.startsWith('/')) key = key.substring(1);
+                    return key;
+                }
+                // Fallback: try to parse URL and take pathname
+                if (url.startsWith('http')) {
+                    const u = new URL(url);
+                    return u.pathname.substring(1); // remove leading /
+                }
+                return url; // Assume it's already a key
+            } catch (e) {
+                console.warn("Key extraction failed", e);
+                return null;
+            }
+        }
 
         function slugify(text) {
             return text.toString().toLowerCase().trim()
@@ -1022,16 +1077,42 @@
                     status.textContent = `Compressing: ${percent}%`;
                 });
 
-                // Compress: 720p, H.264, 2Mbps bitrate, AAC audio
+                // Detect orientation from temporary video element
+                const tempVideo = document.createElement('video');
+                tempVideo.preload = 'metadata';
+                tempVideo.src = URL.createObjectURL(file);
+
+                await new Promise((resolve) => {
+                    tempVideo.onloadedmetadata = () => resolve();
+                });
+
+                const width = tempVideo.videoWidth;
+                const height = tempVideo.videoHeight;
+                URL.revokeObjectURL(tempVideo.src);
+
+                // Smart Strategy:
+                // Landscape (W >= H) -> Scale height to 720 (Width auto)
+                // Portrait (W < H)   -> Scale width to 720 (Height auto)
+                // This ensures we always get "HD 720p" quality relative to the restrictive dimension
+                // But we don't upscale if source is smaller than 720p (optional, but good practice). Here user asked for conversion TO 720p.
+
+                let scaleFilter = 'scale=-2:720'; // Default Landscape
+                if (width < height) {
+                    scaleFilter = 'scale=720:-2'; // Portrait
+                }
+
+                console.log(`[Compression] Input: ${width}x${height}, Scale Filter: ${scaleFilter}`);
+
+                // Compress with calculated scale
                 await ffmpegInstance.exec([
                     '-i', 'input.mp4',
-                    '-vf', 'scale=-2:720', // Keep aspect ratio, max height 720
-                    '-c:v', 'libx264', // H.264 codec
-                    '-b:v', '2M', // 2Mbps video bitrate
-                    '-c:a', 'aac', // AAC audio
-                    '-b:a', '128k', // 128kbps audio
-                    '-preset', 'fast', // Faster encoding
-                    '-movflags', '+faststart', // Web optimized
+                    '-vf', scaleFilter,
+                    '-c:v', 'libx264',
+                    '-b:v', '2500k', // Increased for better 720p quality
+                    '-c:a', 'aac',
+                    '-b:a', '128k',
+                    '-preset', 'fast',
+                    '-movflags', '+faststart',
                     'output.mp4'
                 ]);
 
@@ -1111,6 +1192,13 @@
                     status.classList.remove('animate-pulse');
                     status.classList.add('text-green-500');
 
+                    // Update button text
+                    const videoLabel = document.getElementById('video-upload-label');
+                    if (videoLabel) videoLabel.childNodes[0].textContent = "Replace Video";
+
+                    triggerSave(); // SAVE THE NEW URL TO DB!
+                    status.classList.add('text-green-500');
+
                     const videoUploadLabel = document.getElementById('video-upload-label');
                     if (videoUploadLabel) videoUploadLabel.childNodes[0].textContent = "Replace Video";
 
@@ -1184,9 +1272,12 @@
                     const slotsToRemove = Array.from(slots).slice(newCount);
                     for (const slot of slotsToRemove) {
                         const url = slot.querySelector('.photo-url-input').value;
-                        if (url && url.includes(projectId)) {
+                        if (url) {
                             const key = extractR2Key(url);
-                            if (key) await deleteFromR2(key);
+                            if (key) {
+                                console.log("Reducing Slots: Deleting orphaned file:", key);
+                                await deleteFromR2(key);
+                            }
                         }
                         slot.remove();
                     }
@@ -1207,22 +1298,7 @@
             }
         });
 
-        // Helper to extract key reliably (handle hierarchical paths)
-        function extractR2Key(url) {
-            if (!url) return null;
-            try {
-                // Find where our domain ends and the path begins
-                const urlObj = new URL(url);
-                const path = urlObj.pathname.startsWith('/') ? urlObj.pathname.substring(1) : urlObj.pathname;
-                return decodeURIComponent(path);
-            } catch (e) {
-                // Fallback for simple splitting if URL is partial
-                if (url.includes(PUBLIC_R2_DOMAIN)) {
-                    return url.split(PUBLIC_R2_DOMAIN + '/')[1];
-                }
-                return null;
-            }
-        }
+
 
         // --- TEMPLATE SWITCHING ---
         async function applyTemplate(templateName) {
@@ -1289,14 +1365,18 @@
 
             btn.textContent = 'Processing...'; btn.disabled = true;
             try {
-                // Delete old hero from R2 if exists
-                if (existingUrl && existingUrl.includes(projectId)) {
+                // Delete old hero from R2 if exists (Smart Logic)
+                if (existingUrl) {
                     try {
-                        const key = `${projectId}/hero.webp`;
-                        status.textContent = "Removing old...";
-                        await deleteFromR2(key);
+                        // Use extractR2Key to get the REAL key, regardless of old/new path structure
+                        const key = extractR2Key(existingUrl);
+                        if (key) {
+                            status.textContent = "Removing old...";
+                            console.log("Replacing Hero: Deleting old key:", key);
+                            await deleteFromR2(key);
+                        }
                     } catch (e) {
-                        console.warn("Old hero delete failed (might not exist)", e);
+                        console.warn("Old hero delete failed:", e);
                     }
                 }
 
@@ -1352,40 +1432,62 @@
         // Selection Management
         function toggleSlotSelection(slotDiv) {
             const isSelected = slotDiv.dataset.selected === 'true';
-            const indicator = slotDiv.querySelector('.selection-indicator');
+            const selectionOverlay = slotDiv.querySelector('.selection-indicator');
             const deleteBtn = slotDiv.querySelector('.delete-slot-btn');
-            const uploadBtn = slotDiv.querySelector('.upload-btn'); // Get upload button
+            const actionsOverlay = slotDiv.querySelector('.actions-overlay');
 
             if (isSelected) {
                 // Deselect
                 slotDiv.dataset.selected = 'false';
                 slotDiv.classList.remove('ring-4', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-950/20');
-                indicator.classList.add('hidden');
-                indicator.classList.remove('flex');
-                if (deleteBtn) deleteBtn.classList.remove('hidden'); // Show individual delete
+                if (selectionOverlay) selectionOverlay.classList.add('hidden');
+                if (deleteBtn) deleteBtn.classList.remove('hidden');
 
-                // Re-enable upload button
-                if (uploadBtn) {
-                    uploadBtn.disabled = false;
-                    uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
+                // Show actions again (on hover), but Global Mode check will override this via CSS
+                if (actionsOverlay) actionsOverlay.classList.remove('!hidden');
 
             } else {
                 // Select
                 slotDiv.dataset.selected = 'true';
                 slotDiv.classList.add('ring-4', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-950/20');
-                indicator.classList.remove('hidden');
-                indicator.classList.add('flex');
-                if (deleteBtn) deleteBtn.classList.add('hidden'); // Hide individual delete
+                if (selectionOverlay) selectionOverlay.classList.remove('hidden');
+                if (deleteBtn) deleteBtn.classList.add('hidden');
 
-                // Disable upload button
-                if (uploadBtn) {
-                    uploadBtn.disabled = true;
-                    uploadBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                }
+                // Hide actions (Upload/Replace) completely when selected
+                if (actionsOverlay) actionsOverlay.classList.add('!hidden');
             }
 
+            // Update Global States
+            updateSelectAllButtonState();
             updateBulkDeleteButton();
+            updateGlobalSelectionMode(); // NEW: Toggle container class
+        }
+
+        function updateGlobalSelectionMode() {
+            const selectedCount = document.querySelectorAll('.gallery-slot[data-selected="true"]').length;
+            const container = document.getElementById('gallery-container');
+
+            if (selectedCount > 0) {
+                container.classList.add('selection-mode-active');
+            } else {
+                container.classList.remove('selection-mode-active');
+            }
+        }
+
+        function updateSelectAllButtonState() {
+            const allSlots = document.querySelectorAll('.gallery-slot');
+            if (allSlots.length === 0) return;
+
+            const allSelected = Array.from(allSlots).every(slot => slot.dataset.selected === 'true');
+            const someSelected = Array.from(allSlots).some(slot => slot.dataset.selected === 'true');
+            const btn = document.getElementById('select-all-btn');
+
+            // "select all button should turn to the deselect when user select manually"
+            if (allSelected || someSelected) {
+                btn.textContent = "Deselect All";
+            } else {
+                btn.textContent = "Select All";
+            }
         }
 
         function updateBulkDeleteButton() {
@@ -1403,7 +1505,8 @@
         function createPhotoSlot(photoUrl = "", captionValue = "") {
             const slotId = Date.now() + Math.random().toString(36).substr(2, 9);
             const div = document.createElement('div');
-            div.className = "gallery-slot relative bg-white dark:bg-zinc-900 rounded-xl p-6 border border-slate-200 dark:border-zinc-800 shadow-sm transition-all duration-200 cursor-pointer select-none";
+            // Compact Wrapper
+            div.className = "gallery-slot relative group p-2 rounded-xl transition-all duration-200 cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-white/5";
             div.dataset.id = slotId;
             div.dataset.selected = "false";
             div.draggable = true;
@@ -1411,58 +1514,75 @@
             const hasPhoto = photoUrl && photoUrl.length > 5;
 
             div.innerHTML = `
-                <!-- Selection Indicator (Hidden by default) -->
-                <div class="selection-indicator absolute top-3 right-3 w-6 h-6 bg-indigo-600 rounded-full items-center justify-center hidden z-10">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-                    </svg>
-                </div>
+                <!-- 1. Image Container (Square) -->
+                <div class="aspect-square w-full relative bg-slate-200 dark:bg-zinc-800 rounded-lg overflow-hidden shadow-sm border border-slate-200 dark:border-zinc-700">
+                    
+                    <!-- Main Image -->
+                    <img id="img-${slotId}" src="${hasPhoto ? photoUrl : ''}"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${hasPhoto ? '' : 'opacity-0'}"
+                        onerror="this.style.opacity=0">
 
-                <!-- Card Header: Title + Delete -->
-                <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200 dark:border-zinc-800">
-                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider slot-number">Photo</span>
-                    <button type="button"
-                        class="delete-slot-btn text-red-400 hover:text-red-600 p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                        title="Delete Slot">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    <!-- Empty State Icon -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none ${hasPhoto ? 'hidden' : ''}">
+                        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+
+                    <!-- Selection Overlay (Blue Border/Tint) -->
+                    <div class="selection-indicator absolute inset-0 border-4 border-indigo-500 bg-indigo-500/10 z-20 hidden rounded-lg pointer-events-none">
+                        <div class="absolute top-2 left-2 bg-indigo-600 text-white rounded-full p-1 shadow-sm">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Progress Overlay (NEW) -->
+                    <div class="progress-overlay absolute inset-0 bg-black/60 z-30 hidden flex flex-col items-center justify-center backdrop-blur-[1px]">
+                        <div class="w-3/4 h-1.5 bg-slate-700/50 rounded-full overflow-hidden mb-1">
+                             <div class="progress-bar h-full bg-indigo-500 transition-all duration-300 ease-out" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text text-[10px] font-bold text-white tracking-wider">0%</span>
+                    </div>
+
+                    <!-- Hover Actions Overlay (Added actions-overlay class) -->
+                    <div class="actions-overlay absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-200 flex flex-col items-center justify-center z-10 backdrop-blur-[1px]">
+                        
+                        <!-- Upload Button -->
+                        <div class="relative transform transition-transform hover:scale-105 active:scale-95">
+                            <button type="button" class="upload-btn bg-white text-indigo-600 px-3 py-1.5 rounded-full text-[10px] font-bold shadow-lg flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                </svg>
+                                ${hasPhoto ? 'Replace' : 'Upload'}
+                            </button>
+                            <input type="file" accept="image/*" class="photo-upload-input absolute inset-0 opacity-0 cursor-pointer">
+                        </div>
+
+                        <!-- Status Text -->
+                        <span id="status-${slotId}" class="mt-2 text-[10px] font-bold text-white drop-shadow-md"></span>
+                    </div>
+
+                    <!-- Delete Button (Top Right) -->
+                    <button type="button" class="delete-slot-btn absolute top-1 right-1 z-30 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-all transform hover:scale-110" title="Delete">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
+
+                    <!-- Slot Number (Bottom Left) -->
+                    <span class="absolute bottom-1 left-2 text-[10px] font-bold text-white/80 drop-shadow-md pointer-events-none slot-number">#</span>
                 </div>
 
-                <!-- Card Body: Photo + Upload -->
-                <div class="flex gap-3 mb-3">
-                    <!-- Photo Thumbnail -->
-                    <div class="w-24 h-24 md:w-28 md:h-28 bg-slate-100 dark:bg-zinc-800 rounded-lg overflow-hidden border border-slate-200 dark:border-zinc-700 relative group flex-shrink-0">
-                        <img id="img-${slotId}" src="${hasPhoto ? photoUrl : ''}"
-                            class="w-full h-full object-cover ${hasPhoto ? '' : 'opacity-0'}"
-                            onerror="this.style.opacity=0">
-                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                            <span class="text-white text-[10px] font-bold">CHANGE</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Upload Controls -->
-                    <div class="flex-1 flex flex-col justify-center gap-2">
-                        <div class="relative">
-                            <button type="button"
-                                class="upload-btn w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm">
-                                ${hasPhoto ? 'Replace Photo' : 'Upload Photo'}
-                            </button>
-                            <input type="file" accept="image/*"
-                                class="photo-upload-input absolute inset-0 opacity-0 cursor-pointer">
-                        </div>
-                        <span id="status-${slotId}" class="text-[10px] md:text-xs font-bold text-center text-slate-400"></span>
-                    </div>
+                <!-- 2. Minimal Caption Input -->
+                <div class="mt-1 px-1">
+                    <input type="text" 
+                           class="caption-field w-full bg-transparent border-0 border-b border-transparent hover:border-slate-300 dark:hover:border-zinc-700 focus:border-indigo-500 text-center text-xs text-slate-600 dark:text-slate-400 placeholder-slate-300 focus:ring-0 px-0 py-1 transition-colors"
+                           placeholder="Add caption..." 
+                           value="${captionValue}">
                 </div>
 
-                <!-- Card Footer: Caption (Resizable) -->
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">Caption</label>
-                    <textarea rows="2" placeholder="Add a caption..."
-                        class="caption-field w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-lg p-2.5 text-sm autosave-field focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">${captionValue}</textarea>
-                </div>
                 <input type="hidden" class="photo-url-input" value="${photoUrl}">
                 `;
 
@@ -1601,19 +1721,27 @@
             const urlInput = slotEl.querySelector('.photo-url-input');
             const uploadBtn = slotEl.querySelector('.photo-upload-input + button, button');
 
+            // Progress Elements
+            const progressOverlay = slotEl.querySelector('.progress-overlay');
+            const progressBar = slotEl.querySelector('.progress-bar');
+            const progressText = slotEl.querySelector('.progress-text');
+
             // Check if there's an existing photo to delete (SAVE COSTS!)
             const existingUrl = urlInput ? urlInput.value : "";
 
             statusEl.textContent = "Processing...";
-            statusEl.className = "text-xs font-bold text-blue-500 animate-pulse";
+            // Show progress overlay
+            if (progressOverlay) progressOverlay.classList.remove('hidden');
+            if (progressOverlay) progressOverlay.classList.add('flex');
 
             try {
-                // Delete old photo from R2 if exists
-                if (existingUrl && existingUrl.includes(projectId)) {
+                // Delete old photo from R2 if exists (Relaxed Check)
+                if (existingUrl) {
                     try {
                         const r2Key = extractR2Key(existingUrl);
                         if (r2Key) {
                             statusEl.textContent = "Removing old...";
+                            console.log("Replacing Gallery Photo: Deleting old key:", r2Key);
                             await deleteFromR2(r2Key);
                         }
                     } catch (e) {
@@ -1628,7 +1756,10 @@
                 const uniqueName = `gallery_${Date.now()}_${Math.random().toString(36).substr(2, 5)}.webp`;
                 const key = `${STORAGE_ROOT}/${uniqueName}`;
 
-                await uploadToR2(blob, key);
+                await uploadToR2(blob, key, 'image/webp', (percent) => {
+                    if (progressBar) progressBar.style.width = `${percent}%`;
+                    if (progressText) progressText.textContent = `${percent}%`;
+                });
 
                 const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
 
@@ -1657,6 +1788,13 @@
                 statusEl.textContent = "Error";
                 showError(`Upload failed: ${err.message}`);
                 console.error(err);
+            } finally {
+                // Hide progress overlay
+                setTimeout(() => {
+                    if (progressOverlay) progressOverlay.classList.add('hidden');
+                    if (progressOverlay) progressOverlay.classList.remove('flex');
+                    if (progressBar) progressBar.style.width = '0%'; // Reset
+                }, 500);
             }
         }
 
@@ -1768,6 +1906,8 @@
             const selectedSlots = Array.from(document.querySelectorAll('.gallery-slot[data-selected="true"]'));
             const isTargetedMode = selectedSlots.length > 0;
 
+            const uploadPromises = [];
+
             if (isTargetedMode) {
                 // VALIDATION: Prevent uploading more files than selected slots
                 if (files.length > selectedSlots.length) {
@@ -1777,132 +1917,123 @@
                 }
 
                 // TARGETED UPLOAD MODE
-                // Only fill up to the number of selected slots or files, whichever is smaller.
                 const count = Math.min(files.length, selectedSlots.length);
 
                 for (let i = 0; i < count; i++) {
                     const file = files[i];
                     const slotDiv = selectedSlots[i];
-
-                    const slotId = slotDiv.dataset.id;
-                    const statusEl = document.getElementById(`status-${slotId}`);
-                    const imgEl = document.getElementById(`img-${slotId}`);
-                    const urlInput = slotDiv.querySelector('.photo-url-input');
-                    const btn = slotDiv.querySelector('.upload-btn'); // Should be disabled but we update it
-
-                    // 1. Cleanup existing image if present
-                    if (urlInput.value && urlInput.value.includes(projectId)) {
-                        try {
-                            const r2Key = extractR2Key(urlInput.value);
-                            if (r2Key) await deleteFromR2(r2Key);
-                        } catch (err) {
-                            console.warn("Failed to cleanup old image during targeted upload", err);
-                        }
-                    }
-
-                    statusEl.textContent = "Compressing...";
-                    statusEl.className = "text-xs font-bold text-blue-500 animate-pulse";
-
-                    try {
-                        const blob = await compressImage(file);
-                        statusEl.textContent = "Uploading...";
-
-                        const uniqueName = `gallery_${Date.now()}_${Math.random().toString(36).substr(2, 5)}.webp`;
-                        const key = `${STORAGE_ROOT}/${uniqueName}`;
-
-                        await uploadToR2(blob, key);
-
-                        const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
-
-                        // Update UI
-                        imgEl.src = URL.createObjectURL(blob);
-                        imgEl.classList.remove('opacity-0');
-                        imgEl.style.opacity = '1';
-                        urlInput.value = publicUrl;
-                        statusEl.textContent = "Saved";
-                        statusEl.className = "text-xs font-bold text-green-500";
-                        btn.textContent = 'Replace Photo';
-
-                        // Note: We leave it selected so user knows which one changed, 
-                        // or we could deselect it. Keeping it selected seems safer for now.
-
-                    } catch (err) {
-                        console.error("Targeted bulk upload error", file.name, err);
-                        statusEl.textContent = "Failed";
-                        statusEl.className = "text-xs font-bold text-red-500";
-                    }
+                    uploadPromises.push(processSingleUpload(file, slotDiv));
                 }
-
-                // If user selected MORE slots than files, the remaining selected slots are UNTOUCHED.
-                // If user selected FEWER slots than files, the extra files are IGNORED.
 
             } else {
                 // NORMAL MODE (Fill Empty -> Append)
+                // 1. PRE-ALLOCATE SLOTS synchronously
+                const activeSlots = []; // Store which slots we are using
+
                 for (const file of files) {
-                    // 1. Find the FIRST empty slot
+                    // Find first empty slot that hasn't been claimed in this batch
                     let slotDiv = null;
                     const allSlots = Array.from(document.querySelectorAll('.gallery-slot'));
 
                     for (const slot of allSlots) {
                         const urlInput = slot.querySelector('.photo-url-input');
-                        // Check if empty (no value) AND not currently processing (we'll tag it)
+                        // Check if empty AND not marked as processing AND not already claimed in this batch
                         if (!urlInput.value && !slot.dataset.processing) {
                             slotDiv = slot;
-                            break; // Found the first one
+                            break;
                         }
                     }
 
-                    // 2. If no empty slot, create a new one
+                    // If no empty slot, create new
                     if (!slotDiv) {
                         slotDiv = createPhotoSlot("", "");
                         galleryContainer.appendChild(slotDiv);
                         updateSlotNumbers();
                     }
 
-                    // Mark as processing so next iteration doesn't grab it
+                    // Mark as processing immediately so next iteration respects it
                     slotDiv.dataset.processing = "true";
+                    activeSlots.push(slotDiv);
 
-                    const slotId = slotDiv.dataset.id;
-                    const statusEl = document.getElementById(`status-${slotId}`);
-                    const imgEl = document.getElementById(`img-${slotId}`);
-                    const urlInput = slotDiv.querySelector('.photo-url-input');
-                    const btn = slotDiv.querySelector('.upload-btn');
-
-                    statusEl.textContent = "Compressing...";
-                    statusEl.className = "text-xs font-bold text-blue-500 animate-pulse";
-
-                    try {
-                        const blob = await compressImage(file);
-                        statusEl.textContent = "Uploading...";
-
-                        const uniqueName = `gallery_${Date.now()}_${Math.random().toString(36).substr(2, 5)}.webp`;
-                        const key = `${STORAGE_ROOT}/${uniqueName}`;
-
-                        await uploadToR2(blob, key);
-
-                        const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
-
-                        // Update UI
-                        imgEl.src = URL.createObjectURL(blob);
-                        imgEl.classList.remove('opacity-0');
-                        imgEl.style.opacity = '1';
-                        urlInput.value = publicUrl;
-                        statusEl.textContent = "Saved";
-                        statusEl.className = "text-xs font-bold text-green-500";
-                        btn.textContent = 'Replace Photo';
-
-                    } catch (err) {
-                        console.error("Bulk upload error for file", file.name, err);
-                        statusEl.textContent = "Failed";
-                        statusEl.className = "text-xs font-bold text-red-500";
-                    } finally {
-                        delete slotDiv.dataset.processing; // Clear processing tag
-                    }
+                    // Add to promise list
+                    uploadPromises.push(processSingleUpload(file, slotDiv));
                 }
             }
 
+            // 2. Helper for Unified Upload Logic (Parallel-Ready)
+            async function processSingleUpload(file, slotDiv) {
+                const slotId = slotDiv.dataset.id;
+                const statusEl = document.getElementById(`status-${slotId}`);
+                const imgEl = document.getElementById(`img-${slotId}`);
+                const urlInput = slotDiv.querySelector('.photo-url-input');
+                const btn = slotDiv.querySelector('.upload-btn');
+
+                // Progress Elements
+                const progressOverlay = slotDiv.querySelector('.progress-overlay');
+                const progressBar = slotDiv.querySelector('.progress-bar');
+                const progressText = slotDiv.querySelector('.progress-text');
+
+                // Cleanup
+                const existingUrl = urlInput ? urlInput.value : "";
+                if (existingUrl) {
+                    try {
+                        const r2Key = extractR2Key(existingUrl);
+                        if (r2Key) await deleteFromR2(r2Key);
+                    } catch (err) { console.warn("Cleanup error", err); }
+                }
+
+                statusEl.textContent = "Processing...";
+                statusEl.className = "text-xs font-bold text-blue-500 animate-pulse";
+                if (progressOverlay) {
+                    progressOverlay.classList.remove('hidden');
+                    progressOverlay.classList.add('flex');
+                }
+
+                try {
+                    const blob = await compressImage(file);
+                    statusEl.textContent = "Uploading...";
+
+                    const uniqueName = `gallery_${Date.now()}_${Math.random().toString(36).substr(2, 5)}.webp`;
+                    const key = `${STORAGE_ROOT}/${uniqueName}`;
+
+                    // UPLOAD with Progress Callback
+                    await uploadToR2(blob, key, 'image/webp', (percent) => {
+                        if (progressBar) progressBar.style.width = `${percent}%`;
+                        if (progressText) progressText.textContent = `${percent}%`;
+                    });
+
+                    const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
+
+                    // Success UI
+                    statusEl.textContent = "Saved";
+                    statusEl.className = "text-xs font-bold text-green-500";
+                    imgEl.src = URL.createObjectURL(blob);
+                    imgEl.classList.remove('opacity-0');
+                    imgEl.style.opacity = '1';
+                    if (urlInput) urlInput.value = publicUrl;
+                    if (btn) btn.textContent = 'Replace Photo';
+
+                } catch (err) {
+                    console.error("Upload error", file.name, err);
+                    statusEl.textContent = "Failed";
+                    statusEl.className = "text-xs font-bold text-red-500";
+                } finally {
+                    delete slotDiv.dataset.processing; // Release lock
+                    setTimeout(() => {
+                        if (progressOverlay) {
+                            progressOverlay.classList.add('hidden');
+                            progressOverlay.classList.remove('flex');
+                        }
+                        if (progressBar) progressBar.style.width = '0%';
+                    }, 500);
+                }
+            }
+
+            // 3. EXECUTE ALL PARALLEL
+            await Promise.all(uploadPromises);
+
             e.target.value = ''; // Reset input
-            debouncedAutoSave();
+            triggerSave(); // SAVE ONCE at the end
         });
 
         // --- BULK SELECTION CONTROLS ---
@@ -1910,33 +2041,51 @@
         const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
 
         // Select/Deselect All
+        // Select/Deselect All
         selectAllBtn.addEventListener('click', () => {
             const allSlots = document.querySelectorAll('.gallery-slot');
             const allSelected = Array.from(allSlots).every(slot => slot.dataset.selected === 'true');
+            const someSelected = Array.from(allSlots).some(slot => slot.dataset.selected === 'true');
+
+            // If ANY are selected (all or some), we want to DESELECT ALL
+            const shouldDeselect = allSelected || someSelected;
 
             allSlots.forEach(slot => {
                 const indicator = slot.querySelector('.selection-indicator');
                 const deleteBtn = slot.querySelector('.delete-slot-btn');
+                const actionsOverlay = slot.querySelector('.actions-overlay'); // Get actions overlay
 
-                if (allSelected) {
+                if (shouldDeselect) {
                     // Deselect all
                     slot.dataset.selected = 'false';
                     slot.classList.remove('ring-4', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-950/20');
-                    indicator.classList.add('hidden');
-                    indicator.classList.remove('flex');
+                    if (indicator) indicator.classList.add('hidden');
+                    if (indicator) indicator.classList.remove('flex');
                     if (deleteBtn) deleteBtn.classList.remove('hidden');
+
+                    // Show actions again (Global Mode will turn off separately via update call)
+                    if (actionsOverlay) actionsOverlay.classList.remove('!hidden');
+
                 } else {
                     // Select all
                     slot.dataset.selected = 'true';
                     slot.classList.add('ring-4', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-950/20');
-                    indicator.classList.remove('hidden');
-                    indicator.classList.add('flex');
+                    if (indicator) indicator.classList.remove('hidden');
+                    if (indicator) indicator.classList.add('flex');
                     if (deleteBtn) deleteBtn.classList.add('hidden');
+
+                    // Hide actions
+                    if (actionsOverlay) actionsOverlay.classList.add('!hidden');
                 }
             });
 
             updateBulkDeleteButton();
-            selectAllBtn.textContent = allSelected ? 'Select All' : 'Deselect All';
+            updateGlobalSelectionMode(); // Update global mode class
+
+            // Update button text accordingly
+            // If we just deselected everything, button should say "Select All"
+            // If we just selected everything, button should say "Deselect All"
+            selectAllBtn.textContent = shouldDeselect ? 'Select All' : 'Deselect All';
         });
 
         // Bulk Delete
@@ -1956,11 +2105,14 @@
                 const urlInput = slot.querySelector('.photo-url-input');
                 const currentUrl = urlInput ? urlInput.value : '';
 
-                if (currentUrl && currentUrl.includes(projectId)) { // Only delete if it belongs to this project
+                if (currentUrl && (currentUrl.includes(projectId) || currentUrl.includes(STORAGE_ROOT))) { // Relaxed check
                     try {
                         const r2Key = extractR2Key(currentUrl);
                         if (r2Key) {
+                            console.log("Bulk deleting:", r2Key);
                             await deleteFromR2(r2Key);
+
+                            // Clear inputs logic handled by loop continue, but we should clear src implies success
                         }
                     } catch (e) {
                         console.error('Bulk deletion error:', e);

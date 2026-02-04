@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - QR Memory Frame</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
     <!-- Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap"
@@ -1012,26 +1014,32 @@
             if (card) card.style.opacity = '0.5';
 
             try {
-                // 1. Delete from R2 (Recursive)
+                // 1. Delete from R2 (Recursive) & RECLAIM STORAGE
                 const workerUrl = document.getElementById('worker-url').value;
                 const secret = document.getElementById('worker-secret').value;
+                const prefixToDelete = storagePrefix || id; // Handle old vs new paths
 
-                let res;
-                if (storagePrefix) {
-                    console.log(`Cleaning up R2 storage: ${storagePrefix}...`);
-                    res = await fetch(`${workerUrl}/delete-prefix?prefix=${encodeURIComponent(storagePrefix)}`, {
-                        method: 'DELETE',
-                        headers: { 'X-Auth-Secret': secret }
-                    });
+                console.log(`Cleaning up R2 storage: ${prefixToDelete}...`);
+
+                const res = await fetch(`${workerUrl}/delete-prefix?prefix=${encodeURIComponent(prefixToDelete)}`, {
+                    method: 'DELETE',
+                    headers: { 'X-Auth-Secret': secret }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.totalSize && data.totalSize > 0) {
+                        console.log(`[Storage] Reclaiming ${data.totalSize} bytes from deleted project`);
+                        // Need updateDoc logic here since updateUserStorage isn't global
+                        const { increment, doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                        const user = auth.currentUser;
+                        if (user) {
+                            await updateDoc(doc(db, "users", user.uid), {
+                                storageUsed: increment(-data.totalSize) // Negative increment
+                            });
+                        }
+                    }
                 } else {
-                    // Fallback for old projects using just ID as prefix
-                    res = await fetch(`${workerUrl}/delete-prefix?prefix=${encodeURIComponent(id)}`, {
-                        method: 'DELETE',
-                        headers: { 'X-Auth-Secret': secret }
-                    });
-                }
-
-                if (!res.ok) {
                     const errText = await res.text();
                     throw new Error(`R2 Cleanup Failed (${res.status}): ${errText}`);
                 }
@@ -1047,9 +1055,12 @@
                     setTimeout(() => card.remove(), 300);
                 }
 
+                // Refresh quota display immediately
+                if (auth.currentUser) updateStorageDisplay(auth.currentUser.uid);
+
             } catch (err) {
                 console.error("Deletion failed:", err);
-                alert("Failed to delete project correctly. Some storage might remained.");
+                alert("Failed to delete project correctly. Some storage might remain.");
                 if (card) card.style.opacity = '1';
             }
         }

@@ -190,7 +190,8 @@ export function initGallery(client) {
 
     } catch (err) {
       console.error("Batch download failed", err);
-      alert("Could not download photos. Please try individual downloads.");
+      // Show specific error to help user debug
+      alert(`Download failed: ${err.message}. \n\nCheck if your R2 CORS policy allows this domain.`);
     } finally {
       if (btn) {
         btn.innerHTML = originalText;
