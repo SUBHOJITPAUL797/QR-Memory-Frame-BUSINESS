@@ -119,20 +119,21 @@
                 <p class="text-xs text-slate-400 mt-1">Customize your memory.</p>
             </div>
             <nav class="flex-1 overflow-y-auto py-6 space-y-1">
-                <a href="#section-main"
-                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm">1.
+                <a href="#section-main" id="link-section-main"
+                    class="sidebar-link flex items-center px-8 py-3 text-blue-600 font-bold text-sm transition-colors">1.
                     Main Details</a>
-                <a href="#section-photos"
-                    class="sidebar-link flex items-center px-8 py-3 text-blue-600 font-bold text-sm">2. Gallery
+                <a href="#section-photos" id="link-section-photos"
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">2.
+                    Gallery
                     Manager</a>
-                <a href="#section-message"
-                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm">3.
+                <a href="#section-message" id="link-section-message"
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">3.
                     Message</a>
-                <a href="#section-audio"
-                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm">4.
+                <a href="#section-audio" id="link-section-audio"
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">4.
                     Music</a>
-                <a href="#section-visuals"
-                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm">5.
+                <a href="#section-visuals" id="link-section-visuals"
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">5.
                     Visuals</a>
             </nav>
         </aside>
@@ -218,7 +219,7 @@
                 <input type="hidden" id="worker-secret" value="qr-admin-secret-2024">
                 <input type="hidden" id="r2-domain" value="https://pub-09b0269178c944e19a7f4bad3d3add30.r2.dev">
 
-                <section id="section-main">
+                <section id="section-main" class="scroll-mt-24">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-2xl font-bold">1. Main Details</h3>
                         <div
@@ -286,7 +287,7 @@
                 </section>
 
                 <!-- Section 2: Photos -->
-                <section id="section-photos" class="border-t border-slate-200 dark:border-zinc-800 pt-8">
+                <section id="section-photos" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
                     <h3 class="text-2xl font-bold mb-6">2. Gallery Manager</h3>
 
                     <!-- Hero Image -->
@@ -417,7 +418,7 @@
                     <input type="hidden" name="photoCount" id="photoCountInput">
                 </section>
 
-                <section id="section-message" class="border-t border-slate-200 dark:border-zinc-800 pt-8">
+                <section id="section-message" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
                     <h3 class="text-2xl font-bold mb-6">3. Message</h3>
                     <div class="space-y-4">
                         <div>
@@ -462,7 +463,7 @@
                 </section>
 
                 <!-- Section 4: Music -->
-                <section id="section-audio" class="border-t border-slate-200 dark:border-zinc-800 pt-8">
+                <section id="section-audio" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
                     <h3 class="text-2xl font-bold mb-6">4. Background Music</h3>
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">YouTube
@@ -474,7 +475,7 @@
                 </section>
 
                 <!-- Section 5: Visuals -->
-                <section id="section-visuals" class="border-t border-slate-200 dark:border-zinc-800 pt-8">
+                <section id="section-visuals" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
                     <h3 class="text-2xl font-bold mb-6">5. Visuals</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                         <div>
@@ -2101,26 +2102,37 @@
             bulkDeleteBtn.textContent = 'Deleting...';
 
             // Delete from R2 and DOM
+            // Delete from R2 and DOM in PARALLEL
+            const deletePromises = [];
+
             for (const slot of selectedSlots) {
                 const urlInput = slot.querySelector('.photo-url-input');
                 const currentUrl = urlInput ? urlInput.value : '';
 
-                if (currentUrl && (currentUrl.includes(projectId) || currentUrl.includes(STORAGE_ROOT))) { // Relaxed check
+                if (currentUrl && (currentUrl.includes(projectId) || currentUrl.includes(STORAGE_ROOT))) {
                     try {
                         const r2Key = extractR2Key(currentUrl);
                         if (r2Key) {
-                            console.log("Bulk deleting:", r2Key);
-                            await deleteFromR2(r2Key);
-
-                            // Clear inputs logic handled by loop continue, but we should clear src implies success
+                            // Add to promise list
+                            deletePromises.push(deleteFromR2(r2Key).catch(e => console.error("Single delete failed", e)));
                         }
                     } catch (e) {
-                        console.error('Bulk deletion error:', e);
+                        console.error('Bulk deletion setup error:', e);
                     }
                 }
 
+                // Remove from DOM immediately (Optimistic UI)
                 slot.remove();
             }
+
+            // Wait for all network processing
+            await Promise.all(deletePromises);
+
+            updateGlobalSelectionMode(); // Update global state
+
+            // Reset Select All Button Logic
+            const selectAllBtn = document.getElementById('select-all-btn');
+            if (selectAllBtn) selectAllBtn.textContent = 'Select All';
 
             updateSlotNumbers();
             updateBulkDeleteButton();
@@ -2385,6 +2397,44 @@
         setTimeout(() => {
             if (sectionOrderInput) renderSectionChips(sectionOrderInput.value);
         }, 1000);
+
+        // --- SCROLL SPY & SIDEBAR ACTIVE STATE ---
+        const sections = document.querySelectorAll('section[id^="section-"]');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const headerTitle = document.getElementById('current-section-title');
+
+        const observerOptions = {
+            root: document.querySelector('main'), // Scroll container
+            rootMargin: '-10% 0px -80% 0px', // Trigger when section is near top
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    const activeLink = document.querySelector(`.sidebar-link[href="#${id}"]`);
+
+                    if (activeLink) {
+                        // Reset all
+                        sidebarLinks.forEach(link => {
+                            link.classList.remove('text-blue-600', 'font-bold');
+                            link.classList.add('text-slate-500', 'font-medium');
+                        });
+
+                        // Set active
+                        activeLink.classList.remove('text-slate-500', 'font-medium');
+                        activeLink.classList.add('text-blue-600', 'font-bold');
+
+                        // Update Header Title (Mobile/Desktop)
+                        const sectionName = activeLink.innerText.split('. ')[1] || activeLink.innerText;
+                        if (headerTitle) headerTitle.textContent = sectionName;
+                    }
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
 
         // --- SHARING LOGIC ---
         const openNewTabBtn = document.getElementById('open-new-tab-btn');
