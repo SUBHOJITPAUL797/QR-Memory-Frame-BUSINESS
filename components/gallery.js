@@ -31,6 +31,8 @@ export function renderGallery(client) {
   // Render based on mode
   if (galleryMode === 'auto') {
     return renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass) + `<style>${styleCSS}</style>`;
+  } else if (galleryMode === 'book') {
+    return renderBookFlipHTML(galleryItems, client, frameStyle, btnFontClass) + `<style>${styleCSS}</style>`;
   } else {
     return renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass) + `<style>${styleCSS}</style>`;
   }
@@ -93,8 +95,25 @@ export function initGallery(client) {
     }
 
     try {
-      const response = await fetch(url, { mode: 'cors' });
-      if (!response.ok) throw new Error('Network response was not ok');
+      let fetchUrl = url;
+      if (client.workerUrl) {
+        try {
+          const urlObj = new URL(url);
+          const key = urlObj.pathname.substring(1); // Remove leading slash
+          if (key) fetchUrl = `${client.workerUrl}/proxy?key=${encodeURIComponent(key)}`;
+        } catch (e) { console.warn("Proxy URL construction failed", e); }
+      }
+
+      // DEBUG: Visual Trace
+      console.log(`[Download] Fetching: ${fetchUrl}`);
+
+      const response = await fetch(fetchUrl, { mode: 'cors' });
+
+      if (!response.ok) {
+        console.error(`[Download] HTTP Error: ${response.status} ${response.statusText}`);
+        throw new Error(`HTTP ${response.status}`);
+      }
+
       const webpBlob = await response.blob();
 
       // Convert to JPEG
@@ -111,8 +130,14 @@ export function initGallery(client) {
       window.URL.revokeObjectURL(blobUrl);
 
     } catch (error) {
-      console.error('Download failed (CORS likely):', error);
-      alert("\u26A0\uFE0F Could not convert image due to security settings. Opening original instead.");
+      console.error('[Download] Failed:', error);
+
+      const isProxyError = error.message.includes('404') || error.message.includes('500');
+      let msg = "⚠️ Could not convert image due to security settings.";
+
+      if (isProxyError) msg = "⚠️ Download Service Error (File Not Found or Server Error).";
+
+      alert(`${msg} Opening original instead.`);
       // Fallback
       window.open(url, '_blank');
     } finally {
@@ -156,8 +181,17 @@ export function initGallery(client) {
         const filename = `memory-${i + 1}.jpg`; // Direct to JPG
 
         try {
-          // Fetch blob
-          const response = await fetch(url, { mode: 'cors' });
+          // Fetch blob (Use Proxy if available)
+          let fetchUrl = url;
+          if (client.workerUrl) {
+            try {
+              const urlObj = new URL(url);
+              const key = urlObj.pathname.substring(1);
+              if (key) fetchUrl = `${client.workerUrl}/proxy?key=${encodeURIComponent(key)}`;
+            } catch (e) { console.warn("Proxy URL construction failed", e); }
+          }
+
+          const response = await fetch(fetchUrl, { mode: 'cors' });
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const webpBlob = await response.blob();
 
@@ -205,6 +239,133 @@ export function initGallery(client) {
     if (slides.length > 0) {
       startAutoSlideshow(slides, gallerySpeed);
     }
+  } else if (galleryMode === 'book') {
+    initBookFlip(client.gallery.length);
+  }
+}
+
+// --- BOOK FLIP RENDERER (NEW) ---
+function renderBookFlipHTML(galleryItems, client, frameStyle, btnFontClass) {
+  // We need pages. Each page has Front and Back.
+  // 10 photos = 6-7 pages (Cover + internal spreads + Back cover)
+  // For simplicity: One photo per page side.
+
+  const pages = [];
+  // Cover
+  pages.push({
+    front: `<div class="w-full h-full bg-warm-900 flex flex-col items-center justify-center p-8 border-r-2 border-warm-800">
+              <h3 class="font-serif text-3xl text-gold-500 text-center border-2 border-gold-500 p-4">Our Story</h3>
+              <p class="text-white/50 text-xs mt-4 uppercase tracking-widest">Tap to Open</p>
+            </div>`,
+    back: `<div class="w-full h-full bg-warm-50 p-4 flex items-center justify-center"><img src="${galleryItems[0]}" class="max-w-full max-h-full shadow-md border-4 border-white object-cover"></div>`
+  });
+
+  // Internal Spreads
+  for (let i = 1; i < galleryItems.length; i += 2) {
+    const leftPhoto = galleryItems[i];
+    const rightPhoto = galleryItems[i + 1]; // Could be undefined if odd number
+
+    // Front of this page (Right side of spread when previous is turned)
+    const frontContent = leftPhoto ?
+      `<div class="w-full h-full bg-warm-50 p-4 flex items-center justify-center"><img src="${leftPhoto}" class="max-w-full max-h-full shadow-md border-4 border-white object-cover"></div>`
+      : `<div class="w-full h-full bg-warm-50 flex items-center justify-center text-warm-300">End</div>`;
+
+    // Back of this page (Left side of next spread)
+    const backContent = rightPhoto ?
+      `<div class="w-full h-full bg-warm-50 p-4 flex items-center justify-center"><img src="${rightPhoto}" class="max-w-full max-h-full shadow-md border-4 border-white object-cover"></div>`
+      : `<div class="w-full h-full bg-warm-900 flex items-center justify-center"><p class="text-gold-500 font-serif text-xl">The End</p></div>`;
+
+    pages.push({ front: frontContent, back: backContent });
+  }
+
+  const pagesHtml = pages.map((page, index) => {
+    // z-index: higher index means on top initially
+    const zIndex = pages.length - index;
+    return `
+      <div class="book-page absolute top-0 left-0 w-full h-full transition-transform duration-1000 transform-style-3d cursor-pointer origin-left" 
+           style="z-index: ${zIndex};" 
+           onclick="flipPage(this, ${index})">
+        
+        <!-- Front Face -->
+        <div class="page-front absolute inset-0 w-full h-full backface-hidden bg-white shadow-lg overflow-hidden flex items-center justify-center">
+            ${page.front}
+        </div>
+
+        <!-- Back Face -->
+        <div class="page-back absolute inset-0 w-full h-full backface-hidden bg-white shadow-lg overflow-hidden flex items-center justify-center" style="transform: rotateY(180deg);">
+            ${page.back}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <section id="gallery-section" class="min-h-screen flex flex-col items-center justify-center bg-zinc-100 perspective-1500 overflow-hidden">
+        <div class="text-center mb-8 relative z-20 px-4">
+            <h2 class="font-serif text-3xl text-warm-900 mb-2">Our Storybook</h2>
+            <p class="text-xs uppercase tracking-widest text-gold-500 animate-pulse">Tap right/left to turn pages</p>
+        </div>
+
+        <!-- Book Container -->
+        <div class="relative w-[300px] h-[450px] md:w-[400px] md:h-[600px] shadow-2xl transform-style-3d">
+            <!-- Pages -->
+            ${pagesHtml}
+        </div>
+        
+        <style>
+            .perspective-1500 { perspective: 1500px; }
+            .transform-style-3d { transform-style: preserve-3d; }
+            .backface-hidden { backface-visibility: hidden; }
+            .book-page.flipped { transform: rotateY(-180deg); }
+        </style>
+    </section>
+  `;
+}
+
+function initBookFlip(totalItems) {
+  window.flipPage = (element, index) => {
+    if (element.classList.contains('flipped')) {
+      element.classList.remove('flipped'); // Flip back to Right
+      // User is flipping BACK.
+      // We need to restore original z-index (High to Low).
+      // Delay z-index change until halfway to avoid clipping? 
+      // Actually, standard CSS stacking contexts are robust enough if we swap immediately.
+      element.style.zIndex = totalItems - index;
+    } else {
+      element.classList.add('flipped'); // Flip forward to Left
+      // User is flipping FORWARD.
+      // New page needs to be ON TOP of the left stack.
+      // So z-index should be proportional to index (Page 0 < Page 1).
+      // Add 'totalItems' to ensure it sits above any right-side pages (optional, but safer).
+      element.style.zIndex = totalItems + index;
+    }
+  };
+
+  // Add Swipe Support for Book
+  const container = document.querySelector('#gallery-section');
+  if (container) {
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    container.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX, { passive: true });
+    container.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleBookSwipe();
+    }, { passive: true });
+
+    const handleBookSwipe = () => {
+      const SWIPE_THRESHOLD = 50;
+      if (touchEndX < touchStartX - SWIPE_THRESHOLD) {
+        // Swipe Left -> Next Page (Turn top-most non-flipped page)
+        const pages = document.querySelectorAll('.book-page:not(.flipped)');
+        if (pages.length > 0) pages[0].classList.add('flipped');
+      }
+      if (touchEndX > touchStartX + SWIPE_THRESHOLD) {
+        // Swipe Right -> Prev Page (Un-turn top-most flipped page)
+        const pages = Array.from(document.querySelectorAll('.book-page.flipped'));
+        if (pages.length > 0) pages[pages.length - 1].classList.remove('flipped');
+      }
+    };
   }
 }
 
@@ -293,12 +454,6 @@ function renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass)
                         loading="eager"
                     />
                     
-                    <!-- Single Download Button -->
-                    <button onclick="event.stopPropagation(); window.downloadImage('${imgUrl}')" 
-                        class="absolute bottom-4 right-4 z-20 p-2 md:p-3 bg-black/40 hover:bg-black/60 text-white backdrop-blur-md rounded-full shadow-lg transition-all opacity-0 group-hover/image:opacity-100 translate-y-2 group-hover/image:translate-y-0" title="Download Photo">
-                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    </button>
-
                     ${caption ? `<p class="mt-4 font-script text-xl md:text-2xl text-center text-zinc-700">${caption}</p>` : ''}
                 </div>
             </div>
@@ -311,13 +466,6 @@ function renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass)
             <div class="text-center mb-8 relative z-20 px-4">
                 <h2 class="font-serif text-3xl md:text-4xl text-warm-900 mb-2 tracking-wide">Our Memories</h2>
                  <p id="gallery-status" class="text-xs uppercase tracking-widest text-gold-500 mb-6">Auto-playing</p>
-                 
-                 <!-- Download All Button -->
-                 <button id="download-all-btn" onclick="window.downloadAllGallery()" 
-                    class="${btnFontClass} text-warm-900 bg-white/40 hover:bg-white/60 border border-warm-900/10 px-6 py-2 rounded-full transition-all flex items-center gap-2 mx-auto shadow-sm backdrop-blur-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Download All Photos
-                 </button>
             </div>
 
             <div class="relative w-full h-[65vh] group">
@@ -372,12 +520,6 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass) {
                 loading="eager"
             />
             
-            <!-- Single Download Button -->
-            <button onclick="event.stopPropagation(); window.downloadImage('${imgUrl}')" 
-                class="absolute bottom-4 right-4 z-20 p-2 md:p-3 bg-black/40 hover:bg-black/60 text-white backdrop-blur-md rounded-full shadow-lg transition-all opacity-0 group-hover/card:opacity-100 scale-90 hover:scale-100" title="Download Photo">
-                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            </button>
-
             ${caption ? `<p class="font-script text-2xl text-center text-zinc-600 mt-2">${caption}</p>` : ''}
         </div>
       </div>
@@ -389,13 +531,6 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass) {
         <div class="text-center mb-8 relative z-20 px-4">
             <h2 class="font-serif text-3xl md:text-4xl text-warm-900 mb-2 tracking-wide">Our Memories</h2>
             <p class="text-xs uppercase tracking-widest text-gold-500 animate-pulse mb-6">Tap to Reveal</p>
-
-             <!-- Download All Button -->
-             <button id="download-all-btn" onclick="window.downloadAllGallery()" 
-                class="${btnFontClass} text-warm-900 bg-white/40 hover:bg-white/60 border border-warm-900/10 px-6 py-2 rounded-full transition-all flex items-center gap-2 mx-auto shadow-sm backdrop-blur-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                Download All Photos
-             </button>
         </div>
 
         <div class="relative w-full max-w-lg h-[60vh] md:h-[70vh] perspective-1000">
@@ -500,4 +635,38 @@ function startAutoSlideshow(slides, speed) {
       showSlide(currentSlide);
     });
   });
+
+  // --- SWIPE GESTURES ---
+  const container = document.getElementById('slideshow-container');
+  if (container) {
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    container.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    container.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+
+    const handleSwipe = () => {
+      const SWIPE_THRESHOLD = 50; // Minimum distance
+
+      if (touchEndX < touchStartX - SWIPE_THRESHOLD) {
+        // Swipe Left -> Next Slide
+        stopAutoPlay();
+        currentSlide = (currentSlide + 1) % totalSlides;
+        showSlide(currentSlide);
+      }
+
+      if (touchEndX > touchStartX + SWIPE_THRESHOLD) {
+        // Swipe Right -> Prev Slide
+        stopAutoPlay();
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        showSlide(currentSlide);
+      }
+    };
+  }
 }

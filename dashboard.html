@@ -75,6 +75,15 @@
                     </button>
                 </div>
                 <nav class="flex-1 flex flex-col space-y-4">
+                    <a href="index.html"
+                        class="w-full text-left px-4 py-3 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-3 group">
+                        <svg class="w-5 h-5 group-hover:text-gold-500 transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        Main Site
+                    </a>
                     <button id="nav-memories"
                         class="w-full text-left px-4 py-3 bg-slate-100 dark:bg-zinc-900 rounded-lg text-slate-900 dark:text-white font-medium transition-colors">My
                         Memories</button>
@@ -277,7 +286,7 @@
                     <label class="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">2. Choose a
                         Template</label>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Card 1 -->
+                        <!-- Card 1: Wedding -->
                         <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
                             data-template="wedding-template.json">
                             <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
@@ -291,7 +300,8 @@
                                 class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
                             </div>
                         </div>
-                        <!-- Card 2 -->
+
+                        <!-- Card 2: Birthday -->
                         <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
                             data-template="birthday-template.json">
                             <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
@@ -305,7 +315,8 @@
                                 class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
                             </div>
                         </div>
-                        <!-- Card 3 -->
+
+                        <!-- Card 3: Rice Ceremony -->
                         <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
                             data-template="bhujono-template.json">
                             <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
@@ -319,7 +330,8 @@
                                 class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
                             </div>
                         </div>
-                        <!-- Card 4 -->
+
+                        <!-- Card 4: Anniversary -->
                         <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
                             data-template="anniversary-template.json">
                             <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
@@ -333,7 +345,8 @@
                                 class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
                             </div>
                         </div>
-                        <!-- Card 5 -->
+
+                        <!-- Card 5: Achievement -->
                         <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
                             data-template="achievement-template.json">
                             <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
@@ -347,15 +360,121 @@
                                 class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
                             </div>
                         </div>
-                        <!-- Card 6 -->
+
+                        <!-- Card 6: Proposal -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="proposal-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">💍</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Proposal</h3>
+                                <p class="text-xs text-slate-500">Magical</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+
+                        <!-- Card 7: Love Letter -->
                         <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
                             data-template="loveletter-template.json">
                             <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
                                 <span class="text-4xl">💌</span>
                             </div>
                             <div class="p-4 bg-slate-50 dark:bg-zinc-850">
-                                <h3 class="font-bold">Proposal</h3>
-                                <p class="text-xs text-slate-500">Magical</p>
+                                <h3 class="font-bold">Love Letter</h3>
+                                <p class="text-xs text-slate-500">Handwritten Style</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+
+                        <!-- Card 8: Birthday Wish -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="birthday-wish-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">🎈</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Birthday Wish</h3>
+                                <p class="text-xs text-slate-500">Warm Wishes</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+
+                        <!-- Card 9: Marriage -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="marriage-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">👰</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Marriage</h3>
+                                <p class="text-xs text-slate-500">Timeless Union</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+
+                        <!-- Card 10: Festival -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="festival-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">🏮</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Festival</h3>
+                                <p class="text-xs text-slate-500">Celebration</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+
+                        <!-- Card 11: Party -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="party-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">🎉</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Party</h3>
+                                <p class="text-xs text-slate-500">Nightlife</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+
+                        <!-- Card 12: Portfolio -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="portfolio-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">💼</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Portfolio</h3>
+                                <p class="text-xs text-slate-500">Minimal</p>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+
+                        <!-- Card 13: Custom -->
+                        <div class="template-card cursor-pointer group relative rounded-xl overflow-hidden border-2 border-transparent hover:border-gold-500 transition-all"
+                            data-template="custom-template.json">
+                            <div class="aspect-video bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <span class="text-4xl">✨</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-850">
+                                <h3 class="font-bold">Custom</h3>
+                                <p class="text-xs text-slate-500">Your Idea</p>
                             </div>
                             <div
                                 class="absolute inset-0 bg-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -635,7 +754,50 @@
 
             } else {
                 console.log("Not logged in, redirecting...");
+                // Save intent if trying to create from template
+                const urlParams = new URLSearchParams(window.location.search);
+                const pendingTemplate = urlParams.get('create_from_template');
+                if (pendingTemplate) {
+                    sessionStorage.setItem('pending_template_creation', pendingTemplate);
+                }
                 window.location.href = 'index.html';
+            }
+
+            // --- URL TRIGGER: CREATE FROM TEMPLATE ---
+            const urlParams = new URLSearchParams(window.location.search);
+            let templateId = urlParams.get('create_from_template');
+
+            // Check session storage if not in URL (Restored flow)
+            if (!templateId) {
+                const pending = sessionStorage.getItem('pending_template_creation');
+                if (pending) {
+                    templateId = pending;
+                    sessionStorage.removeItem('pending_template_creation');
+                }
+            }
+
+            if (templateId) {
+                // Wait a split second to ensure modal logic is ready
+                setTimeout(() => {
+                    openModal();
+
+                    // Find and Select Template Card
+                    const card = document.querySelector(`.template-card[data-template="${templateId}"]`);
+                    if (card) {
+                        // Visual Selection
+                        templateCards.forEach(c => c.classList.remove('ring-4', 'ring-gold-500', 'border-gold-500'));
+                        card.classList.add('ring-4', 'ring-gold-500', 'border-gold-500');
+
+                        // State Update
+                        selectedTemplate = templateId;
+                        validateCreate();
+
+                        console.log("Auto-selected template:", templateId);
+
+                        // Focus Name Input
+                        if (projectTitleInput) projectTitleInput.focus();
+                    }
+                }, 500);
             }
         });
 

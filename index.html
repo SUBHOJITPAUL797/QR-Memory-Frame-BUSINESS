@@ -92,50 +92,77 @@
             </div>
 
             <!-- Right Column: Auth Form -->
-            <div
-                class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/20 dark:border-zinc-800 p-8 rounded-3xl shadow-2xl relative">
-                <!-- Auth Tabs -->
-                <div class="flex border-b border-zinc-200 dark:border-zinc-800 mb-6">
-                    <button id="tab-login"
-                        class="flex-1 pb-3 text-sm font-bold text-zinc-900 dark:text-white border-b-2 border-gold-500 transition-colors">Login</button>
-                    <button id="tab-signup"
-                        class="flex-1 pb-3 text-sm font-bold text-zinc-400 hover:text-zinc-600 border-b-2 border-transparent transition-colors">Sign
-                        Up</button>
-                </div>
+            <div id="hero-auth-container"
+                class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/20 dark:border-zinc-800 p-8 rounded-3xl shadow-2xl relative min-h-[400px] flex flex-col justify-center transition-all duration-500">
 
-                <form id="auth-form" class="space-y-4">
-                    <!-- Signup Fields (Hidden) -->
-                    <div id="signup-fields" class="space-y-4 hidden">
-                        <input type="text" id="auth-name" placeholder="Full Name"
-                            class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
-                        <input type="tel" id="auth-mobile" placeholder="Mobile Number"
-                            class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
+                <!-- STATE: LOGGED OUT (Default) -->
+                <div id="auth-logged-out" class="transition-opacity duration-300">
+                    <!-- Auth Tabs -->
+                    <div class="flex border-b border-zinc-200 dark:border-zinc-800 mb-6">
+                        <button id="tab-login"
+                            class="flex-1 pb-3 text-sm font-bold text-zinc-900 dark:text-white border-b-2 border-gold-500 transition-colors">Login</button>
+                        <button id="tab-signup"
+                            class="flex-1 pb-3 text-sm font-bold text-zinc-400 hover:text-zinc-600 border-b-2 border-transparent transition-colors">Sign
+                            Up</button>
                     </div>
 
-                    <!-- Common Fields -->
-                    <input type="email" id="auth-email" required placeholder="Email Address"
-                        class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
-                    <input type="password" id="auth-password" required placeholder="Password"
-                        class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
+                    <form id="auth-form" class="space-y-4">
+                        <!-- Signup Fields (Hidden) -->
+                        <div id="signup-fields" class="space-y-4 hidden">
+                            <input type="text" id="auth-name" placeholder="Full Name"
+                                class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
+                            <input type="tel" id="auth-mobile" placeholder="Mobile Number"
+                                class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
+                        </div>
 
-                    <button type="submit" id="auth-submit-btn"
-                        class="w-full bg-gold-500 hover:bg-gold-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-gold-500/20 transition-transform active:scale-95">
-                        Log In
-                    </button>
-                </form>
+                        <!-- Common Fields -->
+                        <input type="email" id="auth-email" required placeholder="Email Address"
+                            class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
+                        <input type="password" id="auth-password" required placeholder="Password"
+                            class="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all">
 
-                <div class="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800 text-center">
-                    <p class="text-xs text-zinc-400 mb-4">Or continue with</p>
-                    <button id="google-login-btn"
-                        class="flex items-center justify-center gap-2 w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 py-3 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
-                        <span class="text-sm font-medium">Google</span>
-                    </button>
+                        <button type="submit" id="auth-submit-btn"
+                            class="w-full bg-gold-500 hover:bg-gold-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-gold-500/20 transition-transform active:scale-95">
+                            Log In
+                        </button>
+                    </form>
+
+                    <div class="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800 text-center">
+                        <p class="text-xs text-zinc-400 mb-4">Or continue with</p>
+                        <button id="google-login-btn"
+                            class="flex items-center justify-center gap-2 w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 py-3 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                                class="w-5 h-5">
+                            <span class="text-sm font-medium">Google</span>
+                        </button>
+                    </div>
+
+                    <p id="auth-error"
+                        class="hidden mt-4 text-xs text-red-500 bg-red-50 dark:bg-red-900/10 p-3 rounded-lg text-center">
+                    </p>
                 </div>
 
-                <p id="auth-error"
-                    class="hidden mt-4 text-xs text-red-500 bg-red-50 dark:bg-red-900/10 p-3 rounded-lg text-center">
-                </p>
+                <!-- STATE: LOGGED IN (Hidden by default) -->
+                <div id="auth-logged-in"
+                    class="hidden absolute inset-0 flex flex-col items-center justify-center p-8 text-center transition-opacity duration-300">
+                    <div
+                        class="w-20 h-20 bg-gold-500/10 rounded-full flex items-center justify-center mb-6 animate-pulse">
+                        <span class="text-4xl">👋</span>
+                    </div>
+                    <h2 class="text-2xl font-serif font-bold mb-2">Welcome Back!</h2>
+                    <p id="user-welcome-email" class="text-zinc-500 dark:text-zinc-400 mb-8 text-sm truncate w-full">
+                        user@example.com</p>
+
+                    <a href="dashboard.html"
+                        class="w-full block bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-600 hover:to-amber-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-gold-500/20 transition-all transform hover:scale-105 mb-4">
+                        Go to Dashboard
+                    </a>
+
+                    <button id="inline-logout-btn"
+                        class="text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-white underline decoration-zinc-300 underline-offset-4">
+                        Log Out
+                    </button>
+                </div>
 
             </div>
         </div>
@@ -170,6 +197,12 @@
         const errorMsg = document.getElementById('auth-error');
         const googleBtn = document.getElementById('google-login-btn');
 
+        // New State Elements
+        const authLoggedOut = document.getElementById('auth-logged-out');
+        const authLoggedIn = document.getElementById('auth-logged-in');
+        const userWelcomeEmail = document.getElementById('user-welcome-email');
+        const inlineLogoutBtn = document.getElementById('inline-logout-btn');
+
         let isSignup = false;
         let isProcessingAuth = false; // Flag to prevent race conditions
 
@@ -179,24 +212,47 @@
 
             if (user) {
                 // User is logged in:
-                // 1. Change Nav Button to "Go to Dashboard"
+                console.log("User logged in:", user.email);
+
+                // 1. Change Nav Button
                 if (navLoginBtn) {
                     navLoginBtn.textContent = "Go to Dashboard";
-                    navLoginBtn.href = "dashboard.html"; // Ensure it points to dashboard
+                    navLoginBtn.href = "dashboard.html";
                 }
 
-                // 2. If user clicks "Login" tab/button while already logged in, we can optionally redirect them
-                // But generally, we just let them browse. 
-                // We DO NOT force redirect here anymore.
+                // 2. Hide ENTIRE Auth Section (User Request)
+                const heroContainer = document.getElementById('hero-auth-container');
+                if (heroContainer) heroContainer.classList.add('hidden');
 
-                console.log("User logged in:", user.email);
             } else {
                 // User is logged out
+                console.log("User logged out");
+
                 if (navLoginBtn) {
                     navLoginBtn.textContent = "Login / Sign Up";
                 }
+
+                // Show Auth Section
+                const heroContainer = document.getElementById('hero-auth-container');
+                if (heroContainer) heroContainer.classList.remove('hidden');
+
+                // Reset internal state to default
+                if (authLoggedOut) authLoggedOut.classList.remove('hidden');
+                if (authLoggedIn) authLoggedIn.classList.add('hidden');
             }
         });
+
+        // Inline Logout Handler
+        if (inlineLogoutBtn) {
+            inlineLogoutBtn.addEventListener('click', async () => {
+                try {
+                    await auth.signOut();
+                    // UI will update automatically via onAuthStateChanged
+                } catch (e) {
+                    console.error("Logout failed", e);
+                }
+            });
+        }
 
         // 2. Tab Switching
         function toggleMode(signup) {
@@ -237,6 +293,28 @@
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorMsg.classList.add('hidden');
+
+            // --- VALIDATION START ---
+            if (isSignup) {
+                const nameRaw = authName.value.trim();
+                const mobileRaw = authMobile.value.trim();
+
+                if (!nameRaw) {
+                    errorMsg.textContent = "Please enter your full name.";
+                    errorMsg.classList.remove('hidden');
+                    return;
+                }
+
+                // Phone Validation: 10 Digits
+                const mobileRegex = /^\d{10}$/;
+                if (!mobileRegex.test(mobileRaw)) {
+                    errorMsg.textContent = "Please enter a valid 10-digit mobile number.";
+                    errorMsg.classList.remove('hidden');
+                    return;
+                }
+            }
+            // --- VALIDATION END ---
+
             submitBtn.disabled = true;
             submitBtn.textContent = "Processing...";
             isProcessingAuth = true; // Block auto-redirect
@@ -253,7 +331,7 @@
                     // We await this BEFORE any redirect happens
                     await setDoc(doc(db, "users", user.uid), {
                         name: authName.value,
-                        mobile: authMobile.value,
+                        mobile: authMobile.value, // Now validated
                         email: email,
                         createdAt: serverTimestamp(),
                         role: 'client'
@@ -324,6 +402,26 @@
             }
         });
 
+        // 5. Global Create Handler for Templates
+        window.handleCreate = (templateId) => {
+            if (auth.currentUser) {
+                // Logged In -> Go to Dashboard with intent
+                window.location.href = `dashboard.html?create_from_template=${templateId}`;
+            } else {
+                // Not Logged In -> Scroll to Auth
+                const authContainer = document.getElementById('hero-auth-container');
+                if (authContainer) {
+                    authContainer.classList.remove('hidden'); // Ensure visible
+                    authContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Visual cue
+                    setTimeout(() => {
+                        authContainer.classList.add('ring-4', 'ring-gold-500');
+                        setTimeout(() => authContainer.classList.remove('ring-4', 'ring-gold-500'), 1000);
+                    }, 500);
+                }
+            }
+        };
+
     </script>
 
     <!-- Template Showcase -->
@@ -354,15 +452,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/wedding-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Wedding</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Elegant animations with gold accents.</p>
-                                <a href="view.html?template=wedding-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=wedding-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('wedding-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -371,15 +472,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/birthday-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Birthday</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Playful confetti and pop effects.</p>
-                                <a href="view.html?template=birthday-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=birthday-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('birthday-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -388,15 +492,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1519689689378-43091448645b?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/bhujono-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Rice Ceremony</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Traditional warmth for cultural events.</p>
-                                <a href="view.html?template=bhujono-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=bhujono-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('bhujono-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -405,15 +512,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1510076857177-7470076d4098?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/anniversary-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Anniversary</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Romantic, timeless & cinematic experience.</p>
-                                <a href="view.html?template=anniversary-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=anniversary-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('anniversary-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -422,15 +532,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/achievement-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Achievement</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Graduation, career success & milestones.</p>
-                                <a href="view.html?template=achievement-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=achievement-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('achievement-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -439,15 +552,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/proposal-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Proposal</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Intimate, magical moments to remember.</p>
-                                <a href="view.html?template=proposal-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=proposal-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('proposal-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -456,15 +572,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1516589174184-c685bcd05f2c?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/loveletter-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Love Letter</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Handwritten vibes with paper textures.</p>
-                                <a href="view.html?template=loveletter-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=loveletter-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('loveletter-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -473,15 +592,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/festival-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Festival</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Celebration & vibrant lights for every fest.</p>
-                                <a href="view.html?template=festival-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=festival-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('festival-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -490,15 +612,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/portfolio-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Portfolio</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Minimal & professional digital presence.</p>
-                                <a href="view.html?template=portfolio-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=portfolio-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('portfolio-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -507,15 +632,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1549462980-6a013a2bc0b2?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/birthday-wish-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Birthday Wish</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Warm wishes & soft colors for loved ones.</p>
-                                <a href="view.html?template=birthday-wish-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=birthday-wish-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('birthday-wish-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -524,15 +652,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/marriage-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Marriage</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Classic & timeless union for a lifetime.</p>
-                                <a href="view.html?template=marriage-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=marriage-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('marriage-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -541,16 +672,19 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/party-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Party Mode</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Nightlife & high energy for your wildest events.
                                 </p>
-                                <a href="view.html?template=party-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=party-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('party-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -559,15 +693,18 @@
                     <div class="flex-none w-[85vw] md:w-[350px] snap-center">
                         <div
                             class="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-xl bg-zinc-100 dark:bg-zinc-900">
-                            <img src="https://images.unsplash.com/photo-1513530534585-c7b1394c6d51?auto=format&fit=crop&q=80"
+                            <img src="assets/photos/custom-template.webp"
                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-left">
                                 <h3 class="text-white font-serif text-2xl font-bold mb-2">Custom</h3>
                                 <p class="text-zinc-300 text-sm mb-6">Your unique idea, our premium frame.</p>
-                                <a href="view.html?template=custom-template.json" target="_blank"
-                                    class="inline-block w-full py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview
-                                    Demo</a>
+                                <div class="flex gap-2">
+                                    <a href="view.html?template=custom-template.json" target="_blank"
+                                        class="flex-1 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white text-center rounded-lg hover:bg-white hover:text-black transition-all font-medium">Preview</a>
+                                    <button onclick="handleCreate('custom-template.json')"
+                                        class="flex-1 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors font-medium cursor-pointer shadow-lg shadow-gold-500/20">Create</button>
+                                </div>
                             </div>
                         </div>
                     </div>

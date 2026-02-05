@@ -9,7 +9,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <!-- Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500&family=Cinzel:wght@400;700&family=Pacifico&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Allura&family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=Dancing+Script:wght@400;700&family=EB+Garamond:wght@400;700&family=Great+Vibes&family=Lato:wght@300;400;700&family=Merriweather:wght@300;400;700&family=Montserrat:wght@300;400;700&family=Mr+De+Haviland&family=Oswald:wght@300;400;700&family=Pacifico&family=Parisienne&family=Pinyon+Script&family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;700&family=Roboto:wght@300;400;700&family=Sacramento&family=Tangerine:wght@400;700&display=swap"
         rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,6 +34,22 @@
                         script: ['Great Vibes', 'cursive'],
                         cinzel: ['Cinzel', 'serif'],
                         pacifico: ['Pacifico', 'cursive'],
+                        // New Fonts
+                        'dancing-script': ['Dancing Script', 'cursive'],
+                        'sacramento': ['Sacramento', 'cursive'],
+                        'parisienne': ['Parisienne', 'cursive'],
+                        'allura': ['Allura', 'cursive'],
+                        'pinyon-script': ['Pinyon Script', 'cursive'],
+                        'mr-de-haviland': ['Mr De Haviland', 'cursive'],
+                        'alex-brush': ['Alex Brush', 'cursive'],
+                        'tangerine': ['Tangerine', 'cursive'],
+                        'cormorant': ['Cormorant Garamond', 'serif'],
+                        'merriweather': ['Merriweather', 'serif'],
+                        'eb-garamond': ['EB Garamond', 'serif'],
+                        'oswald': ['Oswald', 'sans-serif'],
+                        'raleway': ['Raleway', 'sans-serif'],
+                        'lato': ['Lato', 'sans-serif'],
+                        'roboto': ['Roboto', 'sans-serif'],
                     }
                 }
             }
@@ -180,6 +196,44 @@
         </button>
     </div>
 
+    <!-- STARTUP MODAL (Gallery Mode Selection) -->
+    <div id="startup-modal"
+        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-xl opacity-0 pointer-events-none transition-opacity duration-500">
+        <div
+            class="bg-white/10 border border-white/10 p-8 rounded-2xl max-w-md w-full mx-4 text-center shadow-2xl transform scale-95 transition-transform duration-300">
+            <h2 class="font-serif text-3xl text-gold-500 mb-2">How would you like to view?</h2>
+            <p class="text-gray-400 text-sm mb-8 leading-relaxed">Choose your preferred experience.</p>
+
+            <div class="grid gap-4">
+                <button onclick="selectMode('auto')"
+                    class="group relative overflow-hidden rounded-xl bg-gradient-to-r from-zinc-800 to-zinc-900 p-4 border border-white/5 hover:border-gold-500/50 transition-all text-left">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-gold-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            ✨</div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Auto Slideshow</h3>
+                            <p class="text-xs text-gray-400 mt-1">Sit back and watch memories unfold.</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button onclick="selectMode('manual')"
+                    class="group relative overflow-hidden rounded-xl bg-gradient-to-r from-zinc-800 to-zinc-900 p-4 border border-white/5 hover:border-gold-500/50 transition-all text-left">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            👆</div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Manual Control</h3>
+                            <p class="text-xs text-gray-400 mt-1">Swipe and browse at your own pace.</p>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN APP CONTAINER -->
     <div id="app" class="opacity-0 transition-opacity duration-1000">
         <!-- Components injected here -->
@@ -281,7 +335,46 @@
 
             function enableStartButton() {
                 loadingTitle.querySelector('span').textContent = 'Ready to Begin!';
-                // Update subtitle text to confirm download complete
+
+                // --- START BUTTON CUSTOMIZATION ---
+                const startBtnText = config.visuals?.startBtnText || "Start Experience";
+                const startBtnStyle = config.visuals?.startBtnStyle || "gold";
+
+                startBtn.textContent = startBtnText;
+
+                // Reset classes
+                startBtn.className = "px-8 py-4 rounded-full text-lg tracking-widest uppercase transition-all transform hover:scale-105 opacity-0 pointer-events-none";
+
+                // STYLE MAP
+                const styles = {
+                    // PREMIUM
+                    'gold': ['bg-gradient-to-r', 'from-yellow-200', 'via-yellow-400', 'to-yellow-500', 'text-warm-900', 'shadow-[0_0_40px_rgba(253,224,71,0.3)]', 'font-serif'],
+                    'rose-gold': ['bg-gradient-to-r', 'from-rose-200', 'via-rose-300', 'to-rose-400', 'text-rose-950', 'shadow-lg', 'font-serif'],
+                    'royal': ['bg-gradient-to-r', 'from-blue-900', 'to-slate-900', 'text-gold-300', 'border', 'border-gold-500', 'font-cinzel'],
+                    'silver': ['bg-gradient-to-r', 'from-slate-100', 'to-slate-300', 'text-slate-800', 'shadow-lg', 'font-serif'],
+
+                    // MODERN
+                    'white': ['bg-white', 'text-black', 'shadow-lg', 'hover:bg-gray-100', 'font-sans'],
+                    'black': ['bg-black', 'text-white', 'border', 'border-white/20', 'font-sans'],
+                    'outline': ['border-2', 'border-white', 'text-white', 'hover:bg-white/10', 'font-sans'],
+                    'glass': ['bg-white/10', 'backdrop-blur-md', 'border', 'border-white/30', 'text-white', 'font-sans'],
+
+                    // VIBRANT
+                    'ocean': ['bg-gradient-to-r', 'from-cyan-400', 'to-blue-500', 'text-white', 'shadow-lg', 'font-raleway'],
+                    'sunset': ['bg-gradient-to-r', 'from-orange-400', 'to-rose-500', 'text-white', 'shadow-lg', 'font-pacifico'],
+                    'nature': ['bg-gradient-to-r', 'from-emerald-400', 'to-green-600', 'text-white', 'shadow-lg', 'font-lato'],
+                    'love': ['bg-gradient-to-r', 'from-red-500', 'to-pink-600', 'text-white', 'shadow-lg', 'font-dancing-script'],
+                    'cyberpunk': ['bg-black', 'text-green-400', 'border', 'border-green-400', 'shadow-[0_0_20px_#4ade80]', 'font-oswald'],
+
+                    // RETRO
+                    'retro': ['bg-yellow-400', 'text-blue-900', 'border-b-4', 'border-blue-900', 'font-oswald'],
+                    'vintage': ['bg-[#f0e6d2]', 'text-[#4a3b2a]', 'border', 'border-[#8c7b64]', 'font-cormorant'],
+                    'glitch': ['bg-white', 'text-black', 'hover:bg-red-500', 'hover:text-white', 'transition-none', 'font-oswald'],
+                };
+
+                const activeStyle = styles[startBtnStyle] || styles['gold'];
+                startBtn.classList.add(...activeStyle);
+
                 const subtitle = loadingTitle.nextElementSibling;
                 if (subtitle) subtitle.textContent = 'Experience Loaded';
 
@@ -318,6 +411,7 @@
                 this.messageDuration = (config.visuals?.messageDuration || 8) * 1000;
                 this.galleryMode = config.visuals?.galleryMode || 'auto';
                 this.gallerySpeed = (config.visuals?.gallerySpeed || 4) * 1000;
+                this.galleryPostDelay = (config.visuals?.galleryPostDelay || 0) * 1000; // Default 0 extra seconds
                 this.autoScroll = config.visuals?.autoScroll !== false;
 
                 this.sectionMusicPlayer = null;
@@ -348,7 +442,17 @@
 
                     // Section durations
                     if (currentSection === 'hero') await this.delay(this.heroDuration);
-                    else if (currentSection === 'gallery') await this.delay(this.galleryMode === 'auto' ? (this.config.gallery.length * this.gallerySpeed) : 10000);
+                    else if (currentSection === 'gallery') {
+                        if (this.galleryMode === 'auto') {
+                            const slideshowDuration = this.config.gallery.length * this.gallerySpeed;
+                            await this.delay(slideshowDuration + this.galleryPostDelay);
+                        } else {
+                            // If Manual or Book Flip, wait longer (e.g. 15s) or forever? 
+                            // Default to a safe long wait or let user scroll manually.
+                            // Currently fixed at 10s for manual fallback in auto-scroll mode
+                            await this.delay(10000);
+                        }
+                    }
                     else if (currentSection === 'message') await this.delay(this.messageDuration);
 
                     // --- TRANSITION TO NEXT SECTION ---
@@ -469,6 +573,16 @@
                         }
 
                         config = data.config;
+
+                        // DEBUG: Check Worker URL
+                        console.log("Client Config Loaded:", config);
+
+                        // FALLBACK: If missing, use known Worker URL to fix downloads immediately
+                        if (!config.workerUrl) {
+                            console.warn("Recovering missing workerUrl...");
+                            config.workerUrl = "https://qr-memory-uploader.subhojit.workers.dev";
+                        }
+
                         document.title = data.title + " - Memory Frame";
                     } else {
                         const err = new Error("This memory no longer exists or has been deleted.");
@@ -529,9 +643,57 @@
                 document.documentElement.style.setProperty('--hero-color', client.visuals.heroTextColor);
             }
             if (client.visuals?.fontTheme) {
-                if (client.visuals.fontTheme === 'modern') document.body.style.fontFamily = "'Montserrat', sans-serif";
-                if (client.visuals.fontTheme === 'romantic') document.body.style.fontFamily = "'Great Vibes', cursive";
+                // GLOBAL FONT THEME MAP
+                const themeMap = {
+                    'modern': "'Montserrat', sans-serif",
+                    'romantic': "'Great Vibes', cursive",
+                    'classic': "'Playfair Display', serif",
+                    'minimal': "'Lato', sans-serif",
+                    'vintage': "'Cormorant Garamond', serif",
+                    'cinematic': "'Cinzel', serif",
+                    'handwritten': "'Dancing Script', cursive",
+                    'bold': "'Oswald', sans-serif",
+                    'elegant': "'Parisienne', cursive",
+                    'luxury': "'Pinyon Script', cursive",
+                    'playful': "'Pacifico', cursive",
+                    'tech': "'Roboto', sans-serif"
+                };
+                document.body.style.fontFamily = themeMap[client.visuals.fontTheme] || "'Playfair Display', serif";
             }
+            // Message Font Map - EXPANDED
+            const fontClassMap = {
+                // Script
+                'script': 'font-script',
+                'great-vibes': 'font-script',
+                'dancing-script': 'font-dancing-script',
+                'pacifico': 'font-pacifico',
+                'sacramento': 'font-sacramento',
+                'parisienne': 'font-parisienne',
+                'allura': 'font-allura',
+                'pinyon-script': 'font-pinyon-script',
+                'mr-de-haviland': 'font-mr-de-haviland',
+                'alex-brush': 'font-alex-brush',
+                'tangerine': 'font-tangerine',
+
+                // Serif
+                'serif': 'font-serif',
+                'playfair': 'font-serif',
+                'cinzel': 'font-cinzel',
+                'cormorant': 'font-cormorant',
+                'merriweather': 'font-merriweather',
+                'eb-garamond': 'font-eb-garamond',
+
+                // Sans
+                'sans': 'font-sans',
+                'montserrat': 'font-sans',
+                'oswald': 'font-oswald',
+                'raleway': 'font-raleway',
+                'lato': 'font-lato',
+                'roboto': 'font-roboto'
+            };
+            const messageFontClass = fontClassMap[client.visuals?.messageFont] || 'font-serif';
+            const messageTitleFontClass = fontClassMap[client.visuals?.messageTitleFont] || 'font-script'; // Default to Script for title
+            // Inject this class into the message container logic below
             if (client.visuals?.heroFont) {
                 // We'll apply this to a specific hero container in hero.js
                 document.documentElement.style.setProperty('--hero-font', client.visuals.heroFont);
@@ -555,8 +717,8 @@
                     html += `
                         <section id="message-section" class="py-24 px-6 bg-white text-center relative z-10 scroll-mt-20 opacity-0 reveal-on-scroll">
                             <div class="max-w-2xl mx-auto px-4">
-                                <h3 class="font-script text-4xl mb-8 text-gold-600 break-words">${client.messageTitle || 'A Message'}</h3>
-                                <p class="font-serif text-xl leading-relaxed italic text-zinc-600 mb-12 whitespace-pre-wrap break-words">
+                                <h3 class="${messageTitleFontClass} text-4xl mb-8 text-gold-600 break-words">${client.messageTitle || 'A Message'}</h3>
+                                <p class="${messageFontClass} text-xl leading-relaxed italic text-zinc-600 mb-12 whitespace-pre-wrap break-words">
                                     "${body}"
                                 </p>
                                  <p class="font-sans text-xs uppercase tracking-widest text-zinc-400">
@@ -601,6 +763,42 @@
 
             html += `
                 <footer class="bg-black text-white/40 text-center py-12 text-xs tracking-widest uppercase">
+                    
+                    <!-- Download All Button (Footer) -->
+                    <div class="mb-8">
+                         <button id="download-all-btn" onclick="window.downloadAllGallery()" 
+                            class="font-sans text-white/80 bg-white/10 hover:bg-white/20 border border-white/20 px-6 py-3 rounded-full transition-all flex items-center gap-2 mx-auto shadow-sm backdrop-blur-sm hover:scale-105">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Download All Photos
+                         </button>
+                    </div>
+
+                    <!-- Individual Downloads List -->
+                    <div class="mb-12 max-w-2xl mx-auto px-6">
+                        <details class="group">
+                            <summary class="list-none cursor-pointer flex items-center justify-center gap-2 text-white/30 hover:text-white/60 transition-colors font-sans">
+                                <span>Download Individual Photos</span>
+                                <svg class="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </summary>
+                            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-2 text-left bg-white/5 rounded-xl p-4 border border-white/10 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 font-sans">
+                                ${client.gallery && client.gallery.length ? client.gallery.map((url, i) => `
+                                    <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg border border-transparent hover:border-white/5 group/item transition-all">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded overflow-hidden bg-white/10 border border-white/10 relative">
+                                                <img src="${url}" class="w-full h-full object-cover" loading="lazy">
+                                            </div>
+                                            <span class="text-white/40 text-[10px] font-bold tracking-widest uppercase font-sans">Photo ${i + 1}</span>
+                                        </div>
+                                        <button onclick="window.downloadImage('${url}', 'memory-${i + 1}')" 
+                                            class="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-gold-500 hover:bg-gold-500 hover:text-black transition-all">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                        </button>
+                                    </div>
+                                `).join('') : '<p class="text-white/20 italic p-4 text-center w-full font-sans">No photos available</p>'}
+                            </div>
+                        </details>
+                    </div>
+
                     <p>${client.footerQuote || 'Forever & Always'}</p>
                     <div class="mt-4 opacity-30 scale-75">
                          Generated by QR Memory Frame
@@ -692,22 +890,61 @@
             // 4. Preload Media & Setup Start Button
             preloadMedia(client).then(() => {
                 document.getElementById('start-btn').addEventListener('click', () => {
+                    // Show Modal Selection
+                    const modal = document.getElementById('startup-modal');
+                    modal.classList.remove('opacity-0', 'pointer-events-none');
+                    modal.querySelector('div').classList.remove('scale-95');
+                    modal.querySelector('div').classList.add('scale-100');
+                });
+
+                // Mode Selection Logic
+                window.selectMode = (mode) => {
+                    // Update Client Config with Override
+                    client.visuals = client.visuals || {};
+                    client.visuals.galleryMode = mode; // Override
+
                     // Play Audio (mobile-safe)
                     if (hasAudio || isYT) {
                         playAudio();
                         audioBtn.classList.remove('hidden');
                     }
 
-                    // Fade out loading screen
+                    // Fade out loading screen & modal
                     const loadingScreen = document.getElementById('loading-screen');
+                    const modal = document.getElementById('startup-modal');
+
+                    modal.classList.add('opacity-0');
                     if (loadingScreen) {
                         loadingScreen.classList.add('fade-out');
-                        setTimeout(() => loadingScreen.remove(), 800);
+                        setTimeout(() => {
+                            loadingScreen.remove();
+                            modal.remove();
+                        }, 800);
                     }
 
                     // Reveal App & Force Top Position
                     appDiv.classList.remove('opacity-0');
                     window.scrollTo(0, 0);
+
+                    // Re-Init Gallery with New Mode
+                    // We need to re-render because gallery HTML depends on mode
+                    if (client.visuals.galleryMode !== 'book') {
+                        // If it WAS book but user chose auto/manual, or vice versa
+                        // But actually renderApp generated HTML based on initial JSON.
+                        // We must RE-RENDER the key parts or just rely on CSS?
+                        // Actually renderGallery was ALREADY called in renderApp().
+                        // WE NEED TO CLEAR AND RE-RENDER APP OR JUST GALLERY.
+
+                        // Let's just re-call renderApp? No, that would re-fetch.
+                        // We can just re-inject the gallery section HTML.
+                        const newGalleryHTML = renderGallery(client); // Imported from gallery.js
+                        const gallerySection = document.getElementById('gallery-section');
+                        if (gallerySection) {
+                            gallerySection.outerHTML = newGalleryHTML;
+                            // Re-init logic
+                            initGallery(client);
+                        }
+                    }
 
                     // Init Scroll Animations
                     initAnimations();
@@ -715,7 +952,7 @@
                     // Start Story Flow Controller
                     const storyFlow = new StoryFlowController(client, isYT ? ytPlayer : audio);
                     storyFlow.start();
-                });
+                };
             });
         }
 

@@ -36,7 +36,28 @@ export default {
             });
         }
 
-        // Security: Validate Auth Secret
+        // --- PROXY (GET) - PUBLIC ACCESS ---
+        if (url.pathname === '/proxy' && request.method === 'GET') {
+            if (!key) return new Response("Missing key", { status: 400, headers: corsHeaders });
+
+            try {
+                const object = await env.BUCKET.get(key);
+                if (!object) return new Response("File Not Found", { status: 404, headers: corsHeaders });
+
+                const headers = new Headers(object.httpMetadata);
+                headers.set('etag', object.httpEtag);
+                // CRITICAL: Force CORS for download
+                Object.entries(corsHeaders).forEach(([k, v]) => headers.set(k, v));
+
+                return new Response(object.body, {
+                    headers: headers
+                });
+            } catch (e) {
+                return new Response(e.message, { status: 500, headers: corsHeaders });
+            }
+        }
+
+        // Security: Validate Auth Secret (For Upload/Delete)
         const authHeader = request.headers.get('X-Auth-Secret');
         const expectedSecret = env.AUTH_SECRET || 'qr-admin-secret-2024';
 
@@ -114,6 +135,31 @@ export default {
                 });
             } catch (e) {
                 return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders });
+            }
+        }
+
+        // --- PROXY (GET) ---
+        // Serves images with CORS headers to enable "Save Image" / Download
+        if (url.pathname === '/proxy' && request.method === 'GET') {
+            const fileKey = url.searchParams.get('key');
+            if (!fileKey) return new Response('Missing key', { status: 400, headers: corsHeaders });
+
+            try {
+                const object = await env.BUCKET.get(fileKey);
+                if (!object) return new Response('Not found', { status: 404, headers: corsHeaders });
+
+                const headers = new Headers(object.writeHttpMetadata(request.headers));
+                headers.set('etag', object.httpEtag);
+
+                // FORCE CORS
+                headers.set('Access-Control-Allow-Origin', '*');
+                headers.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+
+                return new Response(object.body, {
+                    headers
+                });
+            } catch (e) {
+                return new Response('Error fetching object', { status: 500, headers: corsHeaders });
             }
         }
 

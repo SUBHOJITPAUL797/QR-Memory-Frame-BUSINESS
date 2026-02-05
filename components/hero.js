@@ -1,14 +1,38 @@
 export function renderHero(client) {
   // Map font theme to Tailwind classes
   const fontClassMap = {
+    // Script
     'script': 'font-script',
+    'great-vibes': 'font-script',
+    'dancing-script': 'font-dancing-script',
+    'pacifico': 'font-pacifico',
+    'sacramento': 'font-sacramento',
+    'parisienne': 'font-parisienne',
+    'allura': 'font-allura',
+    'pinyon-script': 'font-pinyon-script',
+    'mr-de-haviland': 'font-mr-de-haviland',
+    'alex-brush': 'font-alex-brush',
+    'tangerine': 'font-tangerine',
+
+    // Serif
     'serif': 'font-serif',
-    'sans': 'font-sans',
+    'playfair': 'font-serif',
     'cinzel': 'font-cinzel',
-    'pacifico': 'font-pacifico'
+    'cormorant': 'font-cormorant',
+    'merriweather': 'font-merriweather',
+    'eb-garamond': 'font-eb-garamond',
+
+    // Sans
+    'sans': 'font-sans',
+    'montserrat': 'font-sans',
+    'oswald': 'font-oswald',
+    'raleway': 'font-raleway',
+    'lato': 'font-lato',
+    'roboto': 'font-roboto'
   };
 
   const titleFontClass = fontClassMap[client.visuals?.heroFont] || 'font-script';
+  const subtitleFontClass = fontClassMap[client.visuals?.heroSubtitleFont] || 'font-serif';
   const heroQuote = client.footerQuote || 'Every love story is beautiful, but ours is my favorite.';
 
   return `
@@ -35,7 +59,7 @@ export function renderHero(client) {
             <div class="relative z-10 flex flex-col items-center transform translate-y-[-10px]">
                 
                 <!-- Event Type: Technical, Modern, Wide Spacing -->
-                <h2 class="font-serif text-xs md:text-sm tracking-[0.6em] uppercase text-gold-300 mb-8 opacity-0 animate-[fade-in_1.5s_ease-out_0.5s_forwards] border-b border-gold-500/30 pb-4 px-8">
+                <h2 class="${subtitleFontClass} text-xs md:text-sm tracking-[0.6em] uppercase text-gold-300 mb-8 opacity-0 animate-[fade-in_1.5s_ease-out_0.5s_forwards] border-b border-gold-500/30 pb-4 px-8">
                     ${client.eventType}
                 </h2>
                 

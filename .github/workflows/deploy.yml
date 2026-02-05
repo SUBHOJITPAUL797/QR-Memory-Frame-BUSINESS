@@ -22,10 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.7 # actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4.0.3 # actions/setup-node@60edb5dd545a775178f5252474230dffbbe2b353
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           
@@ -36,13 +36,13 @@ jobs:
         run: npm run lint
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5.0.0 # actions/configure-pages@1ba0d56c5476082531633512a210356611488390
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3.0.1 # actions/upload-pages-artifact@a2c7ce3604f3ae5d5e2361ac9b806d2745e69e02
+        uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4.0.5 # actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e
+        uses: actions/deploy-pages@v4

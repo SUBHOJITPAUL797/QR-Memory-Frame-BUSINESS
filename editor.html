@@ -250,14 +250,7 @@
                             </select>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Hero Quote /
-                            Footer Quote</label>
-                        <input type="text" name="footerQuote"
-                            placeholder="Every love story is beautiful, but ours is my favorite."
-                            class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
-                    </div>
-                    <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Subtitle
                                 / Date</label>
@@ -265,25 +258,67 @@
                                 class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Event /
-                                Template</label>
-                            <select id="template-switcher" name="eventType"
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Subtitle
+                                Font</label>
+                            <select name="visuals.heroSubtitleFont"
                                 class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
-                                <option value="wedding">Wedding</option>
-                                <option value="birthday">Birthday</option>
-                                <option value="anniversary">Anniversary</option>
-                                <option value="bhujono">Rice Ceremony (Bhujono)</option>
-                                <option value="festival">Festival</option>
-                                <option value="proposal">Proposal</option>
-                                <option value="marriage">Marriage Proposal</option>
-                                <option value="achievement">Achievement</option>
-                                <option value="party">Party</option>
-                                <option value="loveletter">Love Letter</option>
-                                <option value="portfolio">Portfolio</option>
-                                <option value="custom">Custom Memory</option>
+                                <optgroup label="Romantic & Script">
+                                    <option value="great-vibes">Great Vibes (Classic Romantic)</option>
+                                    <option value="dancing-script">Dancing Script (Playful)</option>
+                                    <option value="pacifico">Pacifico (Casual)</option>
+                                    <option value="sacramento">Sacramento (Delicate)</option>
+                                    <option value="parisienne">Parisienne (Elegant)</option>
+                                    <option value="allura">Allura (Flowing)</option>
+                                    <option value="pinyon-script">Pinyon Script (Royal)</option>
+                                    <option value="mr-de-haviland">Mr De Haviland (Handwritten)</option>
+                                    <option value="alex-brush">Alex Brush (Artistic)</option>
+                                    <option value="tangerine">Tangerine (Tall & Elegant)</option>
+                                </optgroup>
+                                <optgroup label="Serif & Classic">
+                                    <option value="playfair">Playfair Display (Luxury)</option>
+                                    <option value="cinzel">Cinzel (Cinematic)</option>
+                                    <option value="cormorant">Cormorant Garamond (Graceful)</option>
+                                    <option value="merriweather">Merriweather (Readability)</option>
+                                    <option value="eb-garamond">EB Garamond (Old School)</option>
+                                </optgroup>
+                                <optgroup label="Modern & Sans">
+                                    <option value="montserrat">Montserrat (Clean)</option>
+                                    <option value="oswald">Oswald (Bold)</option>
+                                    <option value="raleway">Raleway (Elegant Sans)</option>
+                                    <option value="lato">Lato (Neutral)</option>
+                                    <option value="roboto">Roboto (Standard)</option>
+                                </optgroup>
                             </select>
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Hero Quote /
+                            Footer Quote</label>
+                        <input type="text" name="footerQuote"
+                            placeholder="Every love story is beautiful, but ours is my favorite."
+                            class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Event /
+                            Template</label>
+                        <select id="template-switcher" name="eventType"
+                            class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                            <option value="wedding">Wedding</option>
+                            <option value="birthday">Birthday</option>
+                            <option value="anniversary">Anniversary</option>
+                            <option value="bhujono">Rice Ceremony (Bhujono)</option>
+                            <option value="festival">Festival</option>
+                            <option value="proposal">Proposal</option>
+                            <option value="marriage">Marriage Proposal</option>
+                            <option value="achievement">Achievement</option>
+                            <option value="party">Party</option>
+                            <option value="loveletter">Love Letter</option>
+                            <option value="portfolio">Portfolio</option>
+                            <option value="custom">Custom Memory</option>
+                        </select>
+                    </div>
+
                 </section>
 
                 <!-- Section 2: Photos -->
@@ -344,7 +379,8 @@
                                 <p class="text-xs text-slate-500">
                                     Upload a video message or montage.
                                     <br>Limits: <span class="font-bold">1 min</span> (Standard) / <span
-                                        class="font-bold">3 min</span>
+                                        class="font-bold">3
+                                        min</span>
                                     (Premium)
                                 </p>
                                 <div class="flex items-center gap-3 flex-wrap">
@@ -432,7 +468,8 @@
                                 Body</label>
                             <textarea name="messageBody" id="message-body-input" rows="5" maxlength="500"
                                 placeholder="Write your heartfelt message here..."
-                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field"></textarea>
+                                oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field transition-all overflow-hidden resize-none"></textarea>
                             <div class="text-[10px] text-slate-400 mt-1 text-right">
                                 <span id="char-count">0</span>/500 characters
                             </div>
@@ -459,6 +496,82 @@
                             <input type="text" name="messageSignOff" placeholder="With Love, Us"
                                 class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
                         </div>
+
+                        <!-- Message Fonts -->
+                        <div
+                            class="col-span-full mt-4 border-t border-slate-100 dark:border-zinc-800 pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Message
+                                    Title
+                                    Font</label>
+                                <select name="visuals.messageTitleFont"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                    <optgroup label="Romantic & Script">
+                                        <option value="great-vibes">Great Vibes (Classic Romantic)</option>
+                                        <option value="dancing-script">Dancing Script (Playful)</option>
+                                        <option value="pacifico">Pacifico (Casual)</option>
+                                        <option value="sacramento">Sacramento (Delicate)</option>
+                                        <option value="parisienne">Parisienne (Elegant)</option>
+                                        <option value="allura">Allura (Flowing)</option>
+                                        <option value="pinyon-script">Pinyon Script (Royal)</option>
+                                        <option value="mr-de-haviland">Mr De Haviland (Handwritten)</option>
+                                        <option value="alex-brush">Alex Brush (Artistic)</option>
+                                        <option value="tangerine">Tangerine (Tall & Elegant)</option>
+                                    </optgroup>
+                                    <optgroup label="Serif & Classic">
+                                        <option value="playfair">Playfair Display (Luxury)</option>
+                                        <option value="cinzel">Cinzel (Cinematic)</option>
+                                        <option value="cormorant">Cormorant Garamond (Graceful)</option>
+                                        <option value="merriweather">Merriweather (Readability)</option>
+                                        <option value="eb-garamond">EB Garamond (Old School)</option>
+                                    </optgroup>
+                                    <optgroup label="Modern & Sans">
+                                        <option value="montserrat">Montserrat (Clean)</option>
+                                        <option value="oswald">Oswald (Bold)</option>
+                                        <option value="raleway">Raleway (Elegant Sans)</option>
+                                        <option value="lato">Lato (Neutral)</option>
+                                        <option value="roboto">Roboto (Standard)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Message
+                                    Body
+                                    Font</label>
+                                <select name="visuals.messageFont"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                    <optgroup label="Romantic & Script">
+                                        <option value="great-vibes">Great Vibes (Classic Romantic)</option>
+                                        <option value="dancing-script">Dancing Script (Playful)</option>
+                                        <option value="pacifico">Pacifico (Casual)</option>
+                                        <option value="sacramento">Sacramento (Delicate)</option>
+                                        <option value="parisienne">Parisienne (Elegant)</option>
+                                        <option value="allura">Allura (Flowing)</option>
+                                        <option value="pinyon-script">Pinyon Script (Royal)</option>
+                                        <option value="mr-de-haviland">Mr De Haviland (Handwritten)</option>
+                                        <option value="alex-brush">Alex Brush (Artistic)</option>
+                                        <option value="tangerine">Tangerine (Tall & Elegant)</option>
+                                    </optgroup>
+                                    <optgroup label="Serif & Classic">
+                                        <option value="playfair">Playfair Display (Luxury)</option>
+                                        <option value="cinzel">Cinzel (Cinematic)</option>
+                                        <option value="cormorant">Cormorant Garamond (Graceful)</option>
+                                        <option value="merriweather">Merriweather (Readability)</option>
+                                        <option value="eb-garamond">EB Garamond (Old School)</option>
+                                    </optgroup>
+                                    <optgroup label="Modern & Sans">
+                                        <option value="montserrat">Montserrat (Clean)</option>
+                                        <option value="oswald">Oswald (Bold)</option>
+                                        <option value="raleway">Raleway (Elegant Sans)</option>
+                                        <option value="lato">Lato (Neutral)</option>
+                                        <option value="roboto">Roboto (Standard)</option>
+                                    </optgroup>
+                                </select>
+
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -483,6 +596,27 @@
                                 Color</label>
                             <input type="color" name="visuals.themeColor"
                                 class="h-10 w-full rounded cursor-pointer autosave-field">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Typography</label>
+                            <select name="visuals.fontTheme"
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                <option value="modern">Modern (Montserrat)</option>
+                                <option value="romantic">Romantic (Great Vibes)</option>
+                                <option value="classic">Timeless (Serif)</option>
+                                <option value="minimal">Minimalist (Lato)</option>
+                                <option value="vintage">Vintage (Cormorant)</option>
+                                <option value="cinematic">Cinematic (Cinzel)</option>
+                                <option value="handwritten">Handwritten (Dancing Script)</option>
+                                <option value="bold">Bold Impact (Oswald)</option>
+                                <option value="elegant">Elegant (Parisienne)</option>
+                                <option value="luxury">Luxury (Pinyon Script)</option>
+                                <option value="playful">Playful (Pacifico)</option>
+                                <option value="tech">Tech / Clean (Roboto)</option>
+                            </select>
+
+
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Frame
@@ -544,6 +678,7 @@
                                     class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
                                     <option value="auto">Auto-play Slideshow</option>
                                     <option value="manual">Manual (Tap to Next)</option>
+                                    <option value="book">Book Flip (Interactive)</option>
                                 </select>
                                 <p class="text-xs text-slate-500 mt-1">Let photos advance automatically or require tap
                                 </p>
@@ -557,6 +692,17 @@
                                 <input type="number" name="visuals.gallerySpeed" value="4" min="2" max="10" step="0.5"
                                     class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
                                 <p class="text-xs text-slate-500 mt-1">Only applies when Auto-play is selected</p>
+                            </div>
+
+                            <!-- Gallery Post-Show Delay -->
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">
+                                    Post-Slideshow Delay (seconds)
+                                </label>
+                                <input type="number" name="visuals.galleryPostDelay" value="3" min="0" max="30" step="1"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                <p class="text-xs text-slate-500 mt-1">Wait time after last photo before moving to next
+                                    section</p>
                             </div>
 
                             <!-- Auto-Scroll -->
@@ -579,20 +725,65 @@
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- Experience Sequence (New) -->
-                    <div class="mt-8 border-t border-slate-100 dark:border-zinc-800 pt-8" id="section-sorting-area">
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Experience
-                            Sequence (Drag to Reorder)</label>
-                        <div id="section-order-container" class="flex flex-col gap-2 mb-4 min-h-[50px]">
-                            <!-- Populated via script -->
+                <!-- Section 6: Start Screen -->
+                <section id="section-start" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
+                    <h3 class="text-2xl font-bold mb-6">6. Start Screen</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Button
+                                Text</label>
+                            <input type="text" name="visuals.startBtnText" placeholder="Start Experience"
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
                         </div>
-                        <input type="hidden" name="visuals.sectionOrder" id="section-order-input"
-                            value="hero,gallery,message,video" class="autosave-field">
-                        <p class="text-[10px] text-indigo-500 font-bold italic">Drag and drop the tabs above to set the
-                            order visitors will see your content.</p>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Button
+                                Style</label>
+                            <select name="visuals.startBtnStyle"
+                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                <optgroup label="Premium">
+                                    <option value="gold">Luxury Gold</option>
+                                    <option value="rose-gold">Rose Gold</option>
+                                    <option value="royal">Royal Blue & Gold</option>
+                                    <option value="silver">Sterling Silver</option>
+                                </optgroup>
+                                <optgroup label="Modern">
+                                    <option value="white">Minimal White</option>
+                                    <option value="black">Deep Black</option>
+                                    <option value="outline">Clean Outline</option>
+                                    <option value="glass">Glassmorphism</option>
+                                </optgroup>
+                                <optgroup label="Vibrant">
+                                    <option value="ocean">Ocean Breeze</option>
+                                    <option value="sunset">Sunset Gradient</option>
+                                    <option value="nature">Nature Green</option>
+                                    <option value="love">Passion Red</option>
+                                    <option value="cyberpunk">Cyberpunk Neon</option>
+                                </optgroup>
+                                <optgroup label="Retro">
+                                    <option value="retro">Retro 80s</option>
+                                    <option value="vintage">Vintage Paper</option>
+                                    <option value="glitch">Glitch Effect</option>
+                                </optgroup>
+                            </select>
+                        </div>
                     </div>
                 </section>
+
+                <!-- Experience Sequence (New) -->
+                <div class="mt-8 border-t border-slate-100 dark:border-zinc-800 pt-8" id="section-sorting-area">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Experience
+                        Sequence (Drag to Reorder)</label>
+                    <div id="section-order-container" class="flex flex-col gap-2 mb-4 min-h-[50px]">
+                        <!-- Populated via script -->
+                    </div>
+                    <input type="hidden" name="visuals.sectionOrder" id="section-order-input"
+                        value="hero,gallery,message,video" class="autosave-field">
+                    <p class="text-[10px] text-indigo-500 font-bold italic">Drag and drop the tabs above to set the
+                        order visitors will see your content.</p>
+                </div>
+
 
                 <div class="h-20"></div>
             </form>
@@ -668,16 +859,63 @@
             border-radius: 32px;
         }
 
-        /* Desktop Simulation */
+        /* Desktop Simulation (Monitor Look) */
         .device-desktop {
-            width: 100%;
-            height: 100%;
-            border-radius: 0;
-            border: none;
+            /* Base styles, will be overridden by JS for responsive scaling */
+            background-color: #000;
+            border-top: 10px solid #1a1a1a;
+            border-left: 10px solid #1a1a1a;
+            border-right: 10px solid #1a1a1a;
+            border-bottom: 24px solid #1a1a1a;
+            /* Chin */
+            border-radius: 8px;
+            box-shadow:
+                0 0 0 1px #333,
+                /* Outline */
+                0 20px 50px rgba(0, 0, 0, 0.5);
+            /* Drop Shadow */
+            position: relative;
+        }
+
+        /* Monitor Stand */
+        .device-desktop::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            /* Below chin */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 40px;
+            background: linear-gradient(to bottom, #1a1a1a, #0d0d0d);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
+            z-index: -1;
+            margin-top: 0px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Stand Base */
+        .device-desktop::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 8px;
+            margin-top: 38px;
+            /* Height of stand neck - 2px overlap */
+            background: #1a1a1a;
+            border-radius: 4px;
+            z-index: -1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
 
         .device-desktop iframe {
-            border-radius: 0;
+            border-radius: 2px;
+            background: white;
         }
 
 
@@ -777,10 +1015,12 @@
             updates['config.gallery'] = galleryArray;
             updates['config.captions'] = captionMap;
             updates['config.photoCount'] = galleryArray.length;
+            updates['config.workerUrl'] = WORKER_URL; // Required for Proxy Downloads
 
             try {
                 const { updateDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
                 await updateDoc(doc(db, "projects", projectId), updates);
+                console.log("Save Success. Config:", updates['config']);
                 updateSaveIndicator('saved');
             } catch (error) {
                 console.error("Autosave failed:", error);
@@ -2177,6 +2417,7 @@
             previewConfig.gallery = galleryArray;
             previewConfig.captions = captionMap;
             previewConfig.photoCount = galleryArray.length;
+            previewConfig.workerUrl = WORKER_URL; // Pass to preview
 
             return previewConfig;
         }
@@ -2208,6 +2449,9 @@
             // Load Iframe with cache buster
             previewIframe.src = `view.html?preview=true&t=${Date.now()}`;
             isPreviewOpen = true;
+
+            // Trigger Scale Check
+            setTimeout(updatePreviewScale, 100);
         });
 
         document.getElementById('close-preview').addEventListener('click', () => {
@@ -2219,17 +2463,88 @@
             isPreviewOpen = false;
         });
 
+        // --- PREVIEW SCALING LOGIC (Fixing "Fake Desktop" on Mobile) ---
+        function updatePreviewScale() {
+            if (!isPreviewOpen) return;
+
+            const isDesktop = frameWrapper.classList.contains('device-desktop');
+            const container = frameWrapper.parentElement; // The flex container
+
+            // Reset styles first
+            frameWrapper.style.transform = '';
+            frameWrapper.style.transformOrigin = '';
+            // Reset layout constraints
+            frameWrapper.style.minWidth = '';
+            frameWrapper.style.flexShrink = '';
+
+            if (isDesktop) {
+                // Desktop Simulation Target config (Monitor Aspect)
+                const TARGET_WIDTH = 1280;
+                const TARGET_HEIGHT = 720; // 16:9 Aspect Ratio (Requested)
+
+                // Available space in the modal (minus padding)
+                // We need more vertical space for the stand (approx 50px)
+                const availableWidth = container.clientWidth - 40; // Safe horizontal padding
+                const availableHeight = container.clientHeight - 80; // Safe vertical padding + Stand space
+
+                // Force Fixed Size for Simulation
+                // CRITICAL: Prevent Flexbox from squashing the width on small screens
+                frameWrapper.style.width = `${TARGET_WIDTH}px`;
+                frameWrapper.style.height = `${TARGET_HEIGHT}px`;
+                frameWrapper.style.minWidth = `${TARGET_WIDTH}px`; // Force layout
+                frameWrapper.style.flexShrink = '0'; // Prevent shrinking
+
+                // Calculate Scale to fit Width AND Height
+                const scaleX = availableWidth / TARGET_WIDTH;
+                const scaleY = availableHeight / TARGET_HEIGHT;
+
+                // Use the smaller scale to ensure it fits entirely within the view
+                let scale = Math.min(1, scaleX, scaleY);
+
+                // Apply Scale
+                frameWrapper.style.transform = `scale(${scale})`;
+
+                // Center the scaled element
+                // 'center center' works best with the flex container centering the wrapper
+                frameWrapper.style.transformOrigin = 'center center';
+
+            } else {
+                // Mobile Mode
+                frameWrapper.style.width = ''; // Revert to CSS class settings
+                frameWrapper.style.height = '';
+
+                // Small scale check for very tiny screens (e.g. iPhone SE) vs 375px frame
+                const mobileWidth = 375;
+                const availableWidth = container.clientWidth - 20;
+
+                if (availableWidth < mobileWidth) {
+                    const scale = availableWidth / mobileWidth;
+                    frameWrapper.style.transform = `scale(${scale})`;
+                    frameWrapper.style.transformOrigin = 'center center';
+                }
+            }
+        }
+
+        // Window Resize Listener
+        window.addEventListener('resize', updatePreviewScale);
+
         // Device Toggles
         document.getElementById('device-mobile').addEventListener('click', (e) => {
             frameWrapper.className = "relative transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] shadow-2xl device-mobile";
             document.querySelectorAll('.active-device').forEach(el => el.classList.remove('active-device'));
             e.currentTarget.classList.add('active-device');
+
+            // Small delay to let class apply, then calc scale
+            setTimeout(updatePreviewScale, 50);
         });
 
         document.getElementById('device-desktop').addEventListener('click', (e) => {
             frameWrapper.className = "relative transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] shadow-2xl device-desktop";
             document.querySelectorAll('.active-device').forEach(el => el.classList.remove('active-device'));
             e.currentTarget.classList.add('active-device');
+
+            // Small delay to let class apply, then calc scale
+            setTimeout(updatePreviewScale, 50);
         });
 
         // Send updates to iframe when editing
