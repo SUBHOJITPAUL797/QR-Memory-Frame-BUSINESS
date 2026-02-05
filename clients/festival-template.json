@@ -1,31 +1,31 @@
-{
-    "title": "Festival of Lights",
-    "subtitle": "Joy, Prosperity & Togetherness",
-    "eventType": "Festival",
-    "dedication": "May light triumph over darkness.",
-    "footerQuote": "Let the festivities begin!",
-    "loadingTitle": "Lighting the Lamps",
-    "loadingSubtitle": "Gathering Family...",
-    "enterButtonText": "Start Celebration",
-    "messageTitle": "Wishes for You",
-    "messageBody": "May this festival bring endless joy, prosperity, and health to you and your family. Let's celebrate the traditions that bind us together.",
-    "messageSignOff": "Warm Wishes,",
-    "heroImage": "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?auto=format&fit=crop&q=80",
-    "photoCount": 8,
-    "captions": {
-        "1": "Morning Prayers",
-        "2": "Decorations & Rangoli",
-        "3": "Family Gathering",
-        "4": "Lighting Diya",
-        "5": "Festive Feast",
-        "6": "Sparklers & Fun",
-        "7": "New Outfits",
-        "8": "Sweet Moments"
-    },
-    "visuals": {
-        "themeColor": "#ea580c",
-        "fontTheme": "classic",
-        "frameStyle": "modern",
-        "bgPattern": "mandala"
-    }
+﻿{
+    "title":  "Festival of Lights",
+    "subtitle":  "Joy, Prosperity \u0026 Togetherness",
+    "eventType":  "Festival",
+    "dedication":  "May light triumph over darkness.",
+    "footerQuote":  "",
+    "loadingTitle":  "Lighting the Lamps",
+    "loadingSubtitle":  "Gathering Family...",
+    "enterButtonText":  "Start Celebration",
+    "messageTitle":  "Wishes for You",
+    "messageBody":  "May this festival bring endless joy, prosperity, and health to you and your family. Let\u0027s celebrate the traditions that bind us together.",
+    "messageSignOff":  "",
+    "heroImage":  "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?auto=format\u0026fit=crop\u0026q=80",
+    "photoCount":  8,
+    "captions":  {
+                     "1":  "Morning Prayers",
+                     "2":  "Decorations \u0026 Rangoli",
+                     "3":  "Family Gathering",
+                     "4":  "Lighting Diya",
+                     "5":  "Festive Feast",
+                     "6":  "Sparklers \u0026 Fun",
+                     "7":  "New Outfits",
+                     "8":  "Sweet Moments"
+                 },
+    "visuals":  {
+                    "themeColor":  "#ea580c",
+                    "fontTheme":  "classic",
+                    "frameStyle":  "modern",
+                    "bgPattern":  "mandala"
+                }
 }

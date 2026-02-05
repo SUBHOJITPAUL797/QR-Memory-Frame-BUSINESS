@@ -1,33 +1,33 @@
-{
-    "title": "Happy Birthday!",
-    "subtitle": "Celebrating Another Year of Joy",
-    "eventType": "Birthday",
-    "dedication": "Leveling Up!",
-    "footerQuote": "Go out and shine like the star you are.",
-    "loadingTitle": "Getting the Party Started",
-    "loadingSubtitle": "Blowing Candles...",
-    "enterButtonText": "Open Gift",
-    "messageTitle": "A Birthday Message",
-    "messageBody": "May your birthday be as incredible as you are. Today we celebrate the amazing person you've become and the even brighter future ahead of you.",
-    "messageSignOff": "Best Wishes,",
-    "heroImage": "https://images.unsplash.com/photo-1464349153735-7db50ed83c84?auto=format&fit=crop&q=80",
-    "photoCount": 10,
-    "captions": {
-        "1": "The Big Entrance",
-        "2": "Cake Time!",
-        "3": "Making a Wish",
-        "4": "With the Crew",
-        "5": "Gift Opening",
-        "6": "Silly Faces",
-        "7": "Dance Floor Kings",
-        "8": "The Best Gift",
-        "9": "Another Year Wiser",
-        "10": "Party Late Night"
-    },
-    "visuals": {
-        "themeColor": "#ec4899",
-        "fontTheme": "modern",
-        "frameStyle": "polaroid",
-        "bgPattern": "confetti"
-    }
+﻿{
+    "title":  "Happy Birthday!",
+    "subtitle":  "Celebrating Another Year of Joy",
+    "eventType":  "Birthday",
+    "dedication":  "Leveling Up!",
+    "footerQuote":  "",
+    "loadingTitle":  "Getting the Party Started",
+    "loadingSubtitle":  "Blowing Candles...",
+    "enterButtonText":  "Open Gift",
+    "messageTitle":  "A Birthday Message",
+    "messageBody":  "May your birthday be as incredible as you are. Today we celebrate the amazing person you\u0027ve become and the even brighter future ahead of you.",
+    "messageSignOff":  "",
+    "heroImage":  "https://images.unsplash.com/photo-1464349153735-7db50ed83c84?auto=format\u0026fit=crop\u0026q=80",
+    "photoCount":  10,
+    "captions":  {
+                     "1":  "The Big Entrance",
+                     "2":  "Cake Time!",
+                     "3":  "Making a Wish",
+                     "4":  "With the Crew",
+                     "5":  "Gift Opening",
+                     "6":  "Silly Faces",
+                     "7":  "Dance Floor Kings",
+                     "8":  "The Best Gift",
+                     "9":  "Another Year Wiser",
+                     "10":  "Party Late Night"
+                 },
+    "visuals":  {
+                    "themeColor":  "#ec4899",
+                    "fontTheme":  "modern",
+                    "frameStyle":  "polaroid",
+                    "bgPattern":  "confetti"
+                }
 }

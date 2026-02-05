@@ -1,33 +1,33 @@
-{
-    "title": "Let's Party!",
-    "subtitle": "A Night to Remember",
-    "eventType": "Party",
-    "dedication": "Eat, drink, and be merry.",
-    "footerQuote": "Life is a party, dress like it.",
-    "loadingTitle": "Pumping the Bass",
-    "loadingSubtitle": "Mixing Drinks...",
-    "enterButtonText": "Join the Fun",
-    "messageTitle": "Cheers to Us",
-    "messageBody": "Tonight we celebrate life, friendship, and the good times. Let's make memories that some of us might forget, but none of us will regret!",
-    "messageSignOff": "Cheers,",
-    "heroImage": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80",
-    "photoCount": 15,
-    "captions": {
-        "1": "Pre-Game",
-        "2": "The Setup",
-        "3": "Guests Arriving",
-        "4": "Drink of Choice",
-        "5": "The DJ",
-        "6": "Dance Floor Heat",
-        "7": "Group Selfie",
-        "8": "Wild Moments",
-        "9": "Late Night Snacks",
-        "10": "The Afterparty"
-    },
-    "visuals": {
-        "themeColor": "#8b5cf6",
-        "fontTheme": "modern",
-        "frameStyle": "polaroid",
-        "bgPattern": "confetti"
-    }
+﻿{
+    "title":  "Let\u0027s Party!",
+    "subtitle":  "A Night to Remember",
+    "eventType":  "Party",
+    "dedication":  "Eat, drink, and be merry.",
+    "footerQuote":  "",
+    "loadingTitle":  "Pumping the Bass",
+    "loadingSubtitle":  "Mixing Drinks...",
+    "enterButtonText":  "Join the Fun",
+    "messageTitle":  "Cheers to Us",
+    "messageBody":  "Tonight we celebrate life, friendship, and the good times. Let\u0027s make memories that some of us might forget, but none of us will regret!",
+    "messageSignOff":  "",
+    "heroImage":  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format\u0026fit=crop\u0026q=80",
+    "photoCount":  15,
+    "captions":  {
+                     "1":  "Pre-Game",
+                     "2":  "The Setup",
+                     "3":  "Guests Arriving",
+                     "4":  "Drink of Choice",
+                     "5":  "The DJ",
+                     "6":  "Dance Floor Heat",
+                     "7":  "Group Selfie",
+                     "8":  "Wild Moments",
+                     "9":  "Late Night Snacks",
+                     "10":  "The Afterparty"
+                 },
+    "visuals":  {
+                    "themeColor":  "#8b5cf6",
+                    "fontTheme":  "modern",
+                    "frameStyle":  "polaroid",
+                    "bgPattern":  "confetti"
+                }
 }

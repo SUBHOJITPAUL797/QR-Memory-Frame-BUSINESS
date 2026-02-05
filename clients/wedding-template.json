@@ -1,33 +1,33 @@
-{
-    "title": "Happily Ever After",
-    "subtitle": "The Celebration of Two Souls",
-    "eventType": "Wedding",
-    "dedication": "A love that lasts a lifetime.",
-    "footerQuote": "Together is a beautiful place to be.",
-    "loadingTitle": "Our Wedding Story",
-    "loadingSubtitle": "Forever Starts Here",
-    "enterButtonText": "Join the Celebration",
-    "messageTitle": "Our Eternal Vows",
-    "messageBody": "From this day forward, you shall not walk alone. My heart will be your shelter, and my arms will be your home. We are honored to have you share in the joy of our union.",
-    "messageSignOff": "With Love,",
-    "heroImage": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80",
-    "photoCount": 10,
-    "captions": {
-        "1": "The First Look",
-        "2": "A Moment Together",
-        "3": "Walking the Aisle",
-        "4": "The Vows",
-        "5": "The Kiss",
-        "6": "First Dance",
-        "7": "Just Married",
-        "8": "Reception Vibes",
-        "9": "The Cake Cutting",
-        "10": "Leaving in Style"
-    },
-    "visuals": {
-        "themeColor": "#C5A059",
-        "fontTheme": "romantic",
-        "frameStyle": "classic",
-        "bgPattern": "mandala"
-    }
+﻿{
+    "title":  "Happily Ever After",
+    "subtitle":  "The Celebration of Two Souls",
+    "eventType":  "Wedding",
+    "dedication":  "A love that lasts a lifetime.",
+    "footerQuote":  "",
+    "loadingTitle":  "Our Wedding Story",
+    "loadingSubtitle":  "Forever Starts Here",
+    "enterButtonText":  "Join the Celebration",
+    "messageTitle":  "Our Eternal Vows",
+    "messageBody":  "From this day forward, you shall not walk alone. My heart will be your shelter, and my arms will be your home. We are honored to have you share in the joy of our union.",
+    "messageSignOff":  "",
+    "heroImage":  "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format\u0026fit=crop\u0026q=80",
+    "photoCount":  10,
+    "captions":  {
+                     "1":  "The First Look",
+                     "2":  "A Moment Together",
+                     "3":  "Walking the Aisle",
+                     "4":  "The Vows",
+                     "5":  "The Kiss",
+                     "6":  "First Dance",
+                     "7":  "Just Married",
+                     "8":  "Reception Vibes",
+                     "9":  "The Cake Cutting",
+                     "10":  "Leaving in Style"
+                 },
+    "visuals":  {
+                    "themeColor":  "#C5A059",
+                    "fontTheme":  "romantic",
+                    "frameStyle":  "classic",
+                    "bgPattern":  "mandala"
+                }
 }

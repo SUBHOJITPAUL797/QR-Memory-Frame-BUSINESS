@@ -52,6 +52,17 @@
             scrollbar-width: none;
             /* Firefox */
         }
+
+        /* Hide number input spinners */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 
@@ -389,6 +400,16 @@
                                     Mark as "Most Popular"?
                                 </label>
                                 <span class="text-xs text-slate-400">Adds Gold Badge</span>
+                            </div>
+
+                            <!-- Badge Text -->
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Badge
+                                    Text (Optional)</label>
+                                <input type="text" name="badgeText" placeholder="e.g. FREE, TRIAL, BEST VALUE"
+                                    class="w-full bg-slate-50 dark:bg-zinc-800 border-none rounded-lg py-3 px-4 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-500 text-sm">
+                                <p class="text-[10px] text-slate-400 mt-1">Overrides "Most Popular" gold badge.</p>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1496,6 +1517,7 @@
                     form.elements['projectLimit'].value = data.projectLimit || '';
                     form.elements['storageLimit'].value = data.storageLimit || '';
                     form.elements['videoDuration'].value = data.videoDuration || '';
+                    form.elements['badgeText'].value = data.badgeText || '';
                     form.elements['isPopular'].checked = !!data.isPopular;
 
                     // Set Edit Mode
@@ -1558,6 +1580,7 @@
                         storageLimit: Number(formData.get('storageLimit')) || 0,
                         videoDuration: Number(formData.get('videoDuration')) || 0,
                         isPopular: formData.get('isPopular') === 'on',
+                        badgeText: formData.get('badgeText').trim(),
                         updatedAt: new Date().toISOString()
                     };
 

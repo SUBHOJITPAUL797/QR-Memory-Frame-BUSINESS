@@ -33,7 +33,7 @@ export function renderHero(client) {
 
   const titleFontClass = fontClassMap[client.visuals?.heroFont] || 'font-script';
   const subtitleFontClass = fontClassMap[client.visuals?.heroSubtitleFont] || 'font-serif';
-  const heroQuote = client.footerQuote || 'Every love story is beautiful, but ours is my favorite.';
+  const heroQuote = client.footerQuote || '';
 
   return `
       <section id="hero-section" class="relative h-screen w-full flex flex-col items-center justify-center text-center text-warm-50 overflow-hidden">
@@ -49,19 +49,13 @@ export function renderHero(client) {
         </div>
         
         <!-- Luxury Glass Frame Container -->
-        <div class="relative z-10 p-8 md:p-12 max-w-4xl w-full mx-4 flex flex-col items-center justify-center animate-[fade-in-up_1s_ease-out_forwards]">
+        <div class="relative z-10 p-8 md:p-12 max-w-4xl w-[calc(100%-2rem)] mx-auto flex flex-col items-center justify-center animate-[fade-in-up_1s_ease-out_forwards]">
             
             <!-- The Glass Card: Frosted blur, subtle dark tint, double border system -->
             <div class="absolute inset-0 bg-black/20 backdrop-blur-[2px] border border-white/10 shadow-2xl rounded-sm"></div>
             <div class="absolute inset-3 border border-gold-500/40 rounded-sm z-0"></div> <!-- Inner Gold Border -->
 
-            <!-- Content inside the frame -->
-            <div class="relative z-10 flex flex-col items-center transform translate-y-[-10px]">
-                
-                <!-- Event Type: Technical, Modern, Wide Spacing -->
-                <h2 class="${subtitleFontClass} text-xs md:text-sm tracking-[0.6em] uppercase text-gold-300 mb-8 opacity-0 animate-[fade-in_1.5s_ease-out_0.5s_forwards] border-b border-gold-500/30 pb-4 px-8">
-                    ${client.eventType}
-                </h2>
+            <div class="relative z-10 flex flex-col items-center pt-8 overflow-hidden">
                 
                 <!-- Main Title: Massive, Calligraphic, "Magazine Cover" feel -->
                 <h1 class="${titleFontClass} text-7xl md:text-[10rem] text-hero drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] opacity-0 animate-[zoom-in_1.2s_ease-out_0.2s_forwards] leading-[0.8] break-words px-4">

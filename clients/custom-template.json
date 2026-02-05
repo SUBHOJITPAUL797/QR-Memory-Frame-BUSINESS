@@ -1,35 +1,35 @@
-{
-    "title": "Unforgettable",
-    "subtitle": "A Collection of Moments",
-    "eventType": "Custom Memory",
-    "dedication": "Memories are timeless treasures of the heart.",
-    "footerQuote": "Collect moments, not things.",
-    "loadingTitle": "Loading Fragments",
-    "loadingSubtitle": "Piecing together time...",
-    "enterButtonText": "Open Memory Box",
-    "messageTitle": "The Story",
-    "messageBody": "Some moments are too precious to be forgotten. This is a collection of the times that made us smile, laugh, and feel truly alive.",
-    "messageSignOff": "Sincerely,",
-    "heroImage": "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&q=80",
-    "photoCount": 12,
-    "captions": {
-        "1": "Memory 1",
-        "2": "Memory 2",
-        "3": "Memory 3",
-        "4": "Memory 4",
-        "5": "Memory 5",
-        "6": "Memory 6",
-        "7": "Memory 7",
-        "8": "Memory 8",
-        "9": "Memory 9",
-        "10": "Memory 10",
-        "11": "Memory 11",
-        "12": "Memory 12"
-    },
-    "visuals": {
-        "themeColor": "#059669",
-        "fontTheme": "modern",
-        "frameStyle": "polaroid",
-        "bgPattern": "geometric"
-    }
+﻿{
+    "title":  "Unforgettable",
+    "subtitle":  "A Collection of Moments",
+    "eventType":  "Custom Memory",
+    "dedication":  "Memories are timeless treasures of the heart.",
+    "footerQuote":  "",
+    "loadingTitle":  "Loading Fragments",
+    "loadingSubtitle":  "Piecing together time...",
+    "enterButtonText":  "Open Memory Box",
+    "messageTitle":  "The Story",
+    "messageBody":  "Some moments are too precious to be forgotten. This is a collection of the times that made us smile, laugh, and feel truly alive.",
+    "messageSignOff":  "",
+    "heroImage":  "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format\u0026fit=crop\u0026q=80",
+    "photoCount":  12,
+    "captions":  {
+                     "1":  "Memory 1",
+                     "2":  "Memory 2",
+                     "3":  "Memory 3",
+                     "4":  "Memory 4",
+                     "5":  "Memory 5",
+                     "6":  "Memory 6",
+                     "7":  "Memory 7",
+                     "8":  "Memory 8",
+                     "9":  "Memory 9",
+                     "10":  "Memory 10",
+                     "11":  "Memory 11",
+                     "12":  "Memory 12"
+                 },
+    "visuals":  {
+                    "themeColor":  "#059669",
+                    "fontTheme":  "modern",
+                    "frameStyle":  "polaroid",
+                    "bgPattern":  "geometric"
+                }
 }

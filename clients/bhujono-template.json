@@ -1,33 +1,33 @@
-{
-    "title": "A New Beginning",
-    "subtitle": "The Sacred Rice Ceremony",
-    "eventType": "Rice Ceremony (Bhujono)",
-    "dedication": "Blessings for the Little Soul.",
-    "footerQuote": "May life be as sweet as the first taste of payesh.",
-    "loadingTitle": "First Taste of Life",
-    "loadingSubtitle": "A Joyous Tradition",
-    "enterButtonText": "Receive Blessings",
-    "messageTitle": "A Tradition of Love",
-    "messageBody": "The Bhujono ceremony marks our child's first step into the world of flavors and traditions. We celebrate this milestone with gratitude and the blessings of our elders.",
-    "messageSignOff": "Blessings,",
-    "heroImage": "https://images.unsplash.com/photo-1621244249243-436b79b5eea8?auto=format&fit=crop&q=80",
-    "photoCount": 10,
-    "captions": {
-        "1": "The Sacred Altar",
-        "2": "Dressed in Tradition",
-        "3": "The First Taste",
-        "4": "Grandparents' Blessings",
-        "5": "The Sacred Fire",
-        "6": "Maternal Uncle's Role",
-        "7": "Little One's Smiles",
-        "8": "Traditional Feast",
-        "9": "Family Togetherness",
-        "10": "A Day to Remember"
-    },
-    "visuals": {
-        "themeColor": "#991b1b",
-        "fontTheme": "classic",
-        "frameStyle": "rose",
-        "bgPattern": "swirl"
-    }
+﻿{
+    "title":  "A New Beginning",
+    "subtitle":  "The Sacred Rice Ceremony",
+    "eventType":  "Rice Ceremony (Bhujono)",
+    "dedication":  "Blessings for the Little Soul.",
+    "footerQuote":  "",
+    "loadingTitle":  "First Taste of Life",
+    "loadingSubtitle":  "A Joyous Tradition",
+    "enterButtonText":  "Receive Blessings",
+    "messageTitle":  "A Tradition of Love",
+    "messageBody":  "The Bhujono ceremony marks our child\u0027s first step into the world of flavors and traditions. We celebrate this milestone with gratitude and the blessings of our elders.",
+    "messageSignOff":  "",
+    "heroImage":  "https://images.unsplash.com/photo-1621244249243-436b79b5eea8?auto=format\u0026fit=crop\u0026q=80",
+    "photoCount":  10,
+    "captions":  {
+                     "1":  "The Sacred Altar",
+                     "2":  "Dressed in Tradition",
+                     "3":  "The First Taste",
+                     "4":  "Grandparents\u0027 Blessings",
+                     "5":  "The Sacred Fire",
+                     "6":  "Maternal Uncle\u0027s Role",
+                     "7":  "Little One\u0027s Smiles",
+                     "8":  "Traditional Feast",
+                     "9":  "Family Togetherness",
+                     "10":  "A Day to Remember"
+                 },
+    "visuals":  {
+                    "themeColor":  "#991b1b",
+                    "fontTheme":  "classic",
+                    "frameStyle":  "rose",
+                    "bgPattern":  "swirl"
+                }
 }

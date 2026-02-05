@@ -1,29 +1,29 @@
-{
-    "title": "Will You?",
-    "subtitle": "A Question of a Lifetime",
-    "eventType": "Proposal",
-    "dedication": "For the one who holds my heart.",
-    "footerQuote": "Say Yes.",
-    "loadingTitle": "A Surprise awaits...",
-    "loadingSubtitle": "Heart beating fast...",
-    "enterButtonText": "Reveal the Question",
-    "messageTitle": "My Promise to You",
-    "messageBody": "I've waited my whole life to find you. You are my dream come true, my today and all of my tomorrows. I promise to love you, cherish you, and stand by you forever.",
-    "messageSignOff": "Me,",
-    "heroImage": "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80",
-    "photoCount": 6,
-    "captions": {
-        "1": "The Moment We Met",
-        "2": "Falling in Love",
-        "3": "Adventures Together",
-        "4": "My Favorite Smile",
-        "5": "Why I Love You",
-        "6": "Will You Marry Me?"
-    },
-    "visuals": {
-        "themeColor": "#a855f7",
-        "fontTheme": "romantic",
-        "frameStyle": "polaroid",
-        "bgPattern": "stars"
-    }
+﻿{
+    "title":  "Will You?",
+    "subtitle":  "A Question of a Lifetime",
+    "eventType":  "Proposal",
+    "dedication":  "For the one who holds my heart.",
+    "footerQuote":  "",
+    "loadingTitle":  "A Surprise awaits...",
+    "loadingSubtitle":  "Heart beating fast...",
+    "enterButtonText":  "Reveal the Question",
+    "messageTitle":  "My Promise to You",
+    "messageBody":  "I\u0027ve waited my whole life to find you. You are my dream come true, my today and all of my tomorrows. I promise to love you, cherish you, and stand by you forever.",
+    "messageSignOff":  "",
+    "heroImage":  "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format\u0026fit=crop\u0026q=80",
+    "photoCount":  6,
+    "captions":  {
+                     "1":  "The Moment We Met",
+                     "2":  "Falling in Love",
+                     "3":  "Adventures Together",
+                     "4":  "My Favorite Smile",
+                     "5":  "Why I Love You",
+                     "6":  "Will You Marry Me?"
+                 },
+    "visuals":  {
+                    "themeColor":  "#a855f7",
+                    "fontTheme":  "romantic",
+                    "frameStyle":  "polaroid",
+                    "bgPattern":  "stars"
+                }
 }

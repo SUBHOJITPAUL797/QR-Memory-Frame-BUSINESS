@@ -1,31 +1,31 @@
-{
-    "title": "Milestone Unlocked",
-    "subtitle": "A Journey of Hard Work & Success",
-    "eventType": "Achievement",
-    "dedication": "Dedicated to the hustle.",
-    "footerQuote": "Dream big, work hard, stay humble.",
-    "loadingTitle": "Compiling Success",
-    "loadingSubtitle": "Loading Achievements...",
-    "enterButtonText": "View Journey",
-    "messageTitle": "The Road to Success",
-    "messageBody": "This achievement is not just a destination, but a reflection of the late nights, the challenges overcome, and the unwavering belief in the vision. Thank you to everyone who supported this journey.",
-    "messageSignOff": "Gratefully,",
-    "heroImage": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80",
-    "photoCount": 8,
-    "captions": {
-        "1": "The Beginning",
-        "2": "The Grind",
-        "3": "Turning Point",
-        "4": "The Team",
-        "5": "Execution",
-        "6": "Breakthrough",
-        "7": "The Result",
-        "8": "Victory"
-    },
-    "visuals": {
-        "themeColor": "#0f172a",
-        "fontTheme": "modern",
-        "frameStyle": "modern",
-        "bgPattern": "geometric"
-    }
+﻿{
+    "title":  "Milestone Unlocked",
+    "subtitle":  "A Journey of Hard Work \u0026 Success",
+    "eventType":  "Achievement",
+    "dedication":  "Dedicated to the hustle.",
+    "footerQuote":  "",
+    "loadingTitle":  "Compiling Success",
+    "loadingSubtitle":  "Loading Achievements...",
+    "enterButtonText":  "View Journey",
+    "messageTitle":  "The Road to Success",
+    "messageBody":  "This achievement is not just a destination, but a reflection of the late nights, the challenges overcome, and the unwavering belief in the vision. Thank you to everyone who supported this journey.",
+    "messageSignOff":  "",
+    "heroImage":  "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format\u0026fit=crop\u0026q=80",
+    "photoCount":  8,
+    "captions":  {
+                     "1":  "The Beginning",
+                     "2":  "The Grind",
+                     "3":  "Turning Point",
+                     "4":  "The Team",
+                     "5":  "Execution",
+                     "6":  "Breakthrough",
+                     "7":  "The Result",
+                     "8":  "Victory"
+                 },
+    "visuals":  {
+                    "themeColor":  "#0f172a",
+                    "fontTheme":  "modern",
+                    "frameStyle":  "modern",
+                    "bgPattern":  "geometric"
+                }
 }

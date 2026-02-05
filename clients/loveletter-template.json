@@ -1,28 +1,28 @@
-{
-    "title": "My Dearest",
-    "subtitle": "Words from the Heart",
-    "eventType": "Love Letter",
-    "dedication": "For your eyes only.",
-    "footerQuote": "PS. I Love You",
-    "loadingTitle": "Writing...",
-    "loadingSubtitle": "Sealing with a Kiss",
-    "enterButtonText": "Read Letter",
-    "messageTitle": "My Truth",
-    "messageBody": "I struggle to find the words to express just how much you mean to me. You are the prose in my story and the melody in my song. I love you, endlessly and completely.",
-    "messageSignOff": "Always,",
-    "heroImage": "https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?auto=format&fit=crop&q=80",
-    "photoCount": 5,
-    "captions": {
-        "1": "You",
-        "2": "Us",
-        "3": "A Memory",
-        "4": "A Promise",
-        "5": "Forever"
-    },
-    "visuals": {
-        "themeColor": "#e11d48",
-        "fontTheme": "romantic",
-        "frameStyle": "classic",
-        "bgPattern": "hearts"
-    }
+﻿{
+    "title":  "My Dearest",
+    "subtitle":  "Words from the Heart",
+    "eventType":  "Love Letter",
+    "dedication":  "For your eyes only.",
+    "footerQuote":  "",
+    "loadingTitle":  "Writing...",
+    "loadingSubtitle":  "Sealing with a Kiss",
+    "enterButtonText":  "Read Letter",
+    "messageTitle":  "My Truth",
+    "messageBody":  "I struggle to find the words to express just how much you mean to me. You are the prose in my story and the melody in my song. I love you, endlessly and completely.",
+    "messageSignOff":  "",
+    "heroImage":  "https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?auto=format\u0026fit=crop\u0026q=80",
+    "photoCount":  5,
+    "captions":  {
+                     "1":  "You",
+                     "2":  "Us",
+                     "3":  "A Memory",
+                     "4":  "A Promise",
+                     "5":  "Forever"
+                 },
+    "visuals":  {
+                    "themeColor":  "#e11d48",
+                    "fontTheme":  "romantic",
+                    "frameStyle":  "classic",
+                    "bgPattern":  "hearts"
+                }
 }

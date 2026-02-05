@@ -1,31 +1,31 @@
-{
-    "title": "Creative Showcase",
-    "subtitle": "A Digital Narrative of Craft & Vision",
-    "eventType": "Portfolio",
-    "dedication": "Designed with Purpose.",
-    "footerQuote": "Innovation is the intersection of art and science.",
-    "loadingTitle": "Curating Experience",
-    "loadingSubtitle": "Pixel Perfect Design",
-    "enterButtonText": "Open Studio",
-    "messageTitle": "Design Philosophy",
-    "messageBody": "This space is dedicated to the pursuit of aesthetic excellence and functional simplicity. Each project represents a unique challenge solved through a blend of strategy and creativity.",
-    "messageSignOff": "Let's collaborate,",
-    "heroImage": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80",
-    "photoCount": 8,
-    "captions": {
-        "1": "Visual Branding",
-        "2": "User Experience Design",
-        "3": "Product Photography",
-        "4": "Digital Artistry",
-        "5": "Typography Study",
-        "6": "Concept Architecture",
-        "7": "Minimalist Interface",
-        "8": "Final Reveal"
-    },
-    "visuals": {
-        "themeColor": "#3b82f6",
-        "fontTheme": "modern",
-        "frameStyle": "modern",
-        "bgPattern": "dots"
-    }
+﻿{
+    "title":  "Creative Showcase",
+    "subtitle":  "A Digital Narrative of Craft \u0026 Vision",
+    "eventType":  "Portfolio",
+    "dedication":  "Designed with Purpose.",
+    "footerQuote":  "",
+    "loadingTitle":  "Curating Experience",
+    "loadingSubtitle":  "Pixel Perfect Design",
+    "enterButtonText":  "Open Studio",
+    "messageTitle":  "Design Philosophy",
+    "messageBody":  "This space is dedicated to the pursuit of aesthetic excellence and functional simplicity. Each project represents a unique challenge solved through a blend of strategy and creativity.",
+    "messageSignOff":  "",
+    "heroImage":  "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format\u0026fit=crop\u0026q=80",
+    "photoCount":  8,
+    "captions":  {
+                     "1":  "Visual Branding",
+                     "2":  "User Experience Design",
+                     "3":  "Product Photography",
+                     "4":  "Digital Artistry",
+                     "5":  "Typography Study",
+                     "6":  "Concept Architecture",
+                     "7":  "Minimalist Interface",
+                     "8":  "Final Reveal"
+                 },
+    "visuals":  {
+                    "themeColor":  "#3b82f6",
+                    "fontTheme":  "modern",
+                    "frameStyle":  "modern",
+                    "bgPattern":  "dots"
+                }
 }
