@@ -805,7 +805,7 @@
 
                     // Add Limits to Features visually if important
                     if (plan.projectLimit > 0) featuresHtml += `<li class="flex items-center gap-3"><span class="${isPopular ? 'text-gold-500' : 'text-green-500'}">✓</span> ${plan.projectLimit} Projects</li>`;
-                    if (plan.storageLimit > 0) featuresHtml += `<li class="flex items-center gap-3"><span class="${isPopular ? 'text-gold-500' : 'text-green-500'}">✓</span> ${plan.storageLimit} Photos per Project</li>`;
+                    if (plan.storageLimit > 0) featuresHtml += `<li class="flex items-center gap-3"><span class="${isPopular ? 'text-gold-500' : 'text-green-500'}">✓</span> ${plan.storageLimit} MB Storage</li>`;
 
                     featuresList.forEach(feature => {
                         featuresHtml += `<li class="flex items-center gap-3"><span class="${isPopular ? 'text-gold-500' : 'text-green-500'}">✓</span> ${feature}</li>`;
