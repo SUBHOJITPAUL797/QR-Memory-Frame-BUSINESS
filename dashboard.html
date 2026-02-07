@@ -93,7 +93,8 @@
                     <!-- Storage Usage -->
                     <div class="px-4 py-2 mt-4">
                         <div class="flex justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
-                            <span>Storage</span>
+                            <span>Storage <span id="user-plan-name"
+                                    class="text-xs font-normal text-gold-500 ml-1"></span></span>
                             <span id="storage-text">0 / 0 MB</span>
                         </div>
                         <div class="w-full bg-slate-100 dark:bg-zinc-800 rounded-full h-2 overflow-hidden">
@@ -544,11 +545,21 @@
                 const userSnap = await getDoc(doc(db, "users", uid));
                 const userData = userSnap.exists() ? userSnap.data() : {};
 
+                // 0. Update Plan Name Display
+                const planNameEl = document.getElementById('user-plan-name');
+                if (planNameEl) {
+                    // Use saved plan name (from Admin) or fallback
+                    const pName = userData.plan || (userData.planId ? userData.planId.toUpperCase() : 'FREE');
+                    planNameEl.textContent = `(${pName})`;
+                }
+
                 // 1. Get Used
                 userStorageUsed = userData.storageUsed || 0; // Bytes
 
-                // 2. Get Limit (Plan > Default)
-                if (userData.planId) {
+                // 2. Get Limit (Prioritize Direct User Limit > Plan > Default)
+                if (userData.storageLimit !== undefined && userData.storageLimit !== null) {
+                    userStorageLimitMB = userData.storageLimit;
+                } else if (userData.planId) {
                     const planSnap = await getDoc(doc(db, "plans", userData.planId));
                     if (planSnap.exists()) {
                         userStorageLimitMB = planSnap.data().storageLimit || 100; // Plan limit
@@ -557,18 +568,33 @@
 
                 // 3. Render
                 const usedMB = (userStorageUsed / (1024 * 1024)).toFixed(1);
-                const percent = Math.min((usedMB / userStorageLimitMB) * 100, 100);
 
                 const storageText = document.getElementById('storage-text');
                 const storageBar = document.getElementById('storage-bar');
 
-                if (storageText) storageText.textContent = `${usedMB} / ${userStorageLimitMB} MB`;
-                if (storageBar) {
-                    storageBar.style.width = `${percent}%`;
-                    // Color mapping
-                    if (percent > 90) storageBar.classList.add('bg-red-500');
-                    else if (percent > 75) storageBar.classList.add('bg-yellow-500');
-                    else storageBar.classList.remove('bg-red-500', 'bg-yellow-500');
+                if (userStorageLimitMB === -1) {
+                    // Unlimited Logic
+                    if (storageText) storageText.textContent = `${usedMB} MB / ∞ Unlimited`;
+                    if (storageBar) {
+                        storageBar.style.width = '100%';
+                        storageBar.classList.remove('bg-red-500', 'bg-yellow-500', 'bg-blue-500');
+                        storageBar.classList.add('bg-gold-500'); // Premium Gold for Unlimited
+                    }
+                } else {
+                    // Normal Logic
+                    const percent = Math.min((usedMB / userStorageLimitMB) * 100, 100);
+
+                    if (storageText) storageText.textContent = `${usedMB} / ${userStorageLimitMB} MB`;
+                    if (storageBar) {
+                        storageBar.style.width = `${percent}%`;
+                        // Color mapping
+                        if (percent > 90) storageBar.classList.add('bg-red-500');
+                        else if (percent > 75) storageBar.classList.add('bg-yellow-500');
+                        else {
+                            storageBar.classList.remove('bg-red-500', 'bg-yellow-500');
+                            storageBar.classList.add('bg-blue-500');
+                        }
+                    }
                 }
 
             } catch (e) {

@@ -62,6 +62,86 @@
 
         input[type=number] {
             -moz-appearance: textfield;
+            appearance: textfield;
+        }
+    </style>
+    <style>
+        @media (max-width: 768px) {
+
+            /* Transform Tables to Cards */
+            .overflow-hidden table,
+            .overflow-hidden thead,
+            .overflow-hidden tbody,
+            .overflow-hidden th,
+            .overflow-hidden td,
+            .overflow-hidden tr {
+                display: block;
+            }
+
+            .overflow-hidden thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            .overflow-hidden tr {
+                background-color: white;
+                margin-bottom: 1rem;
+                padding: 1.25rem;
+                border-radius: 0.75rem;
+                border: 1px solid #e2e8f0;
+                box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            }
+
+            :is(.dark .overflow-hidden tr) {
+                background-color: #18181b;
+                /* zinc-900 */
+                border-color: #27272a;
+                /* zinc-800 */
+            }
+
+            .overflow-hidden td {
+                border: none;
+                border-bottom: 1px solid #f1f5f9;
+                position: relative;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                padding-top: 0.75rem !important;
+                padding-bottom: 0.75rem !important;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                text-align: right;
+            }
+
+            :is(.dark .overflow-hidden td) {
+                border-bottom-color: #27272a;
+            }
+
+            .overflow-hidden td:last-child {
+                border-bottom: 0;
+            }
+
+            .overflow-hidden td::before {
+                content: attr(data-label);
+                font-weight: 700;
+                text-transform: uppercase;
+                font-size: 0.7rem;
+                letter-spacing: 0.05em;
+                color: #64748b;
+                margin-right: 1.5rem;
+                text-align: left;
+                flex-shrink: 0;
+            }
+
+            :is(.dark .overflow-hidden td::before) {
+                color: #94a3b8;
+            }
+
+            /* Specific Adjustment for Action Buttons */
+            .text-right {
+                justify-content: flex-end;
+            }
         }
     </style>
 </head>
@@ -231,14 +311,7 @@
                     </svg>
                     Background Audio
                 </a>
-                <a href="#section-uploader"
-                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-zinc-900 transition-all text-sm font-medium">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    Cloud Uploader
-                </a>
+
             </div>
         </nav>
 
@@ -288,6 +361,7 @@
                             class="bg-slate-50 dark:bg-zinc-950/50 border-b border-slate-200 dark:border-zinc-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
                             <th class="px-6 py-4">Client Name</th>
                             <th class="px-6 py-4">Email / Mobile</th>
+                            <th class="px-6 py-4">Storage</th>
                             <th class="px-6 py-4">Projects</th>
                             <th class="px-6 py-4">Joined</th>
                             <th class="px-6 py-4 text-right">Action</th>
@@ -325,6 +399,7 @@
                             class="bg-slate-50 dark:bg-zinc-950/50 border-b border-slate-200 dark:border-zinc-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
                             <th class="px-6 py-4">Project / Template</th>
                             <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4">Project Storage</th>
                             <th class="px-6 py-4">Created / Updated</th>
                             <th class="px-6 py-4">Payment</th>
                             <th class="px-6 py-4 text-right">Actions</th>
@@ -494,7 +569,7 @@
             <form id="configForm" class="max-w-4xl mx-auto py-4 px-8 space-y-16">
 
                 <!-- Sticky Save Header -->
-                <div class="fixed top-0 right-0 left-64 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 z-10 px-8 py-4 flex justify-between items-center transition-all duration-300"
+                <div class="fixed top-0 right-0 left-0 md:left-64 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 z-10 px-8 py-4 flex justify-between items-center transition-all duration-300"
                     id="save-header">
                     <div>
                         <h2 id="current-section-title"
@@ -759,8 +834,31 @@
                             <label
                                 class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 transition-colors">Hero
                                 Image Path</label>
-                            <input type="text" name="heroImage"
-                                class="w-full bg-slate-50 dark:bg-zinc-900 border-none rounded-lg py-3 px-4 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all">
+
+                            <!-- Preview Container -->
+                            <!-- Preview Container -->
+                            <div class="flex flex-col gap-2">
+                                <div class="w-full h-48 bg-slate-50 dark:bg-zinc-900/50 rounded-lg overflow-hidden border border-slate-100 dark:border-zinc-800 relative shadow-sm group cursor-zoom-in hover:ring-2 hover:ring-blue-400 transition-all"
+                                    onclick="if(document.getElementById('hero-preview')?.src) openLightbox(document.getElementById('hero-preview').src)">
+
+                                    <img id="hero-preview" src="" alt="Hero" class="w-full h-full object-cover"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+
+                                    <div
+                                        class="hidden absolute inset-0 flex flex-col items-center justify-center text-slate-400 bg-slate-50 dark:bg-zinc-900 text-center p-4">
+                                        <svg class="w-8 h-8 mb-2 opacity-50" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
+                                        <span class="text-xs">No Hero Image Uploaded</span>
+                                    </div>
+                                </div>
+
+                                <!-- Hidden Input for Form Submission -->
+                                <input type="hidden" name="heroImage">
+                            </div>
                         </div>
                         <div class="group">
                             <label
@@ -770,6 +868,7 @@
                                 class="w-full bg-slate-50 dark:bg-zinc-900 border-none rounded-lg py-3 px-4 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all">
                             <p class="text-[10px] text-slate-400 mt-2">Changing this adds more caption fields below.</p>
                         </div>
+
                     </div>
                 </section>
 
@@ -917,19 +1016,6 @@
                             <p class="text-slate-400 text-sm">Set the mood with invisible background music.</p>
                         </div>
                     </div>
-                    <!-- Photo Base URL (R2 Support) -->
-                    <div
-                        class="mb-4 bg-white dark:bg-black rounded-2xl p-8 shadow-md border border-slate-100 dark:border-zinc-800 ring-1 ring-blue-500/5 dark:ring-blue-500/10">
-                        <div class="group">
-                            <label
-                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 transition-colors">Photo
-                                Storage (Cloudflare R2)</label>
-                            <input type="text" name="photoBaseUrl"
-                                placeholder="https://pub-xxxx.r2.dev/my-album (Leave empty for local photos)"
-                                class="w-full bg-slate-50 dark:bg-zinc-900 border-none rounded-lg py-3 px-4 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all placeholder:text-slate-300 dark:placeholder:text-zinc-700">
-                            <p class="text-[10px] text-slate-400 mt-2">Paste bucket URL to load cloud photos.</p>
-                        </div>
-                    </div>
 
                     <!-- YouTube Music Link -->
                     <div
@@ -941,86 +1027,14 @@
                             <input type="text" name="music"
                                 class="w-full bg-slate-50 dark:bg-zinc-900 border-none rounded-lg py-3 px-4 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all placeholder:text-slate-300 dark:placeholder:text-zinc-700"
                                 placeholder="https://youtu.be/...">
-                            <p class="text-[10px] text-slate-400 mt-2">Will start playing automatically when they enter.
+                            <p class="text-[10px] text-slate-400 mt-2">Will start playing automatically when
+                                they enter.
                                 Player is hidden.</p>
                         </div>
                     </div>
                 </section>
 
-                <!-- Section 8: Cloud Uploader (R2) -->
-                <section id="section-uploader" class="pt-8 pb-32 border-t border-slate-200 dark:border-zinc-800 mt-8">
-                    <div class="mb-6 flex items-center">
-                        <div
-                            class="p-2 bg-gradient-to-tr from-cyan-500 to-blue-500 rounded-lg mr-4 text-white shadow-lg">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-slate-800 dark:text-white">8. Cloud Upload Engine</h2>
-                            <p class="text-slate-400 text-sm">Upload directly to Cloudflare R2.</p>
-                        </div>
-                    </div>
 
-                    <div
-                        class="bg-white dark:bg-black rounded-2xl p-8 shadow-md border border-slate-100 dark:border-zinc-800 ring-1 ring-blue-500/5 dark:ring-blue-500/10">
-
-                        <!-- Configuration -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                            <div>
-                                <label
-                                    class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Worker
-                                    URL</label>
-                                <input type="text" id="worker-url-input"
-                                    value="https://qr-memory-uploader.subhojit.workers.dev"
-                                    placeholder="https://qr-uploader.your-subdomain.workers.dev"
-                                    class="w-full bg-slate-50 dark:bg-zinc-900 border-none rounded-lg py-3 px-4 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-500 transition-all text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Auth
-                                    Secret</label>
-                                <input type="password" id="worker-secret-input" value="qr-admin-secret-2024"
-                                    placeholder="Your Secret Key"
-                                    class="w-full bg-slate-50 dark:bg-zinc-900 border-none rounded-lg py-3 px-4 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-500 transition-all text-sm">
-                            </div>
-                        </div>
-
-                        <!-- Drop Zone -->
-                        <div id="drop-zone"
-                            class="border-2 border-dashed border-slate-300 dark:border-zinc-700 rounded-2xl p-12 text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-zinc-900 transition-all group relative overflow-hidden">
-                            <input type="file" id="file-upload-input" multiple accept="image/*"
-                                class="absolute inset-0 opacity-0 cursor-pointer z-20">
-
-                            <div
-                                class="pointer-events-none relative z-10 transition-transform group-hover:scale-105 duration-300">
-                                <div
-                                    class="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                    </svg>
-                                </div>
-                                <h3 class="text-lg font-bold text-slate-700 dark:text-slate-200 mb-1">Drop Photos Here
-                                </h3>
-                                <p class="text-slate-400 text-sm">or click to browse</p>
-                            </div>
-                        </div>
-
-                        <!-- Upload Queue Status -->
-                        <div id="upload-status-area" class="mt-8 hidden">
-                            <div class="flex justify-between items-center mb-4">
-                                <h4 class="font-bold text-sm text-slate-500 uppercase tracking-wider">Queue</h4>
-                                <span id="queue-count"
-                                    class="text-xs bg-slate-100 dark:bg-zinc-800 px-2 py-1 rounded text-slate-500">0
-                                    Files</span>
-                            </div>
-                            <div id="upload-list" class="space-y-3 max-h-60 overflow-y-auto pr-2 no-scrollbar">
-                                <!-- Dynamic Items -->
-                            </div>
-                        </div>
-                    </div>
-                </section>
             </form>
         </div> <!-- End of #editor-view -->
         <!-- VIEW 4: SITE CONTENT (NEW) -->
@@ -1226,6 +1240,21 @@
                 showClientsView();
             };
 
+            // Return from Editor to Projects List
+            window.showDashboard = () => {
+                clientsView.classList.add('hidden');
+                clientProjectsView.classList.remove('hidden');
+                editorView.classList.add('hidden');
+                plansView.classList.add('hidden');
+                siteContentView.classList.add('hidden');
+                editorNavLinks.classList.add('hidden');
+            };
+
+            // Stub for refreshDashboard (Real-time listeners handle updates)
+            window.refreshDashboard = () => {
+                console.log("Dashboard refresh requested (handled by realtime listeners)");
+            };
+
             // Monitor Auth State
             onAuthStateChanged(auth, async (user) => {
                 if (!user) {
@@ -1309,16 +1338,20 @@
 
                         // Simple Stats (mocked for list view speed, real count in detail)
                         tr.innerHTML = `
-                         <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">${user.name || "User"}</td>
-                         <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                         <td data-label="Client Name" class="px-6 py-4 font-bold text-slate-900 dark:text-white">${user.name || "User"}</td>
+                         <td data-label="Email / Mobile" class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
                             <div>${user.email}</div>
                             <div class="text-xs text-slate-400">${user.mobile || ""}</div>
                          </td>
-                         <td class="px-6 py-4 text-sm text-slate-600">
+                         <td data-label="Storage" class="px-6 py-4 text-sm">
+                             <div class="font-bold text-slate-700 dark:text-slate-200">${(user.storageUsed ? (user.storageUsed / 1024 / 1024).toFixed(1) : '0')} MB</div>
+                             <div class="text-[10px] text-slate-400">of ${(user.storageLimit === -1 ? 'Unlimited' : (user.storageLimit || 0) + ' MB')}</div>
+                         </td>
+                         <td data-label="Projects" class="px-6 py-4 text-sm text-slate-600">
                              <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">View Details</span>
                          </td>
-                         <td class="px-6 py-4 text-sm text-slate-500">${joined}</td>
-                         <td class="px-6 py-4 text-right">
+                         <td data-label="Joined" class="px-6 py-4 text-sm text-slate-500">${joined}</td>
+                         <td data-label="Action" class="px-6 py-4 text-right">
                             <button class="text-blue-600 hover:underline text-sm font-medium">Manage Projects →</button>
                          </td>
                     `;
@@ -1360,31 +1393,38 @@
                         const createdAt = data.createdAt
                             ? new Date(data.createdAt.seconds * 1000).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
                             : 'N/A';
-                        const updatedAt = data.updatedAt
-                            ? new Date(data.updatedAt.seconds * 1000).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
+                        const rawUpdate = data.lastUpdated || data.updatedAt;
+                        const updatedAt = rawUpdate
+                            ? new Date(rawUpdate.seconds * 1000).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
                             : '—';
 
                         const tr = document.createElement('tr');
                         tr.className = "hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors border-b border-slate-100 dark:border-zinc-800 last:border-0";
                         tr.innerHTML = `
-                        <td class="px-6 py-4">
+                        <td data-label="Project Title" class="px-6 py-4">
                             <div class="font-medium text-slate-900 dark:text-white">${data.title}</div>
                             <div class="text-xs text-slate-500">${data.templateId || "Custom"}</div>
                             <div class="text-[10px] text-slate-400 font-mono mt-1">${projectId}</div>
                         </td>
-                         <td class="px-6 py-4">
+                         <td data-label="Status" class="px-6 py-4">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
                                 ${status.toUpperCase()}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-sm">
+                        <td data-label="Project Storage" class="px-6 py-4 text-sm font-mono text-slate-600 dark:text-slate-400">
+                            ${(data.storageUsed ? (data.storageUsed / 1024 / 1024).toFixed(2) : '0.00')} MB
+                        </td>
+                        <td data-label="Created/Updated" class="px-6 py-4 text-sm">
                             <div class="text-slate-600 dark:text-slate-300">${createdAt}</div>
                             <div class="text-xs text-slate-400">Updated: ${updatedAt}</div>
                         </td>
-                        <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">${data.paymentStatus || "unpaid"}</td>
-                        <td class="px-6 py-4 text-right space-x-2">
-                             <a href="view.html?id=${projectId}" target="_blank" class="text-purple-600 hover:text-purple-800 text-sm font-bold hover:underline mr-2">View Site</a>
-                            <button onclick="editProject('${projectId}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline">Edit</button>
+                        <td data-label="Payment" class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">${data.paymentStatus || "unpaid"}</td>
+                        <td data-label="Actions" class="px-6 py-4 text-right space-x-2">
+                             <a href="view.html?id=${projectId}" target="_blank" class="text-purple-600 hover:text-purple-800 text-sm font-bold hover:underline mr-2">View</a>
+                             <button onclick="toggleStatus('${projectId}', '${status === 'active' ? 'paused' : 'active'}')" class="${status === 'active' ? 'text-yellow-600 hover:text-yellow-800' : 'text-green-600 hover:text-green-800'} text-sm font-medium hover:underline mr-2">
+                                ${status === 'active' ? 'Pause' : 'Resume'}
+                             </button>
+                             <button onclick="editProject('${projectId}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline">Edit</button>
                             <button onclick="deleteProject('${projectId}')" class="text-red-500 hover:text-red-700 text-sm font-medium hover:underline">Delete</button>
                         </td>
                     `;
@@ -1428,15 +1468,161 @@
                 }
             };
 
-            // Action: Delete
-            window.deleteProject = async (projectId) => {
-                const confirmDelete = prompt("Type 'DELETE' to confirm removing this project permanently. This CANNOT be undone.");
-                if (confirmDelete !== 'DELETE') return;
+            // Action: Reconcile Storage (Fix Drift)
+            window.reconcileStorage = async (userId, event) => {
+                event.stopPropagation(); // Prevent row click
+                if (!confirm("Recalculate actual storage usage for this user? This scans all files in R2.")) return;
+
+                const btn = event.currentTarget;
+                btn.classList.add('animate-spin', 'text-blue-600');
 
                 try {
-                    await deleteDoc(doc(db, "projects", projectId));
-                    alert("Project deleted.");
+                    // 1. Get Token
+                    if (!auth.currentUser) throw new Error("Not Authenticated");
+                    const token = await auth.currentUser.getIdToken(true);
+
+                    // 2. Determine Prefix (User ID part of the path)
+                    // Note: Our paths are NameSlug-UIDSuffix. Scanning requires knowing the exact prefixes.
+                    // STRATEGY: We can't easily scan *everything* for a user if folders are named dynamically.
+                    // BUT, if we assume the standard pattern, we might need to list projects first.
+                    // WAIT: The worker's reconcile takes a prefix.
+                    // Issue: Projects are stored as "Slug-UIDSuffix/...". The UID is only a suffix.
+                    // This makes "listing by user" hard without a Master User Folder.
+
+                    // FALLBACK FOR NOW: We will warn that this might only work if we moved to "UserID/Project/..." structure.
+                    // OR: We iterate the user's projects from Firestore and sum them up?
+                    // YES. That is safer than R2 scanning if the folder structure isn't strict.
+
+                    // Let's implement the Firestore-based R2 Scan.
+                    // 1. Get all projects for user.
+                    // 2. For each project, call Worker Reconcile on that project's path.
+                    // 3. Sum up.
+
+                    const q = query(collection(db, "projects"), where("userId", "==", userId));
+                    const snap = await getDocs(q);
+                    let totalBytes = 0;
+                    let fileCount = 0;
+
+                    for (const docSnap of snap.docs) {
+                        const data = docSnap.data();
+
+                        // Reconstruct Path (Same logic as delete)
+                        let storagePrefix = data.storagePath || "";
+                        if (!storagePrefix) {
+                            let clientName = data.clientName || data.config?.clientName || 'User';
+                            const nameSlug = clientName.toLowerCase().replace(/[^a-z0-9]/g, '-'); // Simple slug
+                            const uidSuffix = userId.substring(0, 5).toLowerCase();
+                            const titleSlug = (data.title || 'Memory').toLowerCase().replace(/[^a-z0-9]/g, '-');
+                            storagePrefix = `${nameSlug}-${uidSuffix}/${titleSlug}/`;
+                        }
+
+                        // Call Worker for this specific project folder
+                        const res = await fetch(`${WORKER_URL}/reconcile?prefix=${encodeURIComponent(storagePrefix)}`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        const result = await res.json();
+                        if (result.success) {
+                            totalBytes += result.totalSize;
+                            fileCount += result.fileCount;
+
+                            // Optional: Update Project Doc too
+                            await updateDoc(doc(db, "projects", docSnap.id), { storageUsed: result.totalSize });
+                        }
+                    }
+
+                    // 3. Update User Doc
+                    await updateDoc(doc(db, "users", userId), { storageUsed: totalBytes });
+
+                    alert(`Reconciliation Complete.\n\nFound ${fileCount} files.\nTotal: ${(totalBytes / 1024 / 1024).toFixed(2)} MB.\n\nDatabase updated.`);
+                    fetchClients(); // Refresh UI
+
+                } catch (e) {
+                    console.error(e);
+                    alert("Reconciliation Failed: " + e.message);
+                } finally {
+                    btn.classList.remove('animate-spin', 'text-blue-600');
+                }
+            };
+
+            // --- CONFIGURATION ---
+            const WORKER_URL = "https://qr-memory-uploader.subhojit.workers.dev";
+            const WORKER_SECRET = "qr-admin-secret-2024";
+
+            // Action: Delete (Complete Wipe)
+            window.deleteProject = async (projectId) => {
+                const confirmDelete = prompt("This will delete the PROJECT and ALL PHOTOS/VIDEOS permanently.\n\nType 'DELETE' to confirm.");
+                if (confirmDelete !== 'DELETE') return;
+
+                const btn = document.activeElement;
+                if (btn) { btn.disabled = true; btn.innerText = "Deleting..."; }
+
+                try {
+                    // 1. Fetch Project
+                    const docRef = doc(db, "projects", projectId);
+                    const snap = await getDoc(docRef);
+                    if (!snap.exists()) throw new Error("Project not found in DB");
+                    const data = snap.data();
+                    const userId = data.userId;
+
+                    // 2. Determine Prefix (Match Dashboard Creation Logic)
+                    let storagePrefix = "";
+
+                    if (data.storagePath) {
+                        storagePrefix = data.storagePath;
+                    } else {
+                        // RECONSTRUCTION FALLBACK (Crucial for successful deletion)
+                        // Pattern: NameSlug-UIDSuffix/TitleSlug/
+
+                        let clientName = data.clientName || data.config?.clientName;
+
+                        // If name missing, fetch from User Profile
+                        if (!clientName && userId) {
+                            try {
+                                const userSnap = await getDoc(doc(db, "users", userId));
+                                if (userSnap.exists()) {
+                                    clientName = userSnap.data().name;
+                                }
+                            } catch (e) { console.warn("Could not fetch user name for path", e); }
+                        }
+
+                        clientName = clientName || 'User'; // Last resort
+                        const nameSlug = slugify(clientName);
+                        const uidSuffix = userId ? userId.substring(0, 5).toLowerCase() : 'xxxxx';
+                        const titleSlug = slugify(data.title || data.config?.title || 'Memory');
+
+                        storagePrefix = `${nameSlug}-${uidSuffix}/${titleSlug}`;
+                    }
+
+                    // Ensure trailing slash
+                    if (!storagePrefix.endsWith('/')) storagePrefix += '/';
+
+                    console.log(`[Delete] Target Prefix: ${storagePrefix}`);
+
+                    // 3. Delete Files from R2
+                    const token = await auth.currentUser.getIdToken(true);
+                    const deleteUrl = `${WORKER_URL}/delete-prefix?prefix=${encodeURIComponent(storagePrefix)}`;
+                    const res = await fetch(deleteUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    // Even if R2 404s (already empty), proceed to DB delete
+                    let resultMsg = "";
+                    if (res.ok) {
+                        const result = await res.json();
+                        resultMsg = `\nReclaimed Storage: ${result.totalSize ? (result.totalSize / 1024 / 1024).toFixed(2) + ' MB' : '0 MB'}`;
+                    } else {
+                        console.warn("R2 Delete Warning:", await res.text());
+                    }
+
+                    // 4. Delete Firestore Document
+                    await deleteDoc(docRef);
+
+                    alert(`Project deleted successfully.${resultMsg}`);
                     refreshDashboard();
+
                 } catch (e) {
                     console.error("Delete failed", e);
                     alert("Delete failed: " + e.message);
@@ -1464,11 +1650,11 @@
                             const tr = document.createElement('tr');
                             tr.className = "hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors";
                             tr.innerHTML = `
-                            <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">${data.name}</td>
-                            <td class="px-6 py-4 text-slate-600 dark:text-slate-300">₹${data.price}</td>
-                            <td class="px-6 py-4 text-slate-600 dark:text-slate-300">${data.storageLimit || 0} MB</td>
-                            <td class="px-6 py-4 text-slate-600 dark:text-slate-300">${data.duration}</td>
-                            <td class="px-6 py-4 text-right space-x-2">
+                            <td data-label="Plan Name" class="px-6 py-4 font-medium text-slate-900 dark:text-white">${data.name}</td>
+                            <td data-label="Price" class="px-6 py-4 text-slate-600 dark:text-slate-300">₹${data.price}</td>
+                            <td data-label="Storage" class="px-6 py-4 text-slate-600 dark:text-slate-300">${data.storageLimit || 0} MB</td>
+                            <td data-label="Duration" class="px-6 py-4 text-slate-600 dark:text-slate-300">${data.duration}</td>
+                            <td data-label="Actions" class="px-6 py-4 text-right space-x-2">
                                 <button onclick="editPlan('${doc.id}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline">Edit</button>
                                 <button onclick="deletePlan('${doc.id}')" class="text-red-500 hover:text-red-700 text-sm font-medium hover:underline">Delete</button>
                             </td>
@@ -1575,9 +1761,9 @@
                         durationUnit: dUnit,                // Raw
                         durationMonths: months,             // Logic
                         features: featuresArray,
-                        // New Fields
-                        projectLimit: Number(formData.get('projectLimit')) || 0,
-                        storageLimit: Number(formData.get('storageLimit')) || 0,
+                        // New Fields (Blank = Unlimited = -1)
+                        projectLimit: formData.get('projectLimit') === '' ? -1 : Number(formData.get('projectLimit')),
+                        storageLimit: formData.get('storageLimit') === '' ? -1 : Number(formData.get('storageLimit')),
                         videoDuration: Number(formData.get('videoDuration')) || 0,
                         isPopular: formData.get('isPopular') === 'on',
                         badgeText: formData.get('badgeText').trim(),
@@ -1639,8 +1825,15 @@
                     snapshot.forEach(doc => {
                         const p = doc.data();
                         const opt = document.createElement('option');
-                        opt.value = p.name; // Use name as ID for simplicity in this project
+                        opt.value = p.name; // Use name as ID for simplicity
                         opt.textContent = `${p.name} (${p.duration})`;
+
+                        // Strict Plan Application: Attach limits to the option
+                        // Use default of -1 (Unlimited) if field is missing, or actual value
+                        opt.dataset.storageLimit = (p.storageLimit !== undefined && p.storageLimit !== null) ? p.storageLimit : -1;
+                        opt.dataset.videoDuration = p.videoDuration || 0;
+                        opt.dataset.projectLimit = (p.projectLimit !== undefined && p.projectLimit !== null) ? p.projectLimit : -1;
+
                         select.appendChild(opt);
                     });
 
@@ -1695,7 +1888,7 @@
                 <div class="text-6xl mb-4">⏳</div>
                 <h3 class="text-2xl font-bold text-red-600 mb-2">Session Expiring!</h3>
                 <p class="text-slate-600 dark:text-slate-300 mb-8">
-                    For security, you will be logged out in <span class="font-bold underline">30 seconds</span>.
+                    For security, you will be logged out in <span id="session-countdown" class="font-bold underline">30</span> seconds.
                 </p>
                 <button id="stay-logged-in-btn" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold uppercase tracking-widest transition-colors shadow-lg">
                     Stay Logged In
@@ -1704,12 +1897,27 @@
         `;
             document.body.appendChild(warningModal);
 
+            let countdownInterval;
+
             function showSessionWarning() {
                 warningModal.classList.remove('hidden');
+
+                // Realtime Countdown
+                let timeLeft = 30; // Matches WARNING_TIME logic (30s)
+                const countdownEl = document.getElementById('session-countdown');
+                if (countdownEl) countdownEl.innerText = timeLeft;
+
+                if (countdownInterval) clearInterval(countdownInterval);
+                countdownInterval = setInterval(() => {
+                    timeLeft--;
+                    if (countdownEl) countdownEl.innerText = timeLeft;
+                    if (timeLeft <= 0) clearInterval(countdownInterval);
+                }, 1000);
             }
 
             function hideSessionWarning() {
                 warningModal.classList.add('hidden');
+                if (countdownInterval) clearInterval(countdownInterval);
             }
 
             document.getElementById('stay-logged-in-btn').addEventListener('click', () => {
@@ -1822,12 +2030,45 @@
             // Helper: Generate Caption Inputs
             function renderCaptionInputs(count) {
                 captionsContainer.innerHTML = '';
+
+                // Get gallery array from config (contains full R2 URLs)
+                const galleryArray = currentProjectConfig.gallery || [];
+                console.log(`[Preview] Found ${galleryArray.length} photos in config.gallery`);
+
                 for (let i = 1; i <= count; i++) {
                     const div = document.createElement('div');
-                    div.className = "group";
+                    div.className = "group flex gap-4 items-start bg-slate-50 dark:bg-zinc-900/50 p-3 rounded-lg border border-slate-100 dark:border-zinc-800";
+
+                    // Get photo URL from gallery array (0-indexed)
+                    const photoUrl = galleryArray[i - 1] || "";
+
+                    // Image Preview Logic
+                    let imgHtml;
+                    if (photoUrl) {
+                        imgHtml = `
+                        <img src="${photoUrl}" alt="Photo ${i}" 
+                             class="w-full h-full object-cover" 
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-xs text-slate-400 p-2 text-center\\'>Image Not Found</div>';">
+                        <div class="absolute bottom-0 right-0 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-tl font-mono">#${i}</div>
+                        `;
+                    } else {
+                        imgHtml = `
+                        <div class="flex items-center justify-center h-full text-[10px] text-slate-400 p-2 text-center bg-slate-100 dark:bg-zinc-800 italic">
+                            No Photo
+                        </div>`;
+                    }
+
                     div.innerHTML = `
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 transition-colors">Photo ${i}</label>
-                    <input type="text" name="caption_${i}" class="w-full bg-slate-50 dark:bg-zinc-900 border-none rounded-lg py-3 px-4 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all placeholder:text-slate-300 dark:placeholder:text-zinc-700" placeholder="Memory details...">
+                    <div class="w-20 h-20 shrink-0 bg-white dark:bg-zinc-800 rounded-lg overflow-hidden border border-slate-200 dark:border-zinc-700 relative shadow-sm cursor-zoom-in hover:ring-2 hover:ring-blue-400 transition-all" onclick="if(this.querySelector('img')?.src) openLightbox(this.querySelector('img').src)">
+                        ${imgHtml}
+                    </div>
+                    
+                    <div class="flex-1 min-w-0">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 transition-colors">Caption ${i}</label>
+                        <input type="text" name="captions.${i}" 
+                            class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-lg py-2 px-3 text-slate-700 dark:text-slate-200 font-medium focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 focus:border-blue-500 transition-all placeholder:text-slate-300 dark:placeholder:text-zinc-700 text-sm" 
+                            placeholder="Story for photo ${i}...">
+                    </div>
                 `;
                     captionsContainer.appendChild(div);
                 }
@@ -2004,6 +2245,15 @@
                     }
                 }
 
+                // Auto-load Hero Image Preview
+                const heroPreview = document.getElementById('hero-preview');
+                if (heroPreview && config.heroImage) {
+                    heroPreview.src = config.heroImage;
+                    heroPreview.style.display = 'block';
+                    if (heroPreview.nextElementSibling) heroPreview.nextElementSibling.style.display = 'none';
+                    console.log(`[Admin] Hero image loaded: ${config.heroImage}`);
+                }
+
                 // --- INITIALIZE CUSTOM DROPDOWN AFTER POPULATION ---
                 setupCustomDropdowns();
 
@@ -2030,10 +2280,15 @@
             photoCountInput.addEventListener('change', (e) => {
                 const count = Number(e.target.value);
                 renderCaptionInputs(count);
-                if (config.captions) {
+
+                const form = document.getElementById('configForm');
+                // Fill from current config
+                const sourceConfig = currentProjectConfig || {};
+                if (sourceConfig.captions) {
                     for (let i = 1; i <= count; i++) {
-                        const captionValue = config.captions[String(i)] || "";
-                        const input = form.elements[`caption_${i}`];
+                        const captionValue = sourceConfig.captions[String(i)] || "";
+                        // Try both namings to be safe
+                        const input = form.elements[`captions.${i}`] || form.elements[`caption_${i}`];
                         if (input) input.value = captionValue;
                     }
                 }
@@ -2041,6 +2296,17 @@
 
             // Global State
             let currentProjectId = null;
+            let currentProjectUserId = null; // Stored for Account-Level updates
+            let currentStoragePath = ""; // R2 folder path: {username-uid}/{project_name}
+            let currentProjectConfig = {};
+
+            // Utility: Slugify (Ported from editor.html for consistency)
+            function slugify(text) {
+                return text.toString().toLowerCase().trim()
+                    .replace(/\s+/g, '_')           // Replace spaces with _
+                    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+                    .replace(/\-\-+/g, '_');         // Replace multiple - with single _
+            }
 
             // --- EDITOR LOGIC ---
             window.loadConfiguration = async (projectId) => {
@@ -2064,7 +2330,20 @@
                     }
 
                     const data = docSnap.data();
+                    currentProjectUserId = data.userId || null; // Capture User ID
                     const config = data.config || {};
+                    currentProjectConfig = config; // Sync global state
+
+                    // FIX: Robust Storage Path Calculation (Matches editor.html)
+                    if (data.storagePath) {
+                        currentStoragePath = data.storagePath;
+                    } else {
+                        // Fallback: Calculate from client + title
+                        const clientNameSlug = slugify(data.clientName || config.clientName || 'User');
+                        const projectTitleSlug = slugify(data.title || config.title || 'Memory');
+                        currentStoragePath = `${clientNameSlug}/${projectTitleSlug}_${projectId}`;
+                        console.log(`[Admin] Calculated Fallback Path: ${currentStoragePath}`);
+                    }
 
                     // 1. Populate Admin Fields
                     const form = document.getElementById('configForm');
@@ -2074,6 +2353,15 @@
                     if (form.elements['admin_amountPaid']) form.elements['admin_amountPaid'].value = data.amountPaid || '';
                     if (form.elements['admin_mobile']) form.elements['admin_mobile'].value = data.mobile || '';
                     if (form.elements['admin_email']) form.elements['admin_email'].value = data.email || '';
+
+                    // 1.5. Set Template Dropdown (if exists)
+                    const templateSelect = document.getElementById('template-select');
+                    // Check if KNOWN_TEMPLATES includes the saved templateId to avoid invalid selection
+                    if (data.templateId && KNOWN_TEMPLATES.includes(data.templateId)) {
+                        templateSelect.value = data.templateId;
+                    } else {
+                        templateSelect.value = ""; // Default to "Choose a category..."
+                    }
 
                     // 2. Populate Config Fields
                     populateFormFromData(config);
@@ -2095,6 +2383,8 @@
             // Helper: Populate form from Config Object
             function populateFormFromData(data) {
                 const form = document.getElementById('configForm');
+                const R2_DOMAIN = "https://pub-09b0269178c944e19a7f4bad3d3add30.r2.dev";
+
                 Array.from(form.elements).forEach(input => {
                     if (input.name.startsWith('admin_')) return;
                     if (!input.name) return;
@@ -2111,6 +2401,52 @@
                     }
                     if (current !== null) {
                         input.value = current;
+
+                        // SPECIAL HANDLING: Hero Image Preview
+                        if (input.name === 'heroImage') {
+                            const heroPreview = document.getElementById('hero-preview');
+                            if (heroPreview) {
+                                let imageUrl = current;
+                                // If relative path and we have storagePath, construct full URL
+                                if (!imageUrl.startsWith('http') && currentStoragePath) {
+                                    // Check if it already has the prefix or needs it
+                                    if (!imageUrl.includes('/')) {
+                                        imageUrl = `${R2_DOMAIN}/${currentStoragePath}/${imageUrl}`;
+                                    }
+                                }
+                                // REPAIR: (Removed incorrect qr-memory-photos injection logic)
+
+                                heroPreview.src = imageUrl;
+                                heroPreview.style.display = 'block';
+                                // FIX: Ensure placeholder is hidden if image loads
+                                if (heroPreview.nextElementSibling) heroPreview.nextElementSibling.style.display = 'none';
+
+                                // FORCE FULL URL into hidden input so it saves correctly for view.html
+                                if (input.value !== imageUrl) {
+                                    input.value = imageUrl;
+                                }
+
+                                console.log(`[Admin] Loaded Hero Image: ${imageUrl}`);
+                            }
+                        }
+                    } else if (input.name === 'heroImage' && currentStoragePath) {
+                        // FALLBACK: If config.heroImage is undefined/null but we have a storage path
+                        // Assume "hero.webp" exists (default convention)
+                        const heroPreview = document.getElementById('hero-preview');
+                        if (heroPreview) {
+                            // Sanitize path: Replace spaces with underscores
+                            let cleanPath = currentStoragePath.trim();
+                            // Remove leading slash if present to avoid double slashes
+                            if (cleanPath.startsWith('/')) cleanPath = cleanPath.substring(1);
+                            // FIX: Removed incorrect 'qr-memory-photos/' prefix
+                            const imageUrl = `${R2_DOMAIN}/${cleanPath}/hero.webp`;
+                            heroPreview.src = imageUrl;
+                            heroPreview.style.display = 'block';
+                            if (heroPreview.nextElementSibling) heroPreview.nextElementSibling.style.display = 'none';
+
+                            input.value = imageUrl; // CRITICAL: Save the FULL URL
+                            console.log(`[Admin] Auto-detected Hero Image: ${imageUrl}`);
+                        }
                     }
                 });
 
@@ -2125,6 +2461,7 @@
                 e.preventDefault();
                 if (!currentProjectId) return;
 
+                const saveBtn = document.getElementById('save-config-btn');
                 saveBtn.disabled = true;
                 saveBtn.innerHTML = "Saving...";
 
@@ -2133,6 +2470,30 @@
 
                 const adminUpdates = {};
                 const configUpdates = {};
+
+                // Explicitly grab critical admin fields using FormData (most robust)
+                const statusVal = formData.get('admin_status');
+                if (statusVal) {
+                    adminUpdates['status'] = statusVal;
+                }
+
+                // Strict Plan Enforcement
+                const validitySelect = form.querySelector('select[name="admin_validity"]');
+                if (validitySelect && validitySelect.selectedIndex >= 0) {
+                    const selectedOpt = validitySelect.options[validitySelect.selectedIndex];
+                    const storageLimit = Number(selectedOpt.dataset.storageLimit);
+                    const videoDuration = Number(selectedOpt.dataset.videoDuration);
+
+                    // If valid limits exist, apply them strictly
+                    if (!isNaN(storageLimit)) adminUpdates['storageLimit'] = storageLimit;
+                    if (!isNaN(videoDuration)) adminUpdates['videoDuration'] = videoDuration;
+
+                    // Also save the validity name
+                    adminUpdates['validity'] = validitySelect.value;
+                }
+
+                // DEBUG: Alert user to confirm what is being sent
+                // alert(`DEBUG: Saving Project\nID: ${currentProjectId}\nNew Status: ${statusVal || 'Unchanged'}`);
 
                 const setNested = (obj, path, value) => {
                     const keys = path.split('.');
@@ -2145,6 +2506,8 @@
                 };
 
                 for (const [key, value] of formData.entries()) {
+                    if (key === 'admin_status') continue; // Already handled explicitly
+
                     if (key.startsWith('admin_')) {
                         const field = key.replace('admin_', '');
                         adminUpdates[field] = value;
@@ -2152,6 +2515,8 @@
                         setNested(configUpdates, key, value);
                     }
                 }
+
+                console.log("[Admin] Saving Updates:", { adminUpdates, configUpdates });
 
                 try {
                     await setDoc(doc(db, "projects", currentProjectId), {
@@ -2413,98 +2778,42 @@
 
             // Initialize
             fetchTemplates();
-            // --- 8. CLOUD UPLOADER LOGIC ---
-            const dropZone = document.getElementById('drop-zone');
-            const fileInput = document.getElementById('file-upload-input');
-            const workerUrlInput = document.getElementById('worker-url-input');
-            const workerSecretInput = document.getElementById('worker-secret-input');
-            const uploadStatusArea = document.getElementById('upload-status-area');
-            const uploadList = document.getElementById('upload-list');
-            const queueCount = document.getElementById('queue-count');
 
-            // Load Saved Settings
-            if (localStorage.getItem('workerUrl')) workerUrlInput.value = localStorage.getItem('workerUrl');
-            if (localStorage.getItem('workerSecret')) workerSecretInput.value = localStorage.getItem('workerSecret');
+        </script>
 
-            // Save on Change
-            workerUrlInput.addEventListener('change', () => localStorage.setItem('workerUrl', workerUrlInput.value));
-            workerSecretInput.addEventListener('change', () => localStorage.setItem('workerSecret', workerSecretInput.value));
+        <!-- LIGHTBOX MODAL -->
+        <div id="lightbox-modal"
+            class="fixed inset-0 z-[200] hidden bg-black/95 flex items-center justify-center cursor-zoom-out transition-opacity duration-200">
+            <img id="lightbox-img" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl">
+            <button onclick="closeLightbox()"
+                class="absolute top-6 right-6 text-white/80 hover:text-white text-4xl font-light">&times;</button>
+        </div>
 
-            // File Handling
-            fileInput.addEventListener('change', handleFiles);
-
-            function handleFiles(e) {
-                const files = e.target.files;
-                processQueue(files);
+        <script>
+            // Lightbox Functions
+            function openLightbox(src) {
+                const modal = document.getElementById('lightbox-modal');
+                const img = document.getElementById('lightbox-img');
+                img.src = src;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
             }
 
-            async function processQueue(files) {
-                uploadStatusArea.classList.remove('hidden');
-                queueCount.textContent = `${files.length} Files`;
-
-                const workerUrl = workerUrlInput.value.replace(/\/$/, ""); // Remove trailing slash
-                const secret = workerSecretInput.value;
-
-                if (!workerUrl || !secret) {
-                    alert("Please configure Worker URL and Secret first.");
-                    return;
-                }
-
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    const id = `file-${Date.now()}-${i}`;
-
-                    // Add to UI
-                    const item = document.createElement('div');
-                    item.className = "flex items-center gap-4 bg-slate-50 dark:bg-zinc-900 p-3 rounded-lg border border-slate-100 dark:border-zinc-800 text-sm";
-                    item.innerHTML = `
-                    <div class="w-8 h-8 bg-slate-200 dark:bg-zinc-800 rounded flex items-center justify-center text-xs font-bold text-slate-500">
-                        ${file.type.includes('image') ? 'IMG' : 'FILE'}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="truncate font-medium text-slate-700 dark:text-slate-200">${file.name}</p>
-                        <p class="text-xs text-slate-400">${(file.size / 1024).toFixed(0)} KB</p>
-                    </div>
-                    <div id="status-${id}" class="text-xs font-bold text-slate-400">WAITING</div>
-                `;
-                    uploadList.appendChild(item);
-
-                    // Upload
-                    await uploadFile(file, workerUrl, secret, id);
-                }
+            function closeLightbox() {
+                const modal = document.getElementById('lightbox-modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
             }
 
-            async function uploadFile(file, workerUrl, secret, uiId) {
-                const statusEl = document.getElementById(`status-${uiId}`);
-                statusEl.textContent = "UPLOADING...";
-                statusEl.className = "text-xs font-bold text-blue-500 animate-pulse";
+            // Close on click anywhere
+            document.getElementById('lightbox-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'lightbox-modal') closeLightbox();
+            });
 
-                try {
-                    // Construct URL: worker/upload?key=filename
-                    // Use original name for simplicity, or sanitize
-                    const key = encodeURIComponent(file.name); // Using simple name preserve
-
-                    const response = await fetch(`${workerUrl}/upload?key=${key}`, {
-                        method: 'PUT',
-                        headers: {
-                            'X-Auth-Secret': secret,
-                            'Content-Type': file.type
-                        },
-                        body: file
-                    });
-
-                    if (!response.ok) throw new Error(await response.text());
-
-                    const result = await response.json();
-                    statusEl.textContent = "DONE";
-                    statusEl.className = "text-xs font-bold text-green-500";
-                } catch (e) {
-                    console.error(e);
-                    statusEl.textContent = "FAILED";
-                    statusEl.className = "text-xs font-bold text-red-500";
-                    statusEl.title = e.message;
-                }
-            }
+            // Close on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeLightbox();
+            });
         </script>
 </body>
 

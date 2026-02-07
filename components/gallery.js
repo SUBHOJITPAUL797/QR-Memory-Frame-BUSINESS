@@ -25,16 +25,51 @@ export function renderGallery(client) {
   else if (fontTheme === 'modern') btnFontClass = 'font-sans uppercase tracking-widest text-xs';
   else if (fontTheme === 'classic') btnFontClass = 'font-serif tracking-wide';
 
+  // --- GALLERY TITLE CONFIG ---
+  const fontClassMap = {
+    'great-vibes': 'font-script',
+    'dancing-script': 'font-dancing-script',
+    'pacifico': 'font-pacifico',
+    'sacramento': 'font-sacramento',
+    'parisienne': 'font-parisienne',
+    'allura': 'font-allura',
+    'pinyon-script': 'font-pinyon-script',
+    'mr-de-haviland': 'font-mr-de-haviland',
+    'alex-brush': 'font-alex-brush',
+    'tangerine': 'font-tangerine',
+    'playfair': 'font-serif',
+    'cinzel': 'font-cinzel',
+    'cormorant': 'font-cormorant',
+    'merriweather': 'font-merriweather',
+    'eb-garamond': 'font-eb-garamond',
+    'montserrat': 'font-sans',
+    'oswald': 'font-oswald',
+    'raleway': 'font-raleway',
+    'lato': 'font-lato',
+    'roboto': 'font-roboto',
+    // Generic Fallbacks
+    'romantic': 'font-script',
+    'classic': 'font-serif',
+    'modern': 'font-sans'
+  };
+
+  const title = client.galleryTitle || "Our Memories";
+  const titleFont = fontClassMap[client.visuals?.galleryTitleFont] || 'font-serif';
+  const captionFont = fontClassMap[client.visuals?.galleryCaptionFont] || 'font-script';
+
   // Generate Frame Styles
   const styleCSS = getFrameStyleCSS(frameStyle);
 
   // Render based on mode
   if (galleryMode === 'auto') {
-    return renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass) + `<style>${styleCSS}</style>`;
+    return renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass, title, titleFont, captionFont) + `<style>${styleCSS}</style>`;
   } else if (galleryMode === 'book') {
-    return renderBookFlipHTML(galleryItems, client, frameStyle, btnFontClass) + `<style>${styleCSS}</style>`;
+    // For Book, we might want a different default, but user input overrides it if provided.
+    // Use generic title unless specific book title logic exists.
+    const bookTitle = client.galleryTitle || "Our Storybook";
+    return renderBookFlipHTML(galleryItems, client, frameStyle, btnFontClass, bookTitle, titleFont) + `<style>${styleCSS}</style>`;
   } else {
-    return renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass) + `<style>${styleCSS}</style>`;
+    return renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, title, titleFont, captionFont) + `<style>${styleCSS}</style>`;
   }
 }
 
@@ -245,7 +280,7 @@ export function initGallery(client) {
 }
 
 // --- BOOK FLIP RENDERER (NEW) ---
-function renderBookFlipHTML(galleryItems, client, frameStyle, btnFontClass) {
+function renderBookFlipHTML(galleryItems, client, frameStyle, btnFontClass, title, titleFont) {
   // We need pages. Each page has Front and Back.
   // 10 photos = 6-7 pages (Cover + internal spreads + Back cover)
   // For simplicity: One photo per page side.
@@ -302,7 +337,7 @@ function renderBookFlipHTML(galleryItems, client, frameStyle, btnFontClass) {
   return `
     <section id="gallery-section" class="min-h-screen flex flex-col items-center justify-center bg-zinc-100 perspective-1500 overflow-hidden">
         <div class="text-center mb-8 relative z-20 px-4">
-            <h2 class="font-serif text-3xl text-warm-900 mb-2">Our Storybook</h2>
+            <h2 class="${titleFont} text-3xl text-warm-900 mb-2">${title}</h2>
             <p class="text-xs uppercase tracking-widest text-gold-500 animate-pulse">Tap right/left to turn pages</p>
         </div>
 
@@ -441,7 +476,7 @@ function getFrameStyleCSS(style) {
 
 // --- HTML RENDERERS ---
 
-function renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass) {
+function renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass, title, titleFont, captionFont) {
   const slidesHtml = galleryItems.map((imgUrl, index) => {
     const caption = (client.captions && client.captions[index + 1]) || "";
     return `
@@ -454,7 +489,7 @@ function renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass)
                         loading="eager"
                     />
                     
-                    ${caption ? `<p class="mt-4 font-script text-xl md:text-2xl text-center text-zinc-700">${caption}</p>` : ''}
+                    ${caption ? `<p class="mt-4 ${captionFont} text-xl md:text-2xl text-center text-zinc-700">${caption}</p>` : ''}
                 </div>
             </div>
         </div>
@@ -464,7 +499,7 @@ function renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass)
   return `
         <section id="gallery-section" class="min-h-screen flex flex-col items-center justify-center relative py-12 bg-gradient-to-br from-warm-50 to-slate-100 overflow-hidden">
             <div class="text-center mb-8 relative z-20 px-4">
-                <h2 class="font-serif text-3xl md:text-4xl text-warm-900 mb-2 tracking-wide">Our Memories</h2>
+                <h2 class="${titleFont} text-3xl md:text-4xl text-warm-900 mb-2 tracking-wide">${title}</h2>
                  <p id="gallery-status" class="text-xs uppercase tracking-widest text-gold-500 mb-6">Auto-playing</p>
             </div>
 
@@ -493,7 +528,7 @@ function renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass)
     `;
 }
 
-function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass) {
+function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, title, titleFont, captionFont) {
   const cardsHtml = galleryItems.map((imgUrl, index) => {
     const zIndex = galleryItems.length - index;
     // For Stack, we keep rotation randomness unless strict style like Modern/Cinema
@@ -520,7 +555,7 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass) {
                 loading="eager"
             />
             
-            ${caption ? `<p class="font-script text-2xl text-center text-zinc-600 mt-2">${caption}</p>` : ''}
+            ${caption ? `<p class="${captionFont} text-2xl text-center text-zinc-600 mt-2">${caption}</p>` : ''}
         </div>
       </div>
     `;
@@ -529,7 +564,7 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass) {
   return `
       <section id="gallery-section" class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden py-12">
         <div class="text-center mb-8 relative z-20 px-4">
-            <h2 class="font-serif text-3xl md:text-4xl text-warm-900 mb-2 tracking-wide">Our Memories</h2>
+            <h2 class="${titleFont} text-3xl md:text-4xl text-warm-900 mb-2 tracking-wide">${title}</h2>
             <p class="text-xs uppercase tracking-widest text-gold-500 animate-pulse mb-6">Tap to Reveal</p>
         </div>
 

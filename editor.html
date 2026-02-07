@@ -243,6 +243,11 @@
                 <input type="hidden" id="worker-secret" value="qr-admin-secret-2024">
                 <input type="hidden" id="r2-domain" value="https://pub-09b0269178c944e19a7f4bad3d3add30.r2.dev">
 
+                <!-- HIDDEN TEMPLATE CONFIGS (Missing in Editor UI) -->
+                <input type="hidden" name="loadingTitle" class="autosave-field">
+                <input type="hidden" name="loadingSubtitle" class="autosave-field">
+                <input type="hidden" name="enterButtonText" class="autosave-field">
+
                 <section id="section-main" class="scroll-mt-24">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-2xl font-bold">1. Main Details</h3>
@@ -354,6 +359,85 @@
                 <!-- Section 2: Photos -->
                 <section id="section-photos" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
                     <h3 class="text-2xl font-bold mb-6">2. Gallery Manager</h3>
+
+                    <!-- Gallery Title & Font -->
+                    <div
+                        class="mb-8 p-6 bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Gallery
+                                    Title</label>
+                                <input type="text" name="galleryTitle" placeholder="Our Memories"
+                                    class="w-full bg-slate-50 dark:bg-zinc-800 border-none rounded-lg p-3 text-sm font-bold autosave-field focus:ring-2 focus:ring-indigo-500 placeholder-slate-400">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Title
+                                    Font</label>
+                                <select name="visuals.galleryTitleFont"
+                                    class="w-full bg-slate-50 dark:bg-zinc-800 border-none rounded-lg p-3 text-sm font-bold autosave-field focus:ring-2 focus:ring-indigo-500">
+                                    <optgroup label="Romantic & Script">
+                                        <option value="great-vibes">Great Vibes (Classic Romantic)</option>
+                                        <option value="dancing-script">Dancing Script (Playful)</option>
+                                        <option value="pacifico">Pacifico (Casual)</option>
+                                        <option value="sacramento">Sacramento (Delicate)</option>
+                                        <option value="parisienne">Parisienne (Elegant)</option>
+                                        <option value="allura">Allura (Flowing)</option>
+                                        <option value="pinyon-script">Pinyon Script (Royal)</option>
+                                        <option value="mr-de-haviland">Mr De Haviland (Handwritten)</option>
+                                        <option value="alex-brush">Alex Brush (Artistic)</option>
+                                        <option value="tangerine">Tangerine (Tall & Elegant)</option>
+                                    </optgroup>
+                                    <optgroup label="Serif & Classic">
+                                        <option value="playfair">Playfair Display (Luxury)</option>
+                                        <option value="cinzel">Cinzel (Cinematic)</option>
+                                        <option value="cormorant">Cormorant Garamond (Graceful)</option>
+                                        <option value="merriweather">Merriweather (Readability)</option>
+                                        <option value="eb-garamond">EB Garamond (Old School)</option>
+                                    </optgroup>
+                                    <optgroup label="Modern & Sans">
+                                        <option value="montserrat">Montserrat (Clean)</option>
+                                        <option value="oswald">Oswald (Bold)</option>
+                                        <option value="raleway">Raleway (Elegant Sans)</option>
+                                        <option value="lato">Lato (Neutral)</option>
+                                        <option value="roboto">Roboto (Standard)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Caption
+                                    Font</label>
+                                <select name="visuals.galleryCaptionFont"
+                                    class="w-full bg-slate-50 dark:bg-zinc-800 border-none rounded-lg p-3 text-sm font-bold autosave-field focus:ring-2 focus:ring-indigo-500">
+                                    <optgroup label="Romantic & Script">
+                                        <option value="great-vibes">Great Vibes (Classic Romantic)</option>
+                                        <option value="dancing-script">Dancing Script (Playful)</option>
+                                        <option value="pacifico">Pacifico (Casual)</option>
+                                        <option value="sacramento">Sacramento (Delicate)</option>
+                                        <option value="parisienne">Parisienne (Elegant)</option>
+                                        <option value="allura">Allura (Flowing)</option>
+                                        <option value="pinyon-script">Pinyon Script (Royal)</option>
+                                        <option value="mr-de-haviland">Mr De Haviland (Handwritten)</option>
+                                        <option value="alex-brush">Alex Brush (Artistic)</option>
+                                        <option value="tangerine">Tangerine (Tall & Elegant)</option>
+                                    </optgroup>
+                                    <optgroup label="Serif & Classic">
+                                        <option value="playfair">Playfair Display (Luxury)</option>
+                                        <option value="cinzel">Cinzel (Cinematic)</option>
+                                        <option value="cormorant">Cormorant Garamond (Graceful)</option>
+                                        <option value="merriweather">Merriweather (Readability)</option>
+                                        <option value="eb-garamond">EB Garamond (Old School)</option>
+                                    </optgroup>
+                                    <optgroup label="Modern & Sans">
+                                        <option value="montserrat">Montserrat (Clean)</option>
+                                        <option value="oswald">Oswald (Bold)</option>
+                                        <option value="raleway">Raleway (Elegant Sans)</option>
+                                        <option value="lato">Lato (Neutral)</option>
+                                        <option value="roboto">Roboto (Standard)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Hero Image -->
                     <div
@@ -1134,7 +1218,8 @@
             try {
                 const { updateDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
                 await updateDoc(doc(db, "projects", projectId), updates);
-                console.log("Save Success. Config:", updates['config']);
+                // console.log("Save Success. Updates:", updates); // Debug usage only
+                console.log("Save Success.");
                 updateSaveIndicator('saved');
             } catch (error) {
                 console.error("Autosave failed:", error);
@@ -1246,10 +1331,15 @@
             currentUserStorageUsed += bytesDelta; // Local optimist update
             try {
                 const userRef = doc(db, "users", auth.currentUser.uid);
-                await updateDoc(userRef, {
-                    storageUsed: increment(bytesDelta)
-                });
-                console.log("[Storage] Database updated successfully");
+                const projectRef = doc(db, "projects", projectId);
+
+                // Parallel Update: User + Project
+                await Promise.all([
+                    updateDoc(userRef, { storageUsed: increment(bytesDelta) }),
+                    updateDoc(projectRef, { storageUsed: increment(bytesDelta) })
+                ]);
+
+                console.log("[Storage] Database updated successfully (User & Project)");
             } catch (e) { console.warn("Quota sync error", e); }
         }
 
@@ -1257,43 +1347,72 @@
             // 1. Check Quota
             if (!checkStorageQuota(blob.size)) throw new Error("Storage Limit Exceeded");
 
-            return new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open('PUT', `${WORKER_URL}/upload?key=${encodeURIComponent(key)}`, true);
-                xhr.setRequestHeader('X-Auth-Secret', WORKER_SECRET);
-                xhr.setRequestHeader('Content-Type', contentType);
+            // SECURITY: Use Firebase ID Token for Signing Request
+            if (!auth.currentUser) throw new Error("Not Authenticated");
+            const token = await auth.currentUser.getIdToken(true);
 
-                if (onProgress) {
-                    xhr.upload.onprogress = (e) => {
-                        if (e.lengthComputable) {
-                            const percent = Math.round((e.loaded / e.total) * 100);
-                            onProgress(percent);
-                        }
-                    };
+            // 2. Get Presigned URL
+            try {
+                const signRes = await fetch(`${WORKER_URL}/sign-upload?key=${encodeURIComponent(key)}`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!signRes.ok) {
+                    const err = await signRes.json().catch(() => ({}));
+                    throw new Error(err.error || `Sign failed: ${signRes.status}`);
                 }
 
-                xhr.onload = async () => {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        // 2. Track Usage
-                        await updateUserStorage(blob.size);
-                        resolve(true);
-                    } else {
-                        reject(new Error(`Upload failed: ${xhr.status}`));
-                    }
-                };
+                const { url: signedUrl } = await signRes.json();
 
-                xhr.onerror = () => reject(new Error("Network Error"));
-                xhr.send(blob);
-            });
+                // 3. Upload to R2 (Direct)
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('PUT', signedUrl, true);
+                    xhr.setRequestHeader('Content-Type', contentType);
+
+                    if (onProgress) {
+                        xhr.upload.onprogress = (e) => {
+                            if (e.lengthComputable) {
+                                const percent = Math.round((e.loaded / e.total) * 100);
+                                onProgress(percent);
+                            }
+                        };
+                    }
+
+                    xhr.onload = async () => {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            // 4. Track Usage
+                            await updateUserStorage(blob.size);
+                            resolve(true);
+                        } else {
+                            reject(new Error(`Upload failed: ${xhr.status}`));
+                        }
+                    };
+
+                    xhr.onerror = () => reject(new Error("Network Error"));
+                    xhr.send(blob);
+                });
+            } catch (error) {
+                console.error("Upload Init Failed:", error);
+                throw error;
+            }
         }
 
         async function deleteFromR2(key) {
             try {
                 // The Worker now calculates size before delete and returns it.
                 // We trust the Worker to tell us what was removed.
+
+                // SECURITY: Use Firebase ID Token
+                if (!auth.currentUser) throw new Error("Not Authenticated");
+                const token = await auth.currentUser.getIdToken(true);
+
                 const res = await fetch(`${WORKER_URL}/delete?key=${encodeURIComponent(key)}`, {
                     method: 'DELETE',
-                    headers: { 'X-Auth-Secret': WORKER_SECRET }
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
 
                 if (res.ok) {
@@ -1384,27 +1503,38 @@
 
         async function loadFFmpeg() {
             if (ffmpegLoaded) return ffmpeg;
-
             const status = document.getElementById('video-status');
-            status.textContent = "Loading compression tool...";
+            if (status) {
+                // status.textContent = "Loading compression tool..."; 
+            }
 
             try {
                 // Load FFmpeg.wasm from CDN
                 const { FFmpeg } = await import('https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/esm/index.js');
-                const { fetchFile, toBlobURL } = await import('https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js');
+                const { toBlobURL } = await import('https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js');
 
                 ffmpeg = new FFmpeg();
                 const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.4/dist/esm';
 
+                // FIX: Load Worker from Blob to avoid "SecurityError" (Different Origin Restriction)
+                // We fetch the worker script text first, then create a local Blob URL.
+                const workerResp = await fetch(`${baseURL}/ffmpeg-core.worker.js`);
+                if (!workerResp.ok) throw new Error("Failed to fetch worker");
+                const workerBlob = await workerResp.blob();
+                const workerURL = URL.createObjectURL(workerBlob);
+
                 await ffmpeg.load({
                     coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
                     wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+                    workerURL: workerURL // Use local blob URL
                 });
 
                 ffmpegLoaded = true;
                 return ffmpeg;
             } catch (err) {
-                console.warn("FFmpeg load failed, will upload without compression:", err);
+                console.warn("Video Compression Unavailable:", err.message);
+                console.log("Falling back to uncompressed upload. This is normal if Cross-Origin Isolation is not enabled.");
+                // Clean exit so upload continues
                 return null;
             }
         }
@@ -1413,7 +1543,7 @@
             const status = document.getElementById('video-status');
 
             try {
-                status.textContent = "Compressing to 720p for mobile...";
+                // status.textContent = "Compressing to 720p for mobile...";
 
                 const ffmpegInstance = await loadFFmpeg();
                 if (!ffmpegInstance) {
@@ -1429,7 +1559,7 @@
                 // Progress tracking
                 ffmpegInstance.on('progress', ({ progress }) => {
                     const percent = Math.round(progress * 100);
-                    status.textContent = `Compressing: ${percent}%`;
+                    // status.textContent = `Compressing: ${percent}%`;
                 });
 
                 // Detect orientation from temporary video element
@@ -1479,8 +1609,9 @@
                 await ffmpegInstance.deleteFile('input.mp4');
                 await ffmpegInstance.deleteFile('output.mp4');
 
-                status.textContent = `Compressed: ${(file.size / 1024 / 1024).toFixed(1)}MB → ${(compressedBlob.size / 1024 /
-                    1024).toFixed(1)}MB`;
+                // status.textContent = `Compressed: ${(file.size / 1024 / 1024).toFixed(1)}MB → ${(compressedBlob.size / 1024 /
+                // 1024).toFixed(1)
+                // }MB`;
 
                 return compressedBlob;
             } catch (err) {
@@ -1500,7 +1631,7 @@
             const videoPlaceholder = document.getElementById('video-placeholder');
             const deleteBtn = document.getElementById('delete-video-btn');
 
-            status.textContent = "Checking video...";
+            // status.textContent = "Checking video...";
             status.classList.remove('text-green-500');
 
             // Check duration
@@ -1662,6 +1793,10 @@
                 const response = await fetch(`./clients/${templateName}-template.json`);
                 if (!response.ok) throw new Error("Template file not found");
                 const templateData = await response.json();
+
+                // CRITICAL: Force eventType to match the selection (Fixes Dropdown Reset Bug)
+                // The JSON file often has human-readable text ("Marriage Proposal") which doesn't match the value ("marriage").
+                templateData.eventType = templateName;
 
                 // CRITICAL: Preserve ALL user uploads before merging template
                 // Get current project data from Firestore
@@ -2164,22 +2299,12 @@
             const form = document.getElementById('configForm');
             // reset standard fields
             Array.from(form.elements).forEach(input => {
-                if (!input.name || input.name === 'eventType' || input.classList.contains('caption-field')) return;
+                if (!input.name || input.classList.contains('caption-field')) return;
                 const path = input.name.split('.');
                 let val = data;
                 for (let key of path) if (val) val = val[key];
                 if (val !== undefined) input.value = val;
             });
-
-            if (data.eventType) {
-                const select = form.querySelector('select[name="eventType"]');
-                for (let opt of select.options) {
-                    if (opt.value.toLowerCase() === data.eventType.toLowerCase()) {
-                        select.value = opt.value;
-                        break;
-                    }
-                }
-            }
 
             if (data.heroImage) {
                 const preview = document.getElementById('hero-preview');

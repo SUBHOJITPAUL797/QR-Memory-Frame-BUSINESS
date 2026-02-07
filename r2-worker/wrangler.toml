@@ -8,5 +8,13 @@ binding = "BUCKET"
 bucket_name = "qr-memory-photos" # Replace with your actual R2 bucket name
 
 [vars]
-ALLOWED_ORIGIN = "*" # Replace with your domain for security later
-# AUTH_SECRET should be set via `wrangler secret put AUTH_SECRET` or Dashboard
+ALLOWED_ORIGIN = "*"
+FIREBASE_PROJECT_ID = "qr-memory-biz-app"
+# AUTH_SECRET is no longer needed/used
+
+# R2 Compatibility (Required for Large Uploads >100MB)
+# Obtain these from Cloudflare Dashboard > R2 > Manage R2 API Tokens
+R2_ACCESS_KEY_ID = "0ade440213b6c20f5d229a9203b381ad"
+R2_SECRET_ACCESS_KEY = "74b6b737c6364d65ee49ea22087229b74239df5bf04e15c6baaa92bb966a569d"
+ACCOUNT_ID = "aec7fe74728e6432c328840476eec923"
+BUCKET_NAME = "qr-memory-photos"
