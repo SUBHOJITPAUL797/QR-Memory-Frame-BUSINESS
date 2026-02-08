@@ -500,7 +500,7 @@
                             <div
                                 class="w-48 h-32 bg-black rounded-lg overflow-hidden flex-shrink-0 border border-slate-200 dark:border-zinc-700 relative">
                                 <video id="video-preview" src="" class="w-full h-full object-cover hidden" controls
-                                    preload="none"></video>
+                                    preload="metadata" poster=""></video>
                                 <div id="video-placeholder"
                                     class="absolute inset-0 flex items-center justify-center text-slate-500 pointer-events-none">
                                     <span class="text-xs">No Video</span>
@@ -986,83 +986,84 @@
                             </optgroup>
                         </select>
                     </div>
-    </div>
-    </section>
+                </section>
 
-    <!-- Section 7: Export -->
+                <!-- Section 7: Export -->
 
 
-    <!-- Section 7: Downloads -->
-    <section id="section-downloads" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
-        <h3 class="text-2xl font-bold mb-6">7. Download Options</h3>
-        <div
-            class="flex items-center justify-between p-6 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl">
-            <div>
-                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">Allow Photo
-                    Downloads</label>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">If enabled, visitors can download
-                    photos from the footer.</p>
-            </div>
-            <div class="flex items-center space-x-3">
-                <span id="downloads-status-text"
-                    class="text-xs font-bold text-slate-400 uppercase tracking-widest">Allowed</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" name="visuals.allowDownloads" class="sr-only peer autosave-field">
-                    <!-- DEFAULT: OFF (unchecked). User enables if they want downloads. -->
+                <!-- Section 7: Downloads -->
+                <section id="section-downloads"
+                    class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
+                    <h3 class="text-2xl font-bold mb-6">7. Download Options</h3>
                     <div
-                        class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-500">
+                        class="flex items-center justify-between p-6 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">Allow Photo
+                                Downloads</label>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">If enabled, visitors can download
+                                photos from the footer.</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span id="downloads-status-text"
+                                class="text-xs font-bold text-slate-400 uppercase tracking-widest">Allowed</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="visuals.allowDownloads"
+                                    class="sr-only peer autosave-field">
+                                <!-- DEFAULT: OFF (unchecked). User enables if they want downloads. -->
+                                <div
+                                    class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-500">
+                                </div>
+                            </label>
+                        </div>
                     </div>
-                </label>
-            </div>
-        </div>
-    </section>
+                </section>
 
-    <!-- Experience Sequence (New) -->
-    <div class="mt-8 border-t border-slate-100 dark:border-zinc-800 pt-8" id="section-sorting-area">
-        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Experience
-            Sequence (Drag to Reorder)</label>
-        <div id="section-order-container" class="flex flex-col gap-2 mb-4 min-h-[50px]">
-            <!-- Populated via script -->
-        </div>
-        <input type="hidden" name="visuals.sectionOrder" id="section-order-input" value="hero,gallery,message,video"
-            class="autosave-field">
-        <p class="text-[10px] text-indigo-500 font-bold italic">Drag and drop the tabs above to set the
-            order visitors will see your content.</p>
-    </div>
-
-    <!-- Section 8: Export -->
-    <section id="section-export" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
-        <h3 class="text-2xl font-bold mb-6">8. Export</h3>
-        <div
-            class="p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-zinc-900 dark:to-zinc-800 rounded-xl border border-slate-200 dark:border-zinc-700">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Ready to Share?</h4>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-2">
-                        Preview your final memory frame in a full-screen dedicated tab.
-                    </p>
-                    <button type="button" id="reclaim-btn"
-                        class="text-xs font-bold text-slate-500 hover:text-indigo-600 underline">
-                        Reclaim Storage (Cleanup Orphans)
-                    </button>
+                <!-- Experience Sequence (New) -->
+                <div class="mt-8 border-t border-slate-100 dark:border-zinc-800 pt-8" id="section-sorting-area">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Experience
+                        Sequence (Drag to Reorder)</label>
+                    <div id="section-order-container" class="flex flex-col gap-2 mb-4 min-h-[50px]">
+                        <!-- Populated via script -->
+                    </div>
+                    <input type="hidden" name="visuals.sectionOrder" id="section-order-input"
+                        value="hero,gallery,message,video" class="autosave-field">
+                    <p class="text-[10px] text-indigo-500 font-bold italic">Drag and drop the tabs above to set the
+                        order visitors will see your content.</p>
                 </div>
-                <button id="export-site-btn" type="button"
-                    class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2 group">
-                    <span>Open Full Experience</span>
-                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </section>
+
+                <!-- Section 8: Export -->
+                <section id="section-export" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
+                    <h3 class="text-2xl font-bold mb-6">8. Export</h3>
+                    <div
+                        class="p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-zinc-900 dark:to-zinc-800 rounded-xl border border-slate-200 dark:border-zinc-700">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div>
+                                <h4 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Ready to Share?</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-2">
+                                    Preview your final memory frame in a full-screen dedicated tab.
+                                </p>
+                                <button type="button" id="reclaim-btn"
+                                    class="text-xs font-bold text-slate-500 hover:text-indigo-600 underline">
+                                    Reclaim Storage (Cleanup Orphans)
+                                </button>
+                            </div>
+                            <button id="export-site-btn" type="button"
+                                class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2 group">
+                                <span>Open Full Experience</span>
+                                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </section>
 
 
-    <div class="h-20"></div>
-    </form>
-    </main>
+                <div class="h-20"></div>
+            </form>
+        </main>
     </div>
 
     <!-- PREVIEW MODAL OVERLAY -->
@@ -1204,7 +1205,7 @@
     <script type="module">
         import { app, auth, db } from './js/firebase-config.js';
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { doc, getDoc, setDoc, serverTimestamp } from
+        import { doc, getDoc, setDoc, serverTimestamp, collection, query, where, getDocs } from
             "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // --- CONFIG ---
@@ -1391,45 +1392,42 @@
 
         async function initStorageQuota(uid) {
             try {
-                // 1. Fetch User Data (Global Limit & Usage)
+                // 1. Fetch User Data (Global Limit)
                 const userSnap = await getDoc(doc(db, "users", uid));
-                if (!userSnap.exists()) {
-                    console.warn("User doc not found, using defaults");
-                    currentUserStorageUsed = 0;
-                    currentUserStorageLimit = 100 * 1024 * 1024; // Default 100MB
-                } else {
+                if (userSnap.exists()) {
                     const userData = userSnap.data();
-                    currentUserStorageUsed = Math.max(0, userData.storageUsed || 0);
                     if (userData.limitMB) currentUserStorageLimit = userData.limitMB * 1024 * 1024;
 
-                    // If plan-based limit
                     if (userData.planId) {
                         const planSnap = await getDoc(doc(db, "plans", userData.planId));
                         if (planSnap.exists()) {
                             const planData = planSnap.data();
                             currentUserStorageLimit = (planData.storageLimit || 100) * 1024 * 1024;
-
-                            // NEW: Store Global Limits for other checks
                             window.projectLimits = {
                                 videoDuration: planData.videoDuration || 60,
                                 storageLimit: planData.storageLimit || 100,
                                 projectLimit: planData.projectLimit || 1
                             };
-                            console.log("Loaded Plan Limits:", window.projectLimits);
                         }
                     }
                 }
 
-                // 2. Fetch Project Data (Project Specific Usage)
-                try {
-                    const projectSnap = await getDoc(doc(db, "projects", projectId));
-                    if (projectSnap.exists()) {
-                        const pData = projectSnap.data();
+                // 2. Calculate REAL Total Usage by summing all projects
+                // This ensures consistency with Dashboard and fixes "drift" issues
+                const q = query(collection(db, "projects"), where("userId", "==", uid));
+                const projectDocs = await getDocs(q);
+                let totalBytes = 0;
+                projectDocs.forEach(pDoc => {
+                    const pData = pDoc.data();
+                    totalBytes += (pData.storageUsed || 0);
+
+                    // Also capture current project's specific usage for UI
+                    if (pDoc.id === projectId) {
                         currentProjectStorageUsed = Math.max(0, pData.storageUsed || 0);
                     }
-                } catch (err) {
-                    console.warn("Failed to fetch project storage stats:", err);
-                }
+                });
+
+                currentUserStorageUsed = Math.max(0, totalBytes);
 
                 console.log(`Global Storage: ${(currentUserStorageUsed / 1024 / 1024).toFixed(1)}MB / ${(currentUserStorageLimit / 1024 / 1024).toFixed(1)}MB`);
                 console.log(`Project Storage: ${(currentProjectStorageUsed / 1024 / 1024).toFixed(1)}MB`);
@@ -1929,11 +1927,11 @@
                     const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
                     document.getElementById('videoUrlInput').value = publicUrl;
 
-                    // Use Proxy for Preview (Smooth Streaming)
+                    // Use Proxy for Preview (Smooth Streaming) + #t=0.1 nudge for first-frame
                     if (WORKER_URL) {
-                        videoPreview.src = `${WORKER_URL}/proxy?key=${encodeURIComponent(key)}`;
+                        videoPreview.src = `${WORKER_URL}/proxy?key=${encodeURIComponent(key)}#t=0.1`;
                     } else {
-                        videoPreview.src = publicUrl;
+                        videoPreview.src = publicUrl + '#t=0.1';
                     }
                     videoPreview.classList.remove('hidden');
                     videoPlaceholder.classList.add('hidden');
@@ -2155,6 +2153,10 @@
                 const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
                 heroInput.value = publicUrl;
                 preview.src = URL.createObjectURL(blob);
+
+                // NEW: Update video poster if Hero Image changes
+                const vPreview = document.getElementById('video-preview');
+                if (vPreview) vPreview.poster = publicUrl;
                 preview.classList.remove('hidden');
                 placeholder.classList.add('hidden');
                 status.textContent = "✓ Uploaded";
@@ -2611,6 +2613,10 @@
                 document.getElementById('heroImageInput').value = data.heroImage;
                 // Update button text
                 if (heroBtn) heroBtn.textContent = 'Replace Cover';
+
+                // NEW: Sync video poster with Hero Image on load
+                const vPreview = document.getElementById('video-preview');
+                if (vPreview) vPreview.poster = data.heroImage;
             }
 
             // Video restoration
@@ -2622,7 +2628,14 @@
 
                 if (videoPreview && videoPlaceholder) {
                     videoPlaceholder.classList.add('hidden');
-                    videoPreview.src = data.video;
+
+                    // Add #t=0.1 nudge for first-frame if not already present
+                    let videoUrl = data.video;
+                    if (videoUrl && (videoUrl.includes('.r2.dev') || videoUrl.includes('/proxy')) && !videoUrl.includes('#t=')) {
+                        videoUrl += '#t=0.1';
+                    }
+
+                    videoPreview.src = videoUrl;
                     videoPreview.classList.remove('hidden');
                     document.getElementById('videoUrlInput').value = data.video;
                     if (deleteBtn) deleteBtn.classList.remove('hidden'); // Show delete button
@@ -3690,7 +3703,6 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </body>
 

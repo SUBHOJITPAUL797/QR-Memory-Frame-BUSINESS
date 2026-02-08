@@ -603,7 +603,8 @@
             getDoc,
             deleteDoc,
             updateDoc,
-            setDoc
+            setDoc,
+            increment
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const dashboardView = document.getElementById('dashboard-view');
@@ -1380,15 +1381,15 @@
                     const data = await res.json();
                     if (data.totalSize && data.totalSize > 0) {
                         console.debug(`[Storage] Reclaiming ${data.totalSize} bytes from deleted project`);
-                        // FIX: Never let storage go negative - read current, calculate safe new value
                         const user = auth.currentUser;
                         if (user) {
                             const userRef = doc(db, "users", user.uid);
-                            const userSnap = await getDoc(userRef);
-                            const currentUsed = userSnap.exists() ? (userSnap.data().storageUsed || 0) : 0;
-                            const newUsed = Math.max(0, currentUsed - data.totalSize); // NEVER negative
-                            await updateDoc(userRef, { storageUsed: newUsed });
-                            console.log(`[Storage] Updated: ${currentUsed} → ${newUsed} bytes`);
+                            // Atomic decrement using increment with negative value
+                            await updateDoc(userRef, {
+                                storageUsed: increment(-data.totalSize),
+                                updatedAt: serverTimestamp()
+                            });
+                            console.log(`[Storage] Reclaimed: ${data.totalSize} bytes`);
                         }
                     }
                 } else {

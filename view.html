@@ -972,10 +972,10 @@
                                         <p class="mt-6 text-white text-xs tracking-[0.3em] font-sans uppercase font-bold opacity-80 group-hover:opacity-100 transition-opacity">Relive the Memories</p>
                                     </div>
 
-                                    <video controls class="w-full h-full block" playsinline webkit-playsinline preload="none" 
+                                    <video controls class="w-full h-full block" playsinline webkit-playsinline preload="metadata" 
                                            poster="${client.heroImage || ''}"
                                            onplay="const overlay = this.previousElementSibling; if(overlay && overlay.id==='video-overlay') { overlay.style.opacity='0'; setTimeout(() => overlay.remove(), 500); }">
-                                        <source src="${videoSrc}" type="video/mp4">
+                                        <source src="${videoSrc}${videoSrc.includes('#t=') ? '' : '#t=0.1'}" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>
                                 </div>
