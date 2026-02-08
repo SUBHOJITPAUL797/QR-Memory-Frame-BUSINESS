@@ -39,7 +39,7 @@ export function renderHero(client) {
       <section id="hero-section" class="relative h-screen w-full flex flex-col items-center justify-center text-center text-warm-50 overflow-hidden">
         <div class="absolute inset-0 z-0">
           <!-- Image: Crystal clear, no breathing, no scaling, full opacity -->
-          <img src="${client.heroImage}" alt="${client.title}" class="w-full h-full object-cover brightness-105" />
+          <img src="${client.heroImage}" alt="${client.title}" class="w-full h-full object-cover brightness-105" fetchpriority="high" />
           
           <!-- Gradient: Refined for better text contrast without killing the image vibe -->
           <div class="absolute inset-0 bg-gradient-to-t from-warm-900/90 via-warm-900/40 to-warm-900/30 mix-blend-multiply"></div>

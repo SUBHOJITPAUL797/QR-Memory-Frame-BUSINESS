@@ -16,14 +16,42 @@
     <title>DASMO</title>
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
-    <!-- YouTube API -->
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- YouTube API (Deferred) -->
+    <script src="https://www.youtube.com/iframe_api" defer></script>
+    <!-- Resource Hints for High Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <!-- Note: R2 Domain will be preconnected dynamically if possible, or we preconnect the dev domain -->
+    <link rel="preconnect" href="https://pub-05531b262a63459c8cc6a4b3734e69bd.r2.dev">
+
     <!-- Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Allura&family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=Dancing+Script:wght@400;700&family=EB+Garamond:wght@400;700&family=Great+Vibes&family=Lato:wght@300;400;700&family=Merriweather:wght@300;400;700&family=Montserrat:wght@300;400;700&family=Mr+De+Haviland&family=Oswald:wght@300;400;700&family=Pacifico&family=Parisienne&family=Pinyon+Script&family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;700&family=Roboto:wght@300;400;700&family=Sacramento&family=Tangerine:wght@400;700&display=swap"
         rel="stylesheet">
 
+    <link rel="preload" href="./dist/output.css" as="style">
     <link href="./dist/output.css" rel="stylesheet">
+    <style>
+        /* CRITICAL CSS: Inline styles for immediate Loading Screen render (Anti-White-Flash) */
+        /* Mimics Tailwind: fixed inset-0 z-50 flex flex-col items-center justify-center bg-zinc-950 text-white overflow-hidden */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #09090b;
+            /* zinc-950 */
+            color: white;
+            overflow: hidden;
+        }
+    </style>
     <style>
         /* Base Animations */
         @keyframes fade-in-up {
@@ -122,6 +150,10 @@
             background: linear-gradient(90deg, #C5A059 0%, #d4af37 50%, #C5A059 100%);
             background-size: 1000px 100%;
             animation: shimmer 2s infinite linear;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
         }
     </style>
 </head>
@@ -130,29 +162,44 @@
 
     <!-- Loading Screen -->
     <div id="loading-screen"
-        class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-black via-zinc-900 to-black text-white">
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-zinc-950 text-white overflow-hidden">
+
+        <!-- Dynamic Blurred Background for Visual Continuity -->
+        <div id="loading-bg"
+            class="absolute inset-0 bg-cover bg-center scale-110 blur-2xl opacity-0 transition-opacity duration-1000 z-0 will-change-[opacity,transform]">
+        </div>
+        <div class="absolute inset-0 bg-black/60 z-0"></div>
 
         <!-- Logo/Title -->
-        <div class="text-center mb-12 animate-[fade-in_1s_ease-out]">
-            <h1 id="loading-title" class="font-sans text-4xl md:text-5xl mb-2 tracking-wider font-bold">
-                <span class="loading-shimmer bg-clip-text text-transparent">Loading Memory</span>
+        <div class="text-center mb-12 animate-[fade-in_1s_ease-out] relative z-10">
+            <h1 id="loading-title"
+                class="font-sans text-4xl md:text-5xl mb-3 tracking-[0.2em] font-extrabold uppercase">
+                <span id="loading-title-text" class="loading-shimmer">Loading Memory</span>
             </h1>
-            <p class="font-sans text-sm text-gray-400 tracking-widest uppercase">Please wait...</p>
+            <div class="flex items-center justify-center gap-4">
+                <div class="h-[1px] w-8 bg-gold-500/30"></div>
+                <p id="loading-subtitle-text"
+                    class="font-sans text-xs text-gray-400 tracking-[0.4em] uppercase opacity-70">Please wait</p>
+                <div class="h-[1px] w-8 bg-gold-500/30"></div>
+            </div>
         </div>
 
         <!-- Progress Bar -->
-        <div class="w-80 md:w-96 mb-8">
-            <div class="h-2 bg-gray-800 rounded-full overflow-hidden shadow-inner">
+        <div class="w-80 md:w-96 mb-8 relative z-10">
+            <div class="h-1.5 bg-white/5 rounded-full overflow-hidden backdrop-blur-sm border border-white/5">
                 <div id="loading-bar"
-                    class="h-full bg-gradient-to-r from-gold-500 to-gold-300 transition-all duration-300 ease-out"
+                    class="h-full bg-gradient-to-r from-gold-600 via-gold-400 to-gold-500 transition-all duration-500 ease-out shadow-[0_0_15px_rgba(197,160,89,0.5)]"
                     style="width: 0%"></div>
             </div>
-            <p id="loading-text" class="text-center text-sm text-gray-400 mt-3 font-mono">0%</p>
+            <div class="flex justify-between items-center mt-4">
+                <p id="loading-text" class="text-xs text-gold-500/80 font-mono tracking-widest">0%</p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-sans">Synchronizing Assets</p>
+            </div>
         </div>
 
         <!-- Start Button (Initially hidden) -->
         <button id="start-btn"
-            class="opacity-0 pointer-events-none mt-8 px-10 py-4 bg-gradient-to-r from-gold-500 to-gold-600 text-black rounded-full font-bold text-lg shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-gold-500/50"
+            class="opacity-0 pointer-events-none mt-8 px-10 py-4 bg-gradient-to-r from-gold-500 to-gold-600 text-black rounded-full font-bold text-lg shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-gold-500/50 relative z-10"
             disabled>
             <span class="flex items-center gap-2">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -240,6 +287,14 @@
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
+        // --- BACKGROUND PREFETCH (Instant Feel) ---
+        // Loads remaining images in the background after the first few are ready
+        function startBackgroundPrefetch(config) {
+            // DEACTIVATED: User requested strict lazy loading to minimize R2/DB costs.
+            // Remaining assets will load via native browser lazy-loading (loading="lazy") during scroll.
+            console.log("[Prefetch] Background prefetching disabled for R2 efficiency.");
+        }
+
         // --- SMART MEDIA PRELOAD (YouTube-style) ---
         // Only preloads essential content for fast start
         // Remaining content lazy-loads on demand
@@ -249,43 +304,45 @@
             const loadingTitle = document.getElementById('loading-title');
             const startBtn = document.getElementById('start-btn');
 
-            // Resource Collection
+            // Resource Collection (Adaptive based on Sequence)
             const resources = [];
 
-            // 1. Hero Image (High Priority)
+            // Determine what's visible in the FIRST fold to prioritize it
+            const defaultOrder = ['hero', 'gallery', 'message', 'video'];
+            const rawOrder = (config.visuals?.sectionOrder ? config.visuals.sectionOrder.split(',') : defaultOrder);
+            const activeSections = rawOrder.filter(s => {
+                if (s === 'hero') return true;
+                if (s === 'gallery') return !!(config.gallery && config.gallery.length > 0);
+                if (s === 'message') return !!(config.messageBody || config.message);
+                if (s === 'video') return !!config.video;
+                return false;
+            });
+
+            const firstSection = activeSections[0];
+
+            // 1. Hero Image (Prioritize ONLY if it's the first section OR if it's always desired for the loading bg)
+            // We ALWAYS load the hero at high priority because it's used as the loading screen's background "cover"
+            // however, we only BLOCK the start button for it if it's in the first fold.
             if (config.heroImage) {
-                resources.push({ url: config.heroImage, type: 'image', weight: 20 });
+                resources.push({
+                    url: config.heroImage,
+                    type: 'image',
+                    weight: 30,
+                    isCritical: (firstSection === 'hero') // If it's the first fold, it's a blocker
+                });
             }
 
             // 2. Gallery Images (Medium Priority)
             if (config.gallery && Array.isArray(config.gallery)) {
-                // Determine how many to preload based on device capability/network
-                // For a "premium" feel, we want at least the first few to be instant
-                const PRELOAD_COUNT = 5;
-                config.gallery.slice(0, PRELOAD_COUNT).forEach(url => {
-                    if (url) resources.push({ url, type: 'image', weight: 10 });
-                });
-            }
+                // If Gallery is the FIRST fold, we MUST preload at least 5 to prevent it looking empty
+                // If it's NOT the first fold, we don't preload ANY during the loading screen to save bandwidth
+                const isGalleryFirst = (firstSection === 'gallery');
+                const PRELOAD_COUNT = isGalleryFirst ? 5 : 0;
 
-            // 3. Video (High Priority - Metadata Only)
-            // ensuring fast start (YouTube Style)
-            if (config.video) {
-                // Check if it's a proxy URL or direct URL
-                let videoUrl = config.video;
-
-                // R2 Video: Use Worker Proxy?
-                if (config.workerUrl && !videoUrl.includes('/proxy?key=') && !videoUrl.includes('youtube.com') && !videoUrl.includes('youtu.be')) {
-                    try {
-                        const urlObj = new URL(videoUrl);
-                        const key = urlObj.pathname.substring(1);
-                        videoUrl = `${config.workerUrl}/proxy?key=${encodeURIComponent(key)}`;
-                    } catch (e) {
-                        console.warn("Failed to construct proxy URL, using original:", e);
-                    }
-                }
-
-                if (!getYoutubeId(videoUrl)) {
-                    resources.push({ url: videoUrl, type: 'video-metadata', weight: 30 });
+                if (PRELOAD_COUNT > 0) {
+                    config.gallery.slice(0, PRELOAD_COUNT).forEach(url => {
+                        if (url) resources.push({ url, type: 'image', weight: 10, isCritical: true });
+                    });
                 }
             }
 
@@ -342,9 +399,25 @@
                         // Image Loading
                         await new Promise((resolve, reject) => {
                             const img = new Image();
-                            img.onload = resolve;
-                            img.onerror = resolve; // Continue even if fails
                             img.src = item.url;
+
+                            img.decode().then(() => {
+                                // If this is the hero image, apply it to the loading background immediately
+                                if (item.url === config.heroImage) {
+                                    const loadingBg = document.getElementById('loading-bg');
+                                    if (loadingBg) {
+                                        loadingBg.style.backgroundImage = `url('${item.url}')`;
+                                        loadingBg.classList.remove('opacity-0');
+                                    }
+                                }
+                                resolve();
+                            }).catch(() => {
+                                // Fallback for browsers that don't support .decode() or failed decode
+                                img.onload = resolve;
+                                img.onerror = resolve;
+                                if (!img.complete) img.src = item.url;
+                                else resolve();
+                            });
                         });
                         currentProgress += item.weight;
                         updateProgress((currentProgress / totalWeight) * 100);
@@ -357,8 +430,19 @@
                 }
             };
 
-            // Execute Downloads (Parallel-ish)
-            await Promise.all(resources.map(loadItem));
+            // Parallel execute, but only WAIT for critical items
+            // This ensures non-critical items (like hero image if it's at the end) don't block the start button
+            const criticalResources = resources.filter(r => r.isCritical);
+            const nonCriticalResources = resources.filter(r => !r.isCritical);
+
+            // Start all, but await only critical ones
+            const loadAll = resources.map(loadItem);
+            const loadCritical = criticalResources.map(loadItem);
+
+            await Promise.all(loadCritical);
+
+            // Kick off remaining assets in background
+            startBackgroundPrefetch(config);
 
             // Final consistency check
             updateProgress(100);
@@ -366,7 +450,27 @@
             enableStartButton();
 
             function enableStartButton() {
-                loadingTitle.querySelector('span').textContent = 'Ready to Begin!';
+                // Apply Start Screen Typography (Global for this screen)
+                const screenFont = config.visuals?.startScreenFont || "sans";
+                const fontClasses = {
+                    'sans': 'font-sans',
+                    'serif': 'font-serif',
+                    'cinzel': 'font-cinzel',
+                    'montserrat': 'font-montserrat',
+                    'oswald': 'font-oswald',
+                    'great-vibes': 'font-great-vibes'
+                };
+                document.getElementById('loading-screen').className = `fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-black via-zinc-900 to-black text-white ${fontClasses[screenFont] || 'font-sans'}`;
+
+                // Phase 2: Ready Text
+                const readyTitle = config.visuals?.readyTitle || 'Ready to Begin!';
+                const readySubtitle = config.visuals?.readySubtitle || 'Experience Loaded';
+
+                const titleSpan = document.getElementById('loading-title-text');
+                if (titleSpan) titleSpan.textContent = readyTitle;
+
+                const subtitlePara = document.getElementById('loading-subtitle-text');
+                if (subtitlePara) subtitlePara.textContent = readySubtitle;
 
                 // --- START BUTTON CUSTOMIZATION ---
                 const startBtnText = (config.visuals?.startBtnText !== undefined) ? config.visuals.startBtnText : "Start Experience";
@@ -704,6 +808,28 @@
             const appDiv = document.getElementById('app');
             const loadingScreen = document.getElementById('loading-screen');
 
+            // --- START SCREEN CUSTOMIZATION (Initial Phase) ---
+            if (client.visuals?.loadingTitle) {
+                const lt = document.getElementById('loading-title-text');
+                if (lt) lt.textContent = client.visuals.loadingTitle;
+            }
+            if (client.visuals?.loadingSubtitle) {
+                const ls = document.getElementById('loading-subtitle-text');
+                if (ls) ls.textContent = client.visuals.loadingSubtitle;
+            }
+
+            // Apply Start Screen Typography
+            const initialFont = client.visuals?.startScreenFont || "sans";
+            const fontMap = {
+                'sans': 'font-sans',
+                'serif': 'font-serif',
+                'cinzel': 'font-cinzel',
+                'montserrat': 'font-montserrat',
+                'oswald': 'font-oswald',
+                'great-vibes': 'font-great-vibes'
+            };
+            loadingScreen.classList.add(fontMap[initialFont] || 'font-sans');
+
             // 1. Apply Theme Global Styles
             if (client.visuals?.themeColor) {
                 document.documentElement.style.setProperty('--gold-500', client.visuals.themeColor);
@@ -834,8 +960,21 @@
 
                         html += `
                             <section id="video-section" class="py-12 px-6 bg-black flex justify-center scroll-mt-20">
-                                <div class="max-w-4xl w-full border border-white/20 rounded-2xl overflow-hidden shadow-2xl">
-                                    <video controls class="w-full" playsinline preload="metadata">
+                                <div class="max-w-4xl w-full border border-white/20 rounded-2xl overflow-hidden shadow-2xl relative group bg-zinc-900">
+                                    <!-- Custom Big Play Overlay -->
+                                    <div id="video-overlay" class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] cursor-pointer transition-all duration-500 hover:bg-black/20"
+                                         onclick="this.nextElementSibling.play(); this.style.opacity='0'; setTimeout(() => this.remove(), 500);">
+                                        <div class="w-20 h-20 rounded-full bg-gold-500/90 flex items-center justify-center shadow-[0_0_30px_rgba(197,160,89,0.5)] transform transition-transform group-hover:scale-110">
+                                            <svg class="w-10 h-10 text-black fill-current ml-1" viewBox="0 0 24 24">
+                                                <path d="M8 5v14l11-7z"/>
+                                            </svg>
+                                        </div>
+                                        <p class="mt-6 text-white text-xs tracking-[0.3em] font-sans uppercase font-bold opacity-80 group-hover:opacity-100 transition-opacity">Relive the Memories</p>
+                                    </div>
+
+                                    <video controls class="w-full h-full block" playsinline webkit-playsinline preload="none" 
+                                           poster="${client.heroImage || ''}"
+                                           onplay="const overlay = this.previousElementSibling; if(overlay && overlay.id==='video-overlay') { overlay.style.opacity='0'; setTimeout(() => overlay.remove(), 500); }">
                                         <source src="${videoSrc}" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>

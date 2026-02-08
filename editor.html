@@ -499,8 +499,8 @@
                         <div class="flex flex-col md:flex-row gap-4 md:gap-6 items-start">
                             <div
                                 class="w-48 h-32 bg-black rounded-lg overflow-hidden flex-shrink-0 border border-slate-200 dark:border-zinc-700 relative">
-                                <video id="video-preview" src="" class="w-full h-full object-cover hidden"
-                                    controls></video>
+                                <video id="video-preview" src="" class="w-full h-full object-cover hidden" controls
+                                    preload="none"></video>
                                 <div id="video-placeholder"
                                     class="absolute inset-0 flex items-center justify-center text-slate-500 pointer-events-none">
                                     <span class="text-xs">No Video</span>
@@ -884,123 +884,185 @@
                 <!-- Section 6: Start Screen -->
                 <section id="section-start" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
                     <h3 class="text-2xl font-bold mb-6">6. Start Screen</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Button
-                                Text</label>
-                            <input type="text" name="visuals.startBtnText" placeholder="Start Experience"
-                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Button
-                                Style</label>
-                            <select name="visuals.startBtnStyle"
-                                class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
-                                <optgroup label="Premium">
-                                    <option value="gold">Luxury Gold</option>
-                                    <option value="rose-gold">Rose Gold</option>
-                                    <option value="royal">Royal Blue & Gold</option>
-                                    <option value="silver">Sterling Silver</option>
-                                </optgroup>
-                                <optgroup label="Modern">
-                                    <option value="white">Minimal White</option>
-                                    <option value="black">Deep Black</option>
-                                    <option value="outline">Clean Outline</option>
-                                    <option value="glass">Glassmorphism</option>
-                                </optgroup>
-                                <optgroup label="Vibrant">
-                                    <option value="ocean">Ocean Breeze</option>
-                                    <option value="sunset">Sunset Gradient</option>
-                                    <option value="nature">Nature Green</option>
-                                    <option value="love">Passion Red</option>
-                                    <option value="cyberpunk">Cyberpunk Neon</option>
-                                </optgroup>
-                                <optgroup label="Retro">
-                                    <option value="retro">Retro 80s</option>
-                                    <option value="vintage">Vintage Paper</option>
-                                    <option value="glitch">Glitch Effect</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Section 7: Export -->
-
-
-                <!-- Section 7: Downloads -->
-                <section id="section-downloads"
-                    class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
-                    <h3 class="text-2xl font-bold mb-6">7. Download Options</h3>
-                    <div
-                        class="flex items-center justify-between p-6 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl">
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">Allow Photo
-                                Downloads</label>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">If enabled, visitors can download
-                                photos from the footer.</p>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <span id="downloads-status-text"
-                                class="text-xs font-bold text-slate-400 uppercase tracking-widest">Allowed</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="visuals.allowDownloads"
-                                    class="sr-only peer autosave-field">
-                                <!-- DEFAULT: OFF (unchecked). User enables if they want downloads. -->
-                                <div
-                                    class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-500">
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Experience Sequence (New) -->
-                <div class="mt-8 border-t border-slate-100 dark:border-zinc-800 pt-8" id="section-sorting-area">
-                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Experience
-                        Sequence (Drag to Reorder)</label>
-                    <div id="section-order-container" class="flex flex-col gap-2 mb-4 min-h-[50px]">
-                        <!-- Populated via script -->
-                    </div>
-                    <input type="hidden" name="visuals.sectionOrder" id="section-order-input"
-                        value="hero,gallery,message,video" class="autosave-field">
-                    <p class="text-[10px] text-indigo-500 font-bold italic">Drag and drop the tabs above to set the
-                        order visitors will see your content.</p>
-                </div>
-
-                <!-- Section 8: Export -->
-                <section id="section-export" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
-                    <h3 class="text-2xl font-bold mb-6">8. Export</h3>
-                    <div
-                        class="p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-zinc-900 dark:to-zinc-800 rounded-xl border border-slate-200 dark:border-zinc-700">
-                        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="col-span-full mb-6">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Aesthetics &
+                            Typography</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <h4 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Ready to Share?</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-2">
-                                    Preview your final memory frame in a full-screen dedicated tab.
-                                </p>
-                                <button type="button" id="reclaim-btn"
-                                    class="text-xs font-bold text-slate-500 hover:text-indigo-600 underline">
-                                    Reclaim Storage (Cleanup Orphans)
-                                </button>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Screen
+                                    Font</label>
+                                <select name="visuals.startScreenFont"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                                    <option value="sans">Modern Sans (Outfit)</option>
+                                    <option value="serif">Classic Serif (Playfair)</option>
+                                    <option value="cinzel">Cinematic (Cinzel)</option>
+                                    <option value="montserrat">Clean Modern (Montserrat)</option>
+                                    <option value="oswald">Bold (Oswald)</option>
+                                    <option value="great-vibes">Romantic (Great Vibes)</option>
+                                </select>
                             </div>
-                            <button id="export-site-btn" type="button"
-                                class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2 group">
-                                <span>Open Full Experience</span>
-                                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </button>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Start
+                                    Button Text</label>
+                                <input type="text" name="visuals.startBtnText" placeholder="Start Experience"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                            </div>
                         </div>
                     </div>
-                </section>
+
+                    <!-- 6.1 Loading Phase -->
+                    <div
+                        class="col-span-full p-6 bg-slate-50 dark:bg-zinc-900/50 rounded-xl border border-slate-200 dark:border-zinc-800 mb-6">
+                        <h4 class="text-sm font-bold text-indigo-500 uppercase tracking-widest mb-4">Phase 1: Loading
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Loading
+                                    Title</label>
+                                <input type="text" name="visuals.loadingTitle" placeholder="Loading Memory"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Loading
+                                    Subtitle</label>
+                                <input type="text" name="visuals.loadingSubtitle" placeholder="Please wait"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6.2 Ready Phase -->
+                    <div
+                        class="col-span-full p-6 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-xl border border-indigo-100 dark:border-indigo-900/30 mb-6">
+                        <h4 class="text-sm font-bold text-indigo-500 uppercase tracking-widest mb-4">Phase 2: Ready</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Ready
+                                    Title</label>
+                                <input type="text" name="visuals.readyTitle" placeholder="Ready to Begin!"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Ready
+                                    Subtitle</label>
+                                <input type="text" name="visuals.readySubtitle" placeholder="Experience Loaded"
+                                    class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Button
+                            Style</label>
+                        <select name="visuals.startBtnStyle"
+                            class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                            <optgroup label="Premium">
+                                <option value="gold">Luxury Gold</option>
+                                <option value="rose-gold">Rose Gold</option>
+                                <option value="royal">Royal Blue & Gold</option>
+                                <option value="silver">Sterling Silver</option>
+                            </optgroup>
+                            <optgroup label="Modern">
+                                <option value="white">Minimal White</option>
+                                <option value="black">Deep Black</option>
+                                <option value="outline">Clean Outline</option>
+                                <option value="glass">Glassmorphism</option>
+                            </optgroup>
+                            <optgroup label="Vibrant">
+                                <option value="ocean">Ocean Breeze</option>
+                                <option value="sunset">Sunset Gradient</option>
+                                <option value="nature">Nature Green</option>
+                                <option value="love">Passion Red</option>
+                                <option value="cyberpunk">Cyberpunk Neon</option>
+                            </optgroup>
+                            <optgroup label="Retro">
+                                <option value="retro">Retro 80s</option>
+                                <option value="vintage">Vintage Paper</option>
+                                <option value="glitch">Glitch Effect</option>
+                            </optgroup>
+                        </select>
+                    </div>
+    </div>
+    </section>
+
+    <!-- Section 7: Export -->
 
 
-                <div class="h-20"></div>
-            </form>
-        </main>
+    <!-- Section 7: Downloads -->
+    <section id="section-downloads" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
+        <h3 class="text-2xl font-bold mb-6">7. Download Options</h3>
+        <div
+            class="flex items-center justify-between p-6 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl">
+            <div>
+                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">Allow Photo
+                    Downloads</label>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">If enabled, visitors can download
+                    photos from the footer.</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span id="downloads-status-text"
+                    class="text-xs font-bold text-slate-400 uppercase tracking-widest">Allowed</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="visuals.allowDownloads" class="sr-only peer autosave-field">
+                    <!-- DEFAULT: OFF (unchecked). User enables if they want downloads. -->
+                    <div
+                        class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-500">
+                    </div>
+                </label>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Sequence (New) -->
+    <div class="mt-8 border-t border-slate-100 dark:border-zinc-800 pt-8" id="section-sorting-area">
+        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Experience
+            Sequence (Drag to Reorder)</label>
+        <div id="section-order-container" class="flex flex-col gap-2 mb-4 min-h-[50px]">
+            <!-- Populated via script -->
+        </div>
+        <input type="hidden" name="visuals.sectionOrder" id="section-order-input" value="hero,gallery,message,video"
+            class="autosave-field">
+        <p class="text-[10px] text-indigo-500 font-bold italic">Drag and drop the tabs above to set the
+            order visitors will see your content.</p>
+    </div>
+
+    <!-- Section 8: Export -->
+    <section id="section-export" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
+        <h3 class="text-2xl font-bold mb-6">8. Export</h3>
+        <div
+            class="p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-zinc-900 dark:to-zinc-800 rounded-xl border border-slate-200 dark:border-zinc-700">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Ready to Share?</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-2">
+                        Preview your final memory frame in a full-screen dedicated tab.
+                    </p>
+                    <button type="button" id="reclaim-btn"
+                        class="text-xs font-bold text-slate-500 hover:text-indigo-600 underline">
+                        Reclaim Storage (Cleanup Orphans)
+                    </button>
+                </div>
+                <button id="export-site-btn" type="button"
+                    class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2 group">
+                    <span>Open Full Experience</span>
+                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="h-20"></div>
+    </form>
+    </main>
     </div>
 
     <!-- PREVIEW MODAL OVERLAY -->
@@ -1563,6 +1625,11 @@
                 const videoInput = document.getElementById('videoUrlInput');
                 const videoKey = extractR2Key(videoInput?.value);
                 if (videoKey) keepKeys.push(videoKey);
+
+                // Music (FIX)
+                const musicInput = document.querySelector('input[name="music"]');
+                const musicKey = extractR2Key(musicInput?.value);
+                if (musicKey) keepKeys.push(musicKey);
 
                 // 2. Fetch Project Prefix
                 const docSnap = await getDoc(doc(db, "projects", projectId));
@@ -2564,7 +2631,9 @@
                         videoStatus.textContent = "✓ Video Uploaded";
                         videoStatus.classList.add('text-green-500');
 
+                        /* 
                         // SMART CHECK: Verify if the file actually exists in R2
+                        // OPTIMIZATION: Disabled by default to save R2 read costs (Class B)
                         const checkVideoFile = async () => {
                             try {
                                 const response = await fetch(data.video, { method: 'HEAD' });
@@ -2579,6 +2648,7 @@
                             }
                         };
                         checkVideoFile();
+                        */
                     }
 
                     // Update button text using the new ID

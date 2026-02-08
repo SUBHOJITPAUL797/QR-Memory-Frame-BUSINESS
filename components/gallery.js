@@ -409,7 +409,9 @@ function getFrameStyleCSS(style) {
   // Base Frame
   let css = `
         .frame-wrapper { transition: all 0.5s ease; position: relative; }
-        .frame-wrapper img { transition: all 0.5s ease; width: 100%; height: 100%; object-fit: cover; }
+        .frame-wrapper img { transition: opacity 0.8s ease, transform 0.8s ease; width: 100%; height: 100%; object-fit: cover; }
+        .lazy-image.not-loaded { opacity: 0; transform: scale(1.05); }
+        .lazy-image.loaded { opacity: 1; transform: scale(1); }
     `;
 
   // 15 FRAME STYLES
@@ -491,7 +493,8 @@ function renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass,
                         ${isEager ? `src="${imgUrl}"` : `data-src="${imgUrl}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"`}
                         alt="Memory ${index + 1}"
                         loading="${isEager ? 'eager' : 'lazy'}"
-                        class="lazy-image ${isEager ? '' : 'not-loaded'}"
+                        class="lazy-image ${isEager ? 'loaded' : 'not-loaded'}"
+                        onload="this.classList.add('loaded'); this.classList.remove('not-loaded');"
                         onerror="this.onerror=null; if(this.dataset.src) this.src=this.dataset.src;"
                     />
                     
@@ -562,6 +565,8 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, t
                 ${isEager ? `src="${imgUrl}"` : `data-src="${imgUrl}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"`}
                 alt="Memory"
                 loading="${isEager ? 'eager' : 'lazy'}"
+                class="lazy-image ${isEager ? 'loaded' : 'not-loaded'}"
+                onload="this.classList.add('loaded'); this.classList.remove('not-loaded');"
             />
             
             ${caption ? `<p class="${captionFont} text-2xl text-center text-zinc-600 mt-2">${caption}</p>` : ''}

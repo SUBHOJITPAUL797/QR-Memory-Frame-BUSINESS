@@ -191,6 +191,12 @@ export default {
             const prefix = url.searchParams.get('prefix');
             if (!prefix) return new Response(JSON.stringify({ error: 'Missing prefix' }), { status: 400, headers: corsHeaders });
 
+            // SECURITY: Validate Prefix Ownership
+            const uidPart = user.sub.substring(0, 5).toLowerCase();
+            if (!prefix.toLowerCase().includes(uidPart)) {
+                return new Response(JSON.stringify({ error: 'Forbidden: Prefix does not belong to user' }), { status: 403, headers: corsHeaders });
+            }
+
             let list = await env.BUCKET.list({ prefix });
             let totalSize = 0;
             let deletedCount = 0;
@@ -216,6 +222,12 @@ export default {
             const prefix = url.searchParams.get('prefix');
             if (!prefix) return new Response(JSON.stringify({ error: 'Missing prefix' }), { status: 400, headers: corsHeaders });
 
+            // SECURITY: Validate Prefix Ownership
+            const uidPart = user.sub.substring(0, 5).toLowerCase();
+            if (!prefix.toLowerCase().includes(uidPart)) {
+                return new Response(JSON.stringify({ error: 'Forbidden: Prefix does not belong to user' }), { status: 403, headers: corsHeaders });
+            }
+
             let list = await env.BUCKET.list({ prefix });
             let totalSize = 0;
             let fileCount = 0;
@@ -240,6 +252,12 @@ export default {
 
                 if (!prefix || !Array.isArray(keepKeys)) {
                     return new Response(JSON.stringify({ error: 'Missing prefix or keepKeys array' }), { status: 400, headers: corsHeaders });
+                }
+
+                // SECURITY: Validate Prefix Ownership
+                const uidPart = user.sub.substring(0, 5).toLowerCase();
+                if (!prefix.toLowerCase().includes(uidPart)) {
+                    return new Response(JSON.stringify({ error: 'Forbidden: Prefix does not belong to user' }), { status: 403, headers: corsHeaders });
                 }
 
                 // Normalizing keepKeys for easy lookup (Set for O(1))
