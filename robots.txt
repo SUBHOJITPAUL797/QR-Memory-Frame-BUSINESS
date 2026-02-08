@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /editor.html
+Disallow: /dashboard.html
+
+Sitemap: https://dasmo.pages.dev/sitemap.xml

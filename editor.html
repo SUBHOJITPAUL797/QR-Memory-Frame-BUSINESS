@@ -1549,28 +1549,20 @@
 
                 // Hero
                 const heroInput = document.querySelector('input[name="heroImage"]');
-                if (heroInput && heroInput.value) {
-                    try {
-                        const url = new URL(heroInput.value);
-                        // Extract relative path from URL (remove domain)
-                        // public R2 domain: https://....r2.dev/folder/file.webp
-                        // key: folder/file.webp
-                        const key = url.pathname.substring(1);
-                        keepKeys.push(key);
-                    } catch (e) { }
-                }
+                const heroKey = extractR2Key(heroInput?.value);
+                if (heroKey) keepKeys.push(heroKey);
 
                 // Gallery
                 const slots = document.querySelectorAll('.photo-url-input');
                 slots.forEach(input => {
-                    if (input.value) {
-                        try {
-                            const url = new URL(input.value);
-                            const key = url.pathname.substring(1);
-                            keepKeys.push(key);
-                        } catch (e) { }
-                    }
+                    const key = extractR2Key(input.value);
+                    if (key) keepKeys.push(key);
                 });
+
+                // Video (FIX)
+                const videoInput = document.getElementById('videoUrlInput');
+                const videoKey = extractR2Key(videoInput?.value);
+                if (videoKey) keepKeys.push(videoKey);
 
                 // 2. Fetch Project Prefix
                 const docSnap = await getDoc(doc(db, "projects", projectId));
@@ -1862,7 +1854,7 @@
                 status.classList.add('animate-pulse');
 
                 try {
-                    const key = `${STORAGE_ROOT}/video_${Date.now()}.mp4`;
+                    const key = `${STORAGE_ROOT}/video.mp4`;
                     await uploadToR2(compressedFile, key, 'video/mp4', (percent) => {
                         status.textContent = `Uploading: ${percent}%`;
                     });
@@ -2571,6 +2563,22 @@
                     if (videoStatus) {
                         videoStatus.textContent = "✓ Video Uploaded";
                         videoStatus.classList.add('text-green-500');
+
+                        // SMART CHECK: Verify if the file actually exists in R2
+                        const checkVideoFile = async () => {
+                            try {
+                                const response = await fetch(data.video, { method: 'HEAD' });
+                                if (!response.ok) {
+                                    videoStatus.textContent = "⚠ Video file missing (may have been deleted)";
+                                    videoStatus.classList.remove('text-green-500');
+                                    videoStatus.classList.add('text-amber-500');
+                                }
+                            } catch (e) {
+                                // If HEAD fails (CORS), try a simple fetch (0-byte range) or just ignore
+                                console.log("Video presence check skipped due to CORS/Network");
+                            }
+                        };
+                        checkVideoFile();
                     }
 
                     // Update button text using the new ID
