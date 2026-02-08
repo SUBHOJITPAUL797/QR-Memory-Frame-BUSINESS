@@ -553,7 +553,14 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, t
       <div 
         class="gallery-card absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center transition-all duration-700 ease-in-out cursor-pointer hover:scale-[1.02] group/card" 
         style="z-index: ${zIndex}; transform: rotate(${rotation}deg);"
-        onclick="this.classList.add('fly-away'); const next = this.nextElementSibling; if(next) { const img = next.querySelector('img[data-src]'); if(img) { img.src = img.dataset.src; console.log('[Lazy Loader] Loading next stack image'); } }"
+        onclick="this.classList.add('fly-away'); 
+                 const next = this.nextElementSibling; 
+                 if(next) { 
+                    const img = next.querySelector('img[data-src]'); 
+                    if(img) img.src = img.dataset.src; 
+                    const caption = next.querySelector('.gallery-caption');
+                    if(caption) caption.classList.replace('opacity-0', 'opacity-100');
+                 }"
       >
         <div class="relative w-[85vw] max-w-md frame-wrapper">
              ${frameStyle === 'polaroid' || frameStyle === 'stacked' ?
@@ -569,7 +576,7 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, t
                 onload="this.classList.add('loaded'); this.classList.remove('not-loaded');"
             />
             
-            ${caption ? `<p class="${captionFont} text-2xl text-center text-zinc-600 mt-2">${caption}</p>` : ''}
+            ${caption ? `<p class="gallery-caption ${captionFont} text-2xl text-center text-zinc-600 mt-2 transition-opacity duration-500 ${index === 0 ? 'opacity-100' : 'opacity-0'}">${caption}</p>` : ''}
         </div>
       </div>
     `;
