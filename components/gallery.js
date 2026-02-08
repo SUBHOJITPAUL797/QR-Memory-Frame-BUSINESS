@@ -409,7 +409,7 @@ function getFrameStyleCSS(style) {
   // Base Frame
   let css = `
         .frame-wrapper { transition: all 0.5s ease; position: relative; }
-        .frame-wrapper img { transition: opacity 0.8s ease, transform 0.8s ease; width: 100%; height: 100%; object-fit: cover; }
+        .frame-wrapper img { transition: opacity 0.8s ease, transform 0.8s ease; width: 100%; height: auto; object-fit: contain; max-height: 70vh; }
         .lazy-image.not-loaded { opacity: 0; transform: scale(1.05); }
         .lazy-image.loaded { opacity: 1; transform: scale(1); }
     `;
@@ -417,61 +417,61 @@ function getFrameStyleCSS(style) {
   // 15 FRAME STYLES
   switch (style) {
     case 'modern':
-      css += `.frame-wrapper { background: transparent; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden; }`;
+      css += `.frame-wrapper.loaded-frame { background: transparent; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden; }`;
       break;
     case 'polaroid':
-      css += `.frame-wrapper { background: white; padding: 16px 16px 60px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: rotate(-1deg); } 
-                    .frame-wrapper:nth-child(even) { transform: rotate(1deg); }`;
+      css += `.frame-wrapper.loaded-frame { background: white; padding: 16px 16px 60px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: rotate(-1deg); } 
+                    .frame-wrapper.loaded-frame:nth-child(even) { transform: rotate(1deg); }`;
       break;
     case 'classic':
-      css += `.frame-wrapper { background: white; padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; }`;
+      css += `.frame-wrapper.loaded-frame { background: white; padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; }`;
       break;
     case 'cinema':
-      css += `.frame-wrapper { background: black; padding: 40px 0; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); } 
-                    .frame-wrapper p { color: #aaa !important; font-family: monospace !important; margin-top: 20px !important; }`;
+      css += `.frame-wrapper.loaded-frame { background: black; padding: 40px 0; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); } 
+                    .frame-wrapper.loaded-frame p { color: #aaa !important; font-family: monospace !important; margin-top: 20px !important; }`;
       break;
     case 'vintage':
-      css += `.frame-wrapper { background: #fdf6e3; padding: 16px; box-shadow: 2px 2px 10px rgba(92, 61, 46, 0.3); border: 1px solid #d6cbb6; }
-                    .frame-wrapper img { filter: sepia(0.6) contrast(1.1); }`;
+      css += `.frame-wrapper.loaded-frame { background: #fdf6e3; padding: 16px; box-shadow: 2px 2px 10px rgba(92, 61, 46, 0.3); border: 1px solid #d6cbb6; }
+                    .frame-wrapper.loaded-frame img { filter: sepia(0.6) contrast(1.1); }`;
       break;
     case 'neon':
-      css += `.frame-wrapper { border: 2px solid #0ff; box-shadow: 0 0 15px #0ff, inset 0 0 15px #0ff; background: #000; padding: 4px; }
-                    .frame-wrapper img { border: 1px solid #0ff; }`;
+      css += `.frame-wrapper.loaded-frame { border: 2px solid #0ff; box-shadow: 0 0 15px #0ff, inset 0 0 15px #0ff; background: #000; padding: 4px; }
+                    .frame-wrapper.loaded-frame img { border: 1px solid #0ff; }`;
       break;
     case 'minimal':
-      css += `.frame-wrapper { border: 1px solid #333; padding: 0; background: white; }`;
+      css += `.frame-wrapper.loaded-frame { border: 1px solid #333; padding: 0; background: white; }`;
       break;
     case 'floating':
-      css += `.frame-wrapper { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border-radius: 8px; overflow: hidden; }`;
+      css += `.frame-wrapper.loaded-frame { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border-radius: 8px; overflow: hidden; }`;
       break;
     case 'stacked':
-      css += `.frame-wrapper { background: white; padding: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid #eee; position: relative; }
-                     .frame-wrapper::before { content: ''; position: absolute; top: 4px; left: 4px; right: -4px; bottom: -4px; background: white; z-index: -1; border: 1px solid #ddd; transform: rotate(2deg); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }`;
+      css += `.frame-wrapper.loaded-frame { background: white; padding: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid #eee; position: relative; }
+                     .frame-wrapper.loaded-frame::before { content: ''; position: absolute; top: 4px; left: 4px; right: -4px; bottom: -4px; background: white; z-index: -1; border: 1px solid #ddd; transform: rotate(2deg); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }`;
       break;
     case 'rotated':
-      css += `.frame-wrapper { transform: rotate(3deg) scale(0.95); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 8px solid white; outline: 1px solid #ddd; }`;
+      css += `.frame-wrapper.loaded-frame { transform: rotate(3deg) scale(0.95); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 8px solid white; outline: 1px solid #ddd; }`;
       break;
     case 'oval':
-      css += `.frame-wrapper { border-radius: 50%; padding: 8px; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80vw !important; height: 80vw !important; max-width: 400px; max-height: 400px; margin: 0 auto; overflow: hidden; display: flex; align-items: center; justify-content: center; aspect-ratio: 1/1; }
-                     .frame-wrapper img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }`;
+      css += `.frame-wrapper.loaded-frame { border-radius: 50%; padding: 8px; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80vw !important; height: 80vw !important; max-width: 400px; max-height: 400px; margin: 0 auto; overflow: hidden; display: flex; align-items: center; justify-content: center; aspect-ratio: 1/1; }
+                     .frame-wrapper.loaded-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }`;
       break;
     case 'glass':
-      css += `.frame-wrapper { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.3); padding: 16px; border-radius: 16px; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15); }`;
+      css += `.frame-wrapper.loaded-frame { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.3); padding: 16px; border-radius: 16px; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15); }`;
       break;
     case 'wooden':
-      css += `.frame-wrapper { border: 12px solid #8B4513; border-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxmaWx0ZXIgaWQ9Im4iPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjUiIG51bU9jdGF2ZXM9IjEiIHN0aXRjaFRpbGVzPSJzdGl0Y2giIC8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzhCNDUxMyIvPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InRyYW5zcGFyZW50IiBmaWx0ZXI9InVybCgjbikiIG9wYWNpdHk9IjAuNSIvPjwvc3ZnPg==') 30 stretch; background: #5D4037; padding: 0; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3); }`;
+      css += `.frame-wrapper.loaded-frame { border: 12px solid #8B4513; border-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxmaWx0ZXIgaWQ9Im4iPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjUiIG51bU9jdGF2ZXM9IjEiIHN0aXRjaFRpbGVzPSJzdGl0Y2giIC8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzhCNDUxMyIvPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InRyYW5zcGFyZW50IiBmaWx0ZXI9InVybCgjbikiIG9wYWNpdHk9IjAuNSIvPjwvc3ZnPg==') 30 stretch; background: #5D4037; padding: 0; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3); }`;
       break;
     case 'watercolor':
-      css += `.frame-wrapper { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 4px solid white; }
-                     .frame-wrapper img { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }`;
+      css += `.frame-wrapper.loaded-frame { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 4px solid white; }
+                     .frame-wrapper.loaded-frame img { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }`;
       break;
     case 'gold':
-      css += `.frame-wrapper { padding: 4px; background: linear-gradient(45deg, #b8860b, #ffd700, #ffec8b, #b8860b); border-radius: 4px; box-shadow: 0 4px 15px rgba(218, 165, 32, 0.4); } 
-                    .frame-wrapper img { border: 2px solid rgba(0,0,0,0.5); }`;
+      css += `.frame-wrapper.loaded-frame { padding: 4px; background: linear-gradient(45deg, #b8860b, #ffd700, #ffec8b, #b8860b); border-radius: 4px; box-shadow: 0 4px 15px rgba(218, 165, 32, 0.4); } 
+                    .frame-wrapper.loaded-frame img { border: 2px solid rgba(0,0,0,0.5); }`;
       break;
     default:
       // Default Classic
-      css += `.frame-wrapper { background: white; padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; }`;
+      css += `.frame-wrapper.loaded-frame { background: white; padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; }`;
   }
   return css;
 }
@@ -494,7 +494,7 @@ function renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass,
                         alt="Memory ${index + 1}"
                         loading="${isEager ? 'eager' : 'lazy'}"
                         class="lazy-image ${isEager ? 'loaded' : 'not-loaded'}"
-                        onload="this.classList.add('loaded'); this.classList.remove('not-loaded');"
+                        onload="this.parentElement.classList.add('loaded-frame'); this.classList.add('loaded'); this.classList.remove('not-loaded');"
                         onerror="this.onerror=null; if(this.dataset.src) this.src=this.dataset.src;"
                     />
                     
@@ -547,20 +547,25 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, t
     if (frameStyle === 'modern' || frameStyle === 'cinema' || frameStyle === 'minimal') rotation = 0;
 
     const caption = (client.captions && client.captions[index + 1]) || "";
+    const link = (client.galleryLinks && client.galleryLinks[index]) ? client.galleryLinks[index] : null;
     const isEager = index < EAGER_LOAD_COUNT;
 
     return `
       <div 
         class="gallery-card absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center transition-all duration-700 ease-in-out cursor-pointer hover:scale-[1.02] group/card" 
         style="z-index: ${zIndex}; transform: rotate(${rotation}deg);"
-        onclick="this.classList.add('fly-away'); 
-                 const next = this.nextElementSibling; 
-                 if(next) { 
-                    const img = next.querySelector('img[data-src]'); 
-                    if(img) img.src = img.dataset.src; 
-                    const caption = next.querySelector('.gallery-caption');
-                    if(caption) caption.classList.replace('opacity-0', 'opacity-100');
-                 }"
+        onclick="
+             // Ignore if clicking the link
+            if(event.target.closest('a')) return;
+
+            this.classList.add('fly-away'); 
+            const next = this.nextElementSibling; 
+            if(next) { 
+               const img = next.querySelector('img[data-src]'); 
+               if(img) img.src = img.dataset.src; 
+               const caption = next.querySelector('.gallery-caption');
+               if(caption) caption.classList.replace('opacity-0', 'opacity-100');
+            }"
       >
         <div class="relative w-[85vw] max-w-md frame-wrapper">
              ${frameStyle === 'polaroid' || frameStyle === 'stacked' ?
@@ -573,17 +578,22 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, t
                 alt="Memory"
                 loading="${isEager ? 'eager' : 'lazy'}"
                 class="lazy-image ${isEager ? 'loaded' : 'not-loaded'}"
-                onload="this.classList.add('loaded'); this.classList.remove('not-loaded');"
+                onload="this.parentElement.classList.add('loaded-frame'); this.classList.add('loaded'); this.classList.remove('not-loaded');"
             />
             
-            ${caption ? `<p class="gallery-caption ${captionFont} text-2xl text-center text-zinc-600 mt-2 transition-opacity duration-500 ${index === 0 ? 'opacity-100' : 'opacity-0'}">${caption}</p>` : ''}
+            ${caption ? `<div class="gallery-caption ${captionFont} text-2xl text-center text-zinc-600 mt-2 transition-opacity duration-500 ${index === 0 ? 'opacity-100' : 'opacity-0'}">
+                <p>${caption}</p>
+                ${link ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2 px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-sans font-bold uppercase tracking-widest rounded-full border border-blue-100 hover:bg-blue-100 transition-colors" onclick="event.stopPropagation()">
+                    View Project <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>` : ''}
+            </div>` : ''}
         </div>
       </div>
     `;
   }).join('');
 
   return `
-      <section id="gallery-section" class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden py-12">
+      <section id="gallery-section" class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden py-12 bg-gradient-to-br from-warm-50 to-slate-100">
         <div class="text-center mb-8 relative z-20 px-4">
             <h2 class="${titleFont} text-3xl md:text-4xl text-warm-900 mb-2 tracking-wide">${title}</h2>
             <p class="text-xs uppercase tracking-widest text-gold-500 animate-pulse mb-6">Tap to Reveal</p>
@@ -593,10 +603,14 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, t
             ${cardsHtml}
             
             <!-- End Card -->
-            <div class="absolute inset-0 flex items-center justify-center bg-transparent z-0">
-                <div class="text-center opacity-50">
-                    <p class="font-script text-4xl mb-4">Fin.</p>
-                    <button onclick="location.reload()" class="text-xs uppercase tracking-widest underline decoration-gold-500 underline-offset-4">Replay</button>
+            <div class="absolute inset-0 flex flex-col items-center justify-center bg-transparent z-0 px-4">
+                <div class="p-8 md:p-12 rounded-2xl bg-white/20 backdrop-blur-md border border-white/20 text-center opacity-80 shadow-xl transition-all">
+                    <div class="w-16 h-16 bg-gold-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl text-gold-600">✨</span>
+                    </div>
+                    <h3 class="${titleFont} text-4xl mb-4 text-warm-900">Fin.</h3>
+                    <p class="text-xs uppercase tracking-[0.2em] text-warm-600 mb-8 font-bold">You've reached the end of the story</p>
+                    <button onclick="location.reload()" class="px-8 py-3 bg-zinc-900 text-white rounded-full text-xs uppercase tracking-widest font-bold hover:scale-110 active:scale-95 transition-all shadow-lg">Replay Session</button>
                 </div>
             </div>
         </div>

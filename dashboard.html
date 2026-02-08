@@ -227,19 +227,38 @@
                     <div class="mt-8 pt-8 border-t border-slate-200 dark:border-zinc-800">
                         <div
                             class="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-xl p-6">
-                            <h3 class="text-red-600 dark:text-red-400 font-bold mb-2 flex items-center gap-2">
+                            <h3 class="text-red-600 dark:text-red-400 font-bold mb-4 flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
                                 Danger Zone
                             </h3>
-                            <p class="text-sm text-red-600/70 dark:text-red-400/70 mb-4">
-                                Permanently delete your account and all associated data (projects, photos, videos).
-                                <strong>This action cannot be undone.</strong>
-                            </p>
-                            <button type="button" id="delete-account-btn"
-                                class="px-4 py-2 bg-white dark:bg-red-950 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 rounded-lg text-sm font-bold hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors">
+
+                            <div class="text-sm text-red-600/80 dark:text-red-400/80 mb-6 space-y-2">
+                                <p><strong>WARNING:</strong> This action will permanently delete your account and
+                                    <strong>ALL</strong> associated data (projects, photos, videos) from our servers.
+                                </p>
+                                <ul class="list-disc list-inside pl-1">
+                                    <li>Data recovery is impossible.</li>
+                                    <li>We are not responsible for any data loss once deleted.</li>
+                                    <li>All your active QR codes will stop working immediately.</li>
+                                </ul>
+                            </div>
+
+                            <div
+                                class="flex items-start gap-3 mb-6 p-4 bg-white/50 dark:bg-black/20 rounded-lg border border-red-100 dark:border-red-900/30">
+                                <input type="checkbox" id="delete-confirm-checkbox"
+                                    class="mt-1 w-4 h-4 text-red-600 border-red-300 rounded focus:ring-red-500 cursor-pointer">
+                                <label for="delete-confirm-checkbox"
+                                    class="text-sm text-red-700 dark:text-red-300 font-medium select-none cursor-pointer">
+                                    I understand that deleting my account will permanently erase all my data. This
+                                    cannot be undone.
+                                </label>
+                            </div>
+
+                            <button type="button" id="delete-account-btn" disabled
+                                class="px-4 py-2 bg-slate-200 dark:bg-zinc-800 text-slate-400 dark:text-slate-600 border border-transparent rounded-lg text-sm font-bold cursor-not-allowed transition-all duration-200">
                                 Delete Account
                             </button>
                         </div>
@@ -557,11 +576,20 @@
                     </div>
                     <h2 class="text-2xl font-bold font-serif mb-2 text-slate-800 dark:text-white">Complete Your Profile
                     </h2>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm">Please provide your mobile number to help us
-                        secure your account and assist with support.</p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">Please provide your full name and mobile
+                        number to secure your account.</p>
                 </div>
 
                 <form id="complete-profile-form" class="space-y-4">
+                    <!-- NAME INPUT -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Full
+                            Name</label>
+                        <input type="text" id="complete-name-input" required minlength="2" placeholder="e.g. John Doe"
+                            class="w-full bg-slate-50 dark:bg-zinc-800 border-none rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-gold-500 dark:text-white placeholder-slate-400">
+                    </div>
+
+                    <!-- MOBILE INPUT -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mobile
                             Number</label>
@@ -570,7 +598,7 @@
                                 <span class="text-slate-500 font-bold border-r border-slate-300 pr-2 mr-2">+91</span>
                             </div>
                             <input type="tel" id="complete-mobile-input" required pattern="[0-9]{10}"
-                                placeholder="1234567890"
+                                placeholder="1234567890" maxlength="10"
                                 class="w-full bg-slate-50 dark:bg-zinc-800 border-none rounded-xl pl-16 pr-4 py-3 font-bold focus:ring-2 focus:ring-gold-500 dark:text-white placeholder-slate-400">
                         </div>
                         <p class="text-[10px] text-slate-400 mt-1 pl-1">10-digit number without country code</p>
@@ -608,6 +636,7 @@
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const dashboardView = document.getElementById('dashboard-view');
+        // ... (existing constants) ...
         const logoutBtn = document.getElementById('logout-btn');
 
         // Nav & Sections
@@ -622,6 +651,11 @@
         const settingsEmail = document.getElementById('settings-email');
         const settingsMobile = document.getElementById('settings-mobile');
         const saveProfileBtn = document.getElementById('save-profile-btn');
+
+        // ... (rest of the file until onAuthStateChanged) ...
+
+        // Prevent Right Click
+        document.addEventListener('contextmenu', event => event.preventDefault());
 
         // State
         let selectedTemplate = null;
@@ -801,13 +835,10 @@
             });
         });
 
-
-
         // Auth State Listener
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 // User is signed in
-                // console.log("Logged in:", user.email);
                 dashboardView.classList.remove('hidden');
 
                 // Load User Projects
@@ -821,30 +852,40 @@
                 try {
                     const userDocRef = doc(db, "users", user.uid);
                     const userDoc = await getDoc(userDocRef);
-                    console.log("Profile Doc Exists:", userDoc.exists());
                     if (userDoc.exists()) {
                         const d = userDoc.data();
-                        console.log("Profile Data:", d);
 
                         // Ensure elements exist before setting values
                         if (settingsName) settingsName.value = d.name || "";
                         if (settingsMobile) settingsMobile.value = d.mobile || "";
 
-                        // CHECK FOR MISSING MOBILE (Google Login Case)
-                        if (!d.mobile) {
+                        // CHECK FOR MISSING INFO (Name "User" or Missing Mobile)
+                        const isNameDefault = !d.name || d.name === "User";
+                        const isMobileMissing = !d.mobile;
+
+                        if (isNameDefault || isMobileMissing) {
                             const completeModal = document.getElementById('complete-profile-modal');
                             const completeForm = document.getElementById('complete-profile-form');
-                            const completeInput = document.getElementById('complete-mobile-input');
+                            const completeMobileInput = document.getElementById('complete-mobile-input');
+                            const completeNameInput = document.getElementById('complete-name-input');
                             const completeBtn = document.getElementById('complete-submit-btn');
 
-                            // Only show modal if elements exist (modal may not exist in current HTML)
-                            if (completeModal && completeForm && completeInput && completeBtn) {
+                            // Only show modal if elements exist
+                            if (completeModal && completeForm && completeMobileInput && completeBtn) {
+
+                                // Pre-fill known data
+                                if (d.name && d.name !== "User") completeNameInput.value = d.name;
+                                if (d.mobile) completeMobileInput.value = d.mobile;
+
+                                // Focus logic
+                                if (isNameDefault) setTimeout(() => completeNameInput.focus(), 100);
+                                else if (isMobileMissing) setTimeout(() => completeMobileInput.focus(), 100);
+
                                 // Show modal with animation
                                 completeModal.classList.remove('hidden');
                                 setTimeout(() => {
                                     completeModal.classList.remove('opacity-0');
-                                    // Animate the inner dialog
-                                    const modalDialog = completeModal.querySelector('div');
+                                    const modalDialog = completeModal.querySelector('div > div'); // Inner card
                                     if (modalDialog) modalDialog.classList.remove('scale-95');
                                 }, 50);
 
@@ -853,14 +894,19 @@
                                     completeBtn.textContent = "Saving...";
                                     completeBtn.disabled = true;
 
+                                    const enteredName = completeNameInput.value.trim();
+                                    const enteredMobile = completeMobileInput.value.trim();
+
                                     try {
                                         await setDoc(userDocRef, {
-                                            mobile: completeInput.value,
+                                            name: enteredName, // Save correct name
+                                            mobile: enteredMobile,
                                             updatedAt: serverTimestamp()
                                         }, { merge: true });
 
                                         // Update visual state
-                                        settingsMobile.value = completeInput.value;
+                                        settingsName.value = enteredName;
+                                        settingsMobile.value = enteredMobile;
 
                                         // Close Modal
                                         completeModal.classList.add('opacity-0');
@@ -868,7 +914,7 @@
 
                                     } catch (err) {
                                         console.error("Failed to complete profile", err);
-                                        alert("Failed to save mobile. Please try again.");
+                                        alert("Failed to save info. Please check your connection.");
                                         completeBtn.textContent = "Save & Continue";
                                         completeBtn.disabled = false;
                                     }
@@ -881,7 +927,7 @@
                 }
 
             } else {
-                console.log("Not logged in, redirecting...");
+                // ... (redirect logic) ...
                 // Save intent if trying to create from template
                 const urlParams = new URLSearchParams(window.location.search);
                 const pendingTemplate = urlParams.get('create_from_template');
@@ -1259,10 +1305,39 @@
         // --- ACCOUNT DELETION LOGIC (DANGER ZONE) ---
         setTimeout(() => {
             const deleteAccountBtn = document.getElementById('delete-account-btn');
-            if (deleteAccountBtn) {
+            const deleteCheckbox = document.getElementById('delete-confirm-checkbox');
+
+            if (deleteAccountBtn && deleteCheckbox) {
+
+                // Toggle Button State
+                deleteCheckbox.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        deleteAccountBtn.disabled = false;
+                        deleteAccountBtn.classList.remove('bg-slate-200', 'dark:bg-zinc-800', 'text-slate-400', 'dark:text-slate-600', 'cursor-not-allowed');
+                        deleteAccountBtn.classList.add('bg-white', 'dark:bg-red-950', 'border-red-200', 'dark:border-red-900', 'text-red-600', 'dark:text-red-400', 'hover:bg-red-50', 'dark:hover:bg-red-900/40', 'cursor-pointer', 'border');
+                    } else {
+                        deleteAccountBtn.disabled = true;
+                        deleteAccountBtn.classList.add('bg-slate-200', 'dark:bg-zinc-800', 'text-slate-400', 'dark:text-slate-600', 'cursor-not-allowed');
+                        deleteAccountBtn.classList.remove('bg-white', 'dark:bg-red-950', 'border-red-200', 'dark:border-red-900', 'text-red-600', 'dark:text-red-400', 'hover:bg-red-50', 'dark:hover:bg-red-900/40', 'cursor-pointer', 'border');
+                    }
+                });
+
                 deleteAccountBtn.addEventListener('click', async () => {
+                    if (!deleteCheckbox.checked) return; // Double check
+
                     const user = auth.currentUser;
                     if (!user) return;
+
+                    // --- SECURITY CHECK: RECENT LOGIN ---
+                    // Prevent "Zombie Account" issue where data is deleted but Auth deletion fails
+                    const lastSignInTime = new Date(user.metadata.lastSignInTime).getTime();
+                    const now = new Date().getTime();
+                    const fiveMinutes = 5 * 60 * 1000;
+
+                    if (now - lastSignInTime > fiveMinutes) {
+                        alert("SECURITY REQUIREMENT:\n\nFor your protection, you must have signed in recently to delete your account.\n\nPlease Sign Out and Sign In again, then try this action immediately.");
+                        return;
+                    }
 
                     const confirmation = prompt("TYPE 'DELETE' TO CONFIRM.\n\nThis will permanently delete your account, all your projects, and all uploaded photos/videos. This action cannot be undone.");
 
@@ -1342,7 +1417,7 @@
                     } catch (err) {
                         console.error("Account deletion failed:", err);
                         if (err.code === 'auth/requires-recent-login') {
-                            alert("Security Check: Please sign out and sign back in to verify your identity, then try deleting your account again.");
+                            alert("Security Check Failed: Your login session is too old.\n\nPlease Sign Out and Sign In again to verify your identity, then try deleting your account.");
                         } else {
                             alert("Failed to delete account completely: " + err.message + "\n\nPlease contact support if issues persist.");
                         }

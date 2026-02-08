@@ -17,6 +17,7 @@
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="./dist/output.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -345,6 +346,15 @@
                 <div>
                     <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Clients</h2>
                     <p class="text-slate-500 dark:text-slate-400">Manage all users and their memories.</p>
+                </div>
+                <!-- Filter Controls -->
+                <div class="flex gap-4">
+                    <select id="client-filter-project" onchange="fetchClients()"
+                        class="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">All Clients</option>
+                        <option value="with_projects">With Projects</option>
+                        <option value="without_projects">Without Projects</option>
+                    </select>
                 </div>
             </div>
 
@@ -1309,45 +1319,96 @@
             });
 
             // --- 1. CLIENTS LOGIC ---
-            async function fetchClients() {
-                clientsTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-slate-400">Loading clients...</td></tr>`;
-                try {
-                    // Fetch all users
-                    const snapshot = await getDocs(collection(db, "users"));
-                    clientsTableBody.innerHTML = '';
+            window.fetchClients = async function () {
+                const clientsTableBody = document.getElementById('clients-table-body');
+                const filterValue = document.getElementById('client-filter-project')?.value || 'all';
 
-                    if (snapshot.empty) {
-                        clientsTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-slate-400">No clients found.</td></tr>`;
+                clientsTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400">Loading clients & calculating storage...</td></tr>`;
+
+                try {
+                    // 1. Fetch All Users
+                    const usersSnap = await getDocs(collection(db, "users"));
+
+                    // 2. Fetch All Projects (for accurate storage calc)
+                    // Optimization: We could query per user, but for admin view, one big fetch + client-side agg is often faster than N reads if N < 1000.
+                    const projectsSnap = await getDocs(collection(db, "projects"));
+
+                    if (usersSnap.empty) {
+                        clientsTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400">No clients found.</td></tr>`;
                         return;
                     }
 
-                    snapshot.forEach(docSnap => {
+                    // 3. Aggregate Project Data per User
+                    const userStats = {}; // { userId: { count: 0, storage: 0 } }
+
+                    projectsSnap.forEach(doc => {
+                        const p = doc.data();
+                        const uid = p.userId;
+                        if (!uid) return;
+
+                        if (!userStats[uid]) userStats[uid] = { count: 0, storage: 0 };
+
+                        userStats[uid].count++;
+                        userStats[uid].storage += (p.storageUsed || 0);
+                    });
+
+                    clientsTableBody.innerHTML = '';
+                    let visibleCount = 0;
+
+                    usersSnap.forEach(docSnap => {
                         const user = docSnap.data();
                         const userId = docSnap.id;
+
+                        // Get Calculated Stats
+                        const stats = userStats[userId] || { count: 0, storage: 0 };
+                        const realStorage = stats.storage;
+                        const projectCount = stats.count;
+
+                        // --- FILTER LOGIC ---
+                        if (filterValue === 'with_projects' && projectCount === 0) return;
+                        if (filterValue === 'without_projects' && projectCount > 0) return;
+
+                        visibleCount++;
+
                         const joined = user.createdAt
                             ? new Date(user.createdAt.seconds * 1000).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
                             : 'N/A';
 
-                        const tr = document.createElement('tr');
-                        tr.className = "hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors border-b border-slate-100 dark:border-zinc-800 last:border-0 cursor-pointer";
+                        // Storage Display
+                        const storageLimit = user.storageLimit === -1 ? 'Unlimited' : (user.storageLimit || 0);
+                        const storageDisplay = (realStorage / 1024 / 1024).toFixed(2);
 
-                        // Simple Stats (mocked for list view speed, real count in detail)
+                        // Storage Color Warning
+                        let storageClass = "text-slate-700 dark:text-slate-200";
+                        if (storageLimit !== 'Unlimited' && (realStorage / 1024 / 1024) > storageLimit) {
+                            storageClass = "text-red-600 font-bold";
+                        }
+
+                        const tr = document.createElement('tr');
+                        tr.className = "hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors border-b border-slate-100 dark:border-zinc-800 last:border-0 cursor-pointer group";
+
                         tr.innerHTML = `
-                         <td data-label="Client Name" class="px-6 py-4 font-bold text-slate-900 dark:text-white">${user.name || "User"}</td>
-                         <td data-label="Email / Mobile" class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                         <td class="px-6 py-4">
+                            <div class="font-bold text-slate-900 dark:text-white">${user.name || "User"}</div>
+                            <div class="text-[10px] text-slate-400 font-mono">${userId}</div>
+                         </td>
+                         <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
                             <div>${user.email}</div>
                             <div class="text-xs text-slate-400">${user.mobile || ""}</div>
                          </td>
-                         <td data-label="Storage" class="px-6 py-4 text-sm">
-                             <div class="font-bold text-slate-700 dark:text-slate-200">${(user.storageUsed ? (user.storageUsed / 1024 / 1024).toFixed(1) : '0')} MB</div>
-                             <div class="text-[10px] text-slate-400">of ${(user.storageLimit === -1 ? 'Unlimited' : (user.storageLimit || 0) + ' MB')}</div>
+                         <td class="px-6 py-4 text-sm">
+                             <div class="font-mono ${storageClass}">${storageDisplay} MB</div>
+                             <div class="text-[10px] text-slate-400">of ${storageLimit} MB</div>
                          </td>
-                         <td data-label="Projects" class="px-6 py-4 text-sm text-slate-600">
-                             <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">View Details</span>
+                         <td class="px-6 py-4 text-sm text-slate-600">
+                             <div class="flex items-center gap-2">
+                                <span class="font-bold text-slate-900 dark:text-white">${projectCount}</span>
+                                <span class="text-xs text-slate-400">Projects</span>
+                             </div>
                          </td>
-                         <td data-label="Joined" class="px-6 py-4 text-sm text-slate-500">${joined}</td>
-                         <td data-label="Action" class="px-6 py-4 text-right">
-                            <button class="text-blue-600 hover:underline text-sm font-medium">Manage Projects →</button>
+                         <td class="px-6 py-4 text-sm text-slate-500">${joined}</td>
+                         <td class="px-6 py-4 text-right">
+                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline opacity-0 group-hover:opacity-100 transition-opacity">Manage →</button>
                          </td>
                     `;
 
@@ -1356,9 +1417,13 @@
                         clientsTableBody.appendChild(tr);
                     });
 
+                    if (visibleCount === 0) {
+                        clientsTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400">No clients match the filter.</td></tr>`;
+                    }
+
                 } catch (e) {
                     console.error("Fetch Clients Error", e);
-                    clientsTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-red-500">Error: ${e.message}</td></tr>`;
+                    clientsTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-500">Error: ${e.message}</td></tr>`;
                 }
             }
 

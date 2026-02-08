@@ -83,6 +83,15 @@
             background-color: #52525b;
             /* zinc-600 */
         }
+
+        /* Portfolio Mode Visibility */
+        .portfolio-only {
+            display: none !important;
+        }
+
+        .portfolio-mode .portfolio-only {
+            display: block !important;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
@@ -134,14 +143,17 @@
                 <a href="#section-visuals" id="link-section-visuals"
                     class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">5.
                     Visuals</a>
+                <a href="#section-connections" id="link-section-connections"
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors hidden">6.
+                    Connections</a>
                 <a href="#section-start" id="link-section-start"
-                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">6.
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">7.
                     Start Screen</a>
                 <a href="#section-downloads" id="link-section-downloads"
-                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">7.
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">8.
                     Downloads</a>
                 <a href="#section-export" id="link-section-export"
-                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">8.
+                    class="sidebar-link flex items-center px-8 py-3 text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">9.
                     Export</a>
 
                 <!-- Global Storage Info -->
@@ -355,7 +367,11 @@
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Event /
                             Template</label>
                         <select id="template-switcher" name="eventType"
-                            class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field">
+                            class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 autosave-field"
+                            onchange="
+                                const isPortfolio = ['Portfolio', 'Custom Memory', 'portfolio', 'custom'].includes(this.value);
+                                updatePortfolioVisibility(isPortfolio);
+                            ">
                             <option value="wedding">Wedding</option>
                             <option value="birthday">Birthday</option>
                             <option value="anniversary">Anniversary</option>
@@ -492,7 +508,19 @@
                     </div>
 
                     <!-- 1.5 Video Upload (New) -->
-                    <div
+                    <!-- Toggle Video Section (Portfolio Only) -->
+                    <div id="video-toggle-container" class="mb-4 flex items-center gap-2 hidden">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="enable-video-check" class="sr-only peer"
+                                onchange="document.getElementById('video-memory-container').classList.toggle('hidden', !this.checked)">
+                            <div
+                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600">
+                            </div>
+                        </label>
+                        <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Enable Video Section</span>
+                    </div>
+
+                    <div id="video-memory-container"
                         class="mb-8 p-4 md:p-6 bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-sm">
                         <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Memory
                             Video</label>
@@ -881,9 +909,123 @@
                     </div>
                 </section>
 
-                <!-- Section 6: Start Screen -->
+                <!-- Section 6: Connections & Resume (Hidden by Default) -->
+                <section id="section-connections"
+                    class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8 hidden">
+                    <h3 class="text-2xl font-bold mb-6">6. Connections & Resume</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <!-- Resume Upload / Link -->
+                        <div
+                            class="p-6 bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-sm col-span-full md:col-span-1">
+                            <h4 class="font-bold text-lg mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 011.414.586l4 4a1 1 0 01.586 1.414V19a2 2 0 01-2 2z">
+                                    </path>
+                                </svg>
+                                Resume / CV (PDF)
+                            </h4>
+
+                            <!-- Resume Upload Control -->
+                            <div class="space-y-3">
+                                <div class="relative">
+                                    <input type="file" id="resume-upload-input" accept="application/pdf" class="hidden"
+                                        onchange="handleResumeUpload(this)">
+                                    <label for="resume-upload-input"
+                                        class="flex items-center justify-center w-full px-4 py-3 bg-indigo-50 dark:bg-zinc-800 border-2 border-dashed border-indigo-200 dark:border-zinc-700 rounded-lg cursor-pointer hover:bg-indigo-100 dark:hover:bg-zinc-700 transition-colors group">
+                                        <div class="text-center">
+                                            <span
+                                                class="block text-sm font-bold text-indigo-600 dark:text-indigo-400 group-hover:underline"
+                                                id="resume-upload-label">
+                                                Click to Upload PDF
+                                            </span>
+                                            <span class="block text-[10px] text-slate-400 mt-1">Max 5MB</span>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <!-- Progress Bar -->
+                                <div id="resume-progress-container" class="hidden">
+                                    <div
+                                        class="h-1.5 w-full bg-slate-200 dark:bg-zinc-700 rounded-full overflow-hidden">
+                                        <div id="resume-progress-bar"
+                                            class="h-full bg-indigo-500 w-0 transition-all duration-300"></div>
+                                    </div>
+                                    <p id="resume-status-text"
+                                        class="text-[10px] text-right text-indigo-500 mt-1 font-bold">Uploading...</p>
+                                </div>
+
+                                <!-- Hidden Input used for Saving -->
+                                <input type="hidden" name="resumeUrl" id="resume-url-input" class="autosave-field">
+
+                                <!-- Current File Indicator (if exists) -->
+                                <div id="current-resume-display"
+                                    class="hidden flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
+                                    <div class="flex items-center gap-2 overflow-hidden">
+                                        <svg class="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0"
+                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="text-xs text-green-700 dark:text-green-300 truncate">Resume
+                                            Uploaded</span>
+                                    </div>
+                                    <button type="button"
+                                        onclick="document.getElementById('resume-url-input').value=''; document.getElementById('current-resume-display').classList.add('hidden'); triggerSave();"
+                                        class="text-xs text-red-500 hover:underline px-2">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Links -->
+                        <div
+                            class="p-6 bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-sm col-span-full md:col-span-1">
+                            <h4 class="font-bold text-lg mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                    </path>
+                                </svg>
+                                Social Profiles
+                            </h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">LinkedIn</label>
+                                    <input type="url" name="socials.linkedin" placeholder="https://linkedin.com/in/..."
+                                        class="w-full bg-slate-50 dark:bg-zinc-800 border-none rounded-lg p-2 text-sm autosave-field">
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">GitHub
+                                        / Portfolio</label>
+                                    <input type="url" name="socials.github" placeholder="https://github.com/..."
+                                        class="w-full bg-slate-50 dark:bg-zinc-800 border-none rounded-lg p-2 text-sm autosave-field">
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Instagram
+                                        / Other</label>
+                                    <input type="url" name="socials.instagram" placeholder="https://instagram.com/..."
+                                        class="w-full bg-slate-50 dark:bg-zinc-800 border-none rounded-lg p-2 text-sm autosave-field">
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Website</label>
+                                    <input type="url" name="socials.website" placeholder="https://yourwebsite.com"
+                                        class="w-full bg-slate-50 dark:bg-zinc-800 border-none rounded-lg p-2 text-sm autosave-field">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 7: Start Screen -->
                 <section id="section-start" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
-                    <h3 class="text-2xl font-bold mb-6">6. Start Screen</h3>
+                    <h3 class="text-2xl font-bold mb-6">7. Start Screen</h3>
                     <div class="col-span-full mb-6">
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Aesthetics &
                             Typography</label>
@@ -994,7 +1136,7 @@
                 <!-- Section 7: Downloads -->
                 <section id="section-downloads"
                     class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
-                    <h3 class="text-2xl font-bold mb-6">7. Download Options</h3>
+                    <h3 class="text-2xl font-bold mb-6">8. Download Options</h3>
                     <div
                         class="flex items-center justify-between p-6 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl">
                         <div>
@@ -1033,7 +1175,7 @@
 
                 <!-- Section 8: Export -->
                 <section id="section-export" class="scroll-mt-24 border-t border-slate-200 dark:border-zinc-800 pt-8">
-                    <h3 class="text-2xl font-bold mb-6">8. Export</h3>
+                    <h3 class="text-2xl font-bold mb-6">9. Export</h3>
                     <div
                         class="p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-zinc-900 dark:to-zinc-800 rounded-xl border border-slate-200 dark:border-zinc-700">
                         <div class="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -1304,9 +1446,16 @@
             gallerySlots.forEach((slot, index) => {
                 const urlInput = slot.querySelector('.photo-url-input');
                 const captionInput = slot.querySelector('.caption-field');
+                const linkInput = slot.querySelector('.link-url-input');
 
                 galleryArray.push(urlInput ? urlInput.value : "");
                 captionMap[index + 1] = captionInput ? captionInput.value : "";
+
+                // Save Link
+                if (linkInput && linkInput.value) {
+                    if (!updates['config.galleryLinks']) updates['config.galleryLinks'] = [];
+                    updates['config.galleryLinks'][index] = linkInput.value;
+                }
             });
 
             updates['config.gallery'] = galleryArray;
@@ -2271,7 +2420,7 @@
             }
         }
 
-        function createPhotoSlot(photoUrl = "", captionValue = "") {
+        function createPhotoSlot(photoUrl = "", captionValue = "", linkUrlValue = "") {
             const slotId = Date.now() + Math.random().toString(36).substr(2, 9);
             const div = document.createElement('div');
             // Compact Wrapper
@@ -2345,11 +2494,21 @@
                 </div>
 
                 <!-- 2. Minimal Caption Input -->
-                <div class="mt-1 px-1">
+                <div class="mt-1 px-1 space-y-1">
                     <input type="text" 
                            class="caption-field w-full bg-transparent border-0 border-b border-transparent hover:border-slate-300 dark:hover:border-zinc-700 focus:border-indigo-500 text-center text-xs text-slate-600 dark:text-slate-400 placeholder-slate-300 focus:ring-0 px-0 py-1 transition-colors"
                            placeholder="Add caption..." 
                            value="${captionValue}">
+                    
+                    <!-- NEW: Link Input (Hidden by default, shown on hover/focus or if has value) -->
+                    <div class="relative group/link portfolio-only">
+                        <input type="url" 
+                               class="link-url-input w-full bg-transparent border-0 border-b border-transparent hover:border-slate-300 dark:hover:border-zinc-700 focus:border-blue-500 text-center text-[10px] text-blue-600 dark:text-blue-400 placeholder-slate-300 focus:ring-0 px-0 py-0.5 transition-colors"
+                               placeholder="https://..." 
+                               title="Add external link (Project/Portfolio)"
+                               value="${linkUrlValue}">
+                        <svg class="w-3 h-3 absolute right-0 top-1 text-slate-300 group-hover/link:text-blue-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </div>
                 </div>
 
                 <input type="hidden" class="photo-url-input" value="${photoUrl}">
@@ -2578,6 +2737,187 @@
             debouncedAutoSave();
         });
 
+        // --- RESUME UPLOAD HANDLER ---
+        async function handleResumeUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // Validation
+            if (file.type !== 'application/pdf') {
+                showError("Only PDF files are allowed for resumes.");
+                input.value = '';
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                showError("File size must be under 5MB.");
+                input.value = '';
+                return;
+            }
+
+            const statusEl = document.getElementById('resume-upload-status');
+            const hiddenInput = document.getElementById('resume-url-input');
+            const displayContainer = document.getElementById('current-resume-display');
+            const progressBar = document.getElementById('resume-progress-bar');
+            const progressContainer = document.getElementById('resume-progress-container');
+
+            try {
+                // Show Progress
+                if (statusEl) {
+                    statusEl.textContent = "Uploading...";
+                    statusEl.className = "text-xs font-bold text-blue-500 animate-pulse";
+                }
+                if (progressContainer) progressContainer.classList.remove('hidden');
+
+                // Predictable Name: resume.pdf (or unique?)
+                // To allow replacing, let's use a consistent name base but maybe with a timestamp or random hash if we want to avoid caching issues?
+                // Actually, for a single resume, "resume.pdf" inside the project folder is cleanest.
+                // But if they upload a new one, we want to make sure the URL updates or cache busts.
+                // Let's use `resume-${Date.now()}.pdf` to be safe and avoid aggressive caching.
+                const uniqueName = `resume-${Date.now()}.pdf`;
+                const key = `${STORAGE_ROOT}/${uniqueName}`;
+
+                // Delete old resume if exists?
+                if (hiddenInput && hiddenInput.value) {
+                    try {
+                        const oldKey = extractR2Key(hiddenInput.value);
+                        if (oldKey) {
+                            console.log("Deleting old resume:", oldKey);
+                            await deleteFromR2(oldKey);
+                        }
+                    } catch (e) {
+                        console.warn("Failed to delete old resume", e);
+                    }
+                }
+
+                await uploadToR2(file, key, 'application/pdf', (percent) => {
+                    if (progressBar) progressBar.style.width = `${percent}%`;
+                });
+
+                const publicUrl = `${PUBLIC_R2_DOMAIN}/${key}`;
+
+                // Update UI
+                if (hiddenInput) hiddenInput.value = publicUrl;
+                if (displayContainer) displayContainer.classList.remove('hidden');
+                if (statusEl) {
+                    statusEl.innerHTML = `
+                        <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-green-600">Resume Uploaded</span>
+                    `;
+                    statusEl.className = "flex items-center gap-1 text-xs font-bold";
+                }
+
+                triggerSave();
+
+            } catch (err) {
+                console.error("Resume upload failed:", err);
+                showError("Resume upload failed. Please try again.");
+                if (statusEl) {
+                    statusEl.textContent = "Upload Failed";
+                    statusEl.className = "text-xs font-bold text-red-500";
+                }
+            } finally {
+                if (progressContainer) progressContainer.classList.add('hidden');
+                // input.value = ''; // Keep file selected? Or clear? Usually clear if we show a "Replace" UI.
+            }
+        }
+        window.handleResumeUpload = handleResumeUpload;
+
+        // --- VISIBILITY & RENUMBERING (Portfolio Mode) ---
+        function updatePortfolioVisibility(isPortfolio) {
+            console.log("Updating Portfolio Visibility:", isPortfolio);
+
+            // 1. Sections & Content
+            const elements = {
+                // Sections
+                'section-audio': isPortfolio,  // Hide if portfolio
+                'section-start': isPortfolio,  // Hide if portfolio
+
+                // Sidebar Links (Match Section Visibility)
+                'link-section-audio': isPortfolio,
+                'link-section-start': isPortfolio,
+
+                // Portfolio Specifics
+                'section-connections': !isPortfolio, // Show if portfolio (logic inverted)
+                'link-section-connections': !isPortfolio,
+                'video-toggle-container': !isPortfolio // Show toggle if portfolio
+            };
+
+            for (const [id, shouldHide] of Object.entries(elements)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.toggle('hidden', shouldHide);
+                    // Force display style to ensure override of flex/other classes for sidebar links
+                    if (id.startsWith('link-')) {
+                        el.style.display = shouldHide ? 'none' : 'flex';
+                    }
+                }
+            }
+
+            // Portfolio Mode Class
+            const galleryContainer = document.getElementById('gallery-container');
+            if (galleryContainer) galleryContainer.classList.toggle('portfolio-mode', isPortfolio);
+
+            // Video Container Default State for Portfolio
+            const videoContainer = document.getElementById('video-memory-container');
+            if (isPortfolio) {
+                const videoCheck = document.getElementById('enable-video-check');
+                if (videoCheck && !videoCheck.checked) {
+                    if (videoContainer) videoContainer.classList.add('hidden');
+                }
+            } else {
+                if (videoContainer) videoContainer.classList.remove('hidden');
+            }
+
+            // 2. DYNAMIC RENUMBERING
+            renumberSections();
+        }
+        // Expose to global scope for inline HTML handlers
+        window.updatePortfolioVisibility = updatePortfolioVisibility;
+
+        // --- SECTION RENUMBERING ---
+        function renumberSections() {
+            // Define the logical order of ALL possible sections
+            const sectionOrder = [
+                { id: 'section-main', title: 'Main Details' },
+                { id: 'section-photos', title: 'Gallery Manager' },
+                { id: 'section-message', title: 'Message' },
+                { id: 'section-audio', title: 'Background Music' },
+                { id: 'section-visuals', title: 'Visuals' },
+                { id: 'section-connections', title: 'Connections & Resume' },
+                { id: 'section-start', title: 'Start Screen' },
+                { id: 'section-downloads', title: 'Download Options' },
+                { id: 'section-export', title: 'Export' }
+            ];
+
+            let count = 1;
+            sectionOrder.forEach(sec => {
+                const sectionEl = document.getElementById(sec.id);
+                const linkEl = document.getElementById(`link-${sec.id}`);
+
+                // If section is visible (not hidden)
+                // Note: We check if offsetParent is null as a proxy for visibility if classes are complex, 
+                // but checking .hidden class is safer given our toggle logic.
+                if (sectionEl && !sectionEl.classList.contains('hidden')) {
+                    // Update Heading (First h3 in section)
+                    const heading = sectionEl.querySelector('h3');
+                    if (heading) {
+                        heading.textContent = `${count}. ${sec.title}`;
+                    }
+
+                    // Update Sidebar Link
+                    if (linkEl) {
+                        linkEl.textContent = `${count}. ${sec.title}`;
+                        // Custom short names for sidebar
+                        if (sec.id === 'section-photos') linkEl.textContent = `${count}. Gallery Manager`;
+                        if (sec.id === 'section-connections') linkEl.textContent = `${count}. Connections`;
+                    }
+                    count++;
+                }
+            });
+        }
+
         // --- FORM POPULATION ---
         function populateForm(data) {
             const form = document.getElementById('configForm');
@@ -2603,6 +2943,12 @@
                 const eventSelect = form.querySelector('select[name="eventType"]');
                 if (eventSelect) eventSelect.value = derivedType;
             }
+
+            // 1c. UPDATE EDITOR MODE (Portfolio/Custom vs Regular)
+            const currentEvent = data.eventType || 'wedding';
+            const isPortfolioMode = ['Portfolio', 'Custom Memory', 'portfolio', 'custom'].includes(currentEvent);
+
+            updatePortfolioVisibility(isPortfolioMode);
 
             if (data.heroImage) {
                 const preview = document.getElementById('hero-preview');
@@ -2683,7 +3029,8 @@
             }
             itemsToRender.forEach((url, index) => {
                 const caption = data.captions ? data.captions[index + 1] : "";
-                galleryContainer.appendChild(createPhotoSlot(url, caption));
+                const link = (data.galleryLinks && data.galleryLinks[index]) ? data.galleryLinks[index] : "";
+                galleryContainer.appendChild(createPhotoSlot(url, caption, link));
             });
 
             updateSlotNumbers();
