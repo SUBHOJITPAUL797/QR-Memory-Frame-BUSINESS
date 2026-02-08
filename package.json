@@ -1,7 +1,7 @@
 {
-  "name": "qr-memory-frame",
+  "name": "dasmo",
   "version": "1.0.0",
-  "description": "QR Memory Frame - Static Site",
+  "description": "DASMO - Digital Memory Frames with QR",
   "scripts": {
     "dev": "bun run server.js",
     "lint": "eslint .",

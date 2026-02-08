@@ -1,4 +1,4 @@
-# QR Memory Frame - Operations Manual
+# DASMO - Operations Manual
 
 ## 1. How the System Works
 You do **NOT** need to create new branches or new websites for each client. 
