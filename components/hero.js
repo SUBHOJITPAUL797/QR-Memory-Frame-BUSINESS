@@ -59,7 +59,7 @@ export function renderHero(client) {
                 
                 <!-- Main Title: Massive, Calligraphic, "Magazine Cover" feel -->
                 <h1 class="${titleFontClass} text-7xl md:text-[10rem] text-hero drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] opacity-0 animate-[zoom-in_1.2s_ease-out_0.2s_forwards] leading-[0.8] break-words px-4">
-                    ${client.title.replace('&', '<span class="block text-gold-500 text-4xl md:text-6xl font-serif my-4 opacity-80">&</span>')}
+                    ${(client.title || "").replace('&', '<span class="block text-gold-500 text-4xl md:text-6xl font-serif my-4 opacity-80">&</span>')}
                 </h1>
 
                 <!-- Decorative Separator -->

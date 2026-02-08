@@ -4,7 +4,9 @@
   "description": "QR Memory Frame - Static Site",
   "scripts": {
     "dev": "bun run server.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

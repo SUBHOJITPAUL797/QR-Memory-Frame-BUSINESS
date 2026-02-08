@@ -53,7 +53,7 @@ export function renderGallery(client) {
     'modern': 'font-sans'
   };
 
-  const title = client.galleryTitle || "Our Memories";
+  const title = client.galleryTitle !== undefined ? client.galleryTitle : "Our Memories";
   const titleFont = fontClassMap[client.visuals?.galleryTitleFont] || 'font-serif';
   const captionFont = fontClassMap[client.visuals?.galleryCaptionFont] || 'font-script';
 
@@ -66,7 +66,7 @@ export function renderGallery(client) {
   } else if (galleryMode === 'book') {
     // For Book, we might want a different default, but user input overrides it if provided.
     // Use generic title unless specific book title logic exists.
-    const bookTitle = client.galleryTitle || "Our Storybook";
+    const bookTitle = client.galleryTitle !== undefined ? client.galleryTitle : "Our Storybook";
     return renderBookFlipHTML(galleryItems, client, frameStyle, btnFontClass, bookTitle, titleFont) + `<style>${styleCSS}</style>`;
   } else {
     return renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, title, titleFont, captionFont) + `<style>${styleCSS}</style>`;
@@ -477,16 +477,22 @@ function getFrameStyleCSS(style) {
 // --- HTML RENDERERS ---
 
 function renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass, title, titleFont, captionFont) {
+  const EAGER_LOAD_COUNT = 5; // First 5 images load immediately
+
   const slidesHtml = galleryItems.map((imgUrl, index) => {
     const caption = (client.captions && client.captions[index + 1]) || "";
+    const isEager = index < EAGER_LOAD_COUNT;
+
     return `
         <div class="gallery-slide ${index === 0 ? 'active' : 'hidden'} absolute inset-0 transition-opacity duration-1000 ease-in-out" data-index="${index}">
             <div class="w-full h-full flex items-center justify-center p-4">
                 <div class="relative w-[90vw] max-w-2xl frame-wrapper group/image">
                     <img 
-                        src="${imgUrl}" 
+                        ${isEager ? `src="${imgUrl}"` : `data-src="${imgUrl}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"`}
                         alt="Memory ${index + 1}"
-                        loading="eager"
+                        loading="${isEager ? 'eager' : 'lazy'}"
+                        class="lazy-image ${isEager ? '' : 'not-loaded'}"
+                        onerror="this.onerror=null; if(this.dataset.src) this.src=this.dataset.src;"
                     />
                     
                     ${caption ? `<p class="mt-4 ${captionFont} text-xl md:text-2xl text-center text-zinc-700">${caption}</p>` : ''}
@@ -529,6 +535,8 @@ function renderAutoSlideshowHTML(galleryItems, client, frameStyle, btnFontClass,
 }
 
 function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, title, titleFont, captionFont) {
+  const EAGER_LOAD_COUNT = 5; // First 5 images load immediately
+
   const cardsHtml = galleryItems.map((imgUrl, index) => {
     const zIndex = galleryItems.length - index;
     // For Stack, we keep rotation randomness unless strict style like Modern/Cinema
@@ -536,12 +544,13 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, t
     if (frameStyle === 'modern' || frameStyle === 'cinema' || frameStyle === 'minimal') rotation = 0;
 
     const caption = (client.captions && client.captions[index + 1]) || "";
+    const isEager = index < EAGER_LOAD_COUNT;
 
     return `
       <div 
         class="gallery-card absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center transition-all duration-700 ease-in-out cursor-pointer hover:scale-[1.02] group/card" 
         style="z-index: ${zIndex}; transform: rotate(${rotation}deg);"
-        onclick="this.classList.add('fly-away')"
+        onclick="this.classList.add('fly-away'); const next = this.nextElementSibling; if(next) { const img = next.querySelector('img[data-src]'); if(img) { img.src = img.dataset.src; console.log('[Lazy Loader] Loading next stack image'); } }"
       >
         <div class="relative w-[85vw] max-w-md frame-wrapper">
              ${frameStyle === 'polaroid' || frameStyle === 'stacked' ?
@@ -550,9 +559,9 @@ function renderManualStackHTML(galleryItems, client, frameStyle, btnFontClass, t
         : ''}
             
             <img 
-                src="${imgUrl}" 
+                ${isEager ? `src="${imgUrl}"` : `data-src="${imgUrl}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"`}
                 alt="Memory"
-                loading="eager"
+                loading="${isEager ? 'eager' : 'lazy'}"
             />
             
             ${caption ? `<p class="${captionFont} text-2xl text-center text-zinc-600 mt-2">${caption}</p>` : ''}
@@ -607,6 +616,15 @@ function startAutoSlideshow(slides, speed) {
 
     const slide = slides[index];
     slide.classList.remove('hidden');
+
+    // LAZY LOAD: Load image when slide becomes active
+    const lazyImg = slide.querySelector('img.not-loaded[data-src]');
+    if (lazyImg) {
+      lazyImg.src = lazyImg.dataset.src;
+      lazyImg.classList.remove('not-loaded');
+      console.log(`[Lazy Loader] Loading image ${index + 1}`);
+    }
+
     requestAnimationFrame(() => {
       slide.classList.add('active');
       slide.style.opacity = '1';

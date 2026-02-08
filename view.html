@@ -2,9 +2,20 @@
 <html lang="en">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZF1TH0JJG3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-ZF1TH0JJG3');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Memory Frame</title>
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
     <!-- YouTube API -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <!-- Fonts -->
@@ -12,49 +23,7 @@
         href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Allura&family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=Dancing+Script:wght@400;700&family=EB+Garamond:wght@400;700&family=Great+Vibes&family=Lato:wght@300;400;700&family=Merriweather:wght@300;400;700&family=Montserrat:wght@300;400;700&family=Mr+De+Haviland&family=Oswald:wght@300;400;700&family=Pacifico&family=Parisienne&family=Pinyon+Script&family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;700&family=Roboto:wght@300;400;700&family=Sacramento&family=Tangerine:wght@400;700&display=swap"
         rel="stylesheet">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        warm: { 50: '#fdfcfb', 100: '#fcfbf9', 900: '#1c1917' },
-                        gold: {
-                            300: '#d4af37',
-                            500: 'var(--gold-500, #C5A059)',
-                            600: 'var(--gold-600, #B08D55)'
-                        },
-                        hero: {
-                            DEFAULT: 'var(--hero-color, #ffffff)'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Montserrat', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                        script: ['Great Vibes', 'cursive'],
-                        cinzel: ['Cinzel', 'serif'],
-                        pacifico: ['Pacifico', 'cursive'],
-                        // New Fonts
-                        'dancing-script': ['Dancing Script', 'cursive'],
-                        'sacramento': ['Sacramento', 'cursive'],
-                        'parisienne': ['Parisienne', 'cursive'],
-                        'allura': ['Allura', 'cursive'],
-                        'pinyon-script': ['Pinyon Script', 'cursive'],
-                        'mr-de-haviland': ['Mr De Haviland', 'cursive'],
-                        'alex-brush': ['Alex Brush', 'cursive'],
-                        'tangerine': ['Tangerine', 'cursive'],
-                        'cormorant': ['Cormorant Garamond', 'serif'],
-                        'merriweather': ['Merriweather', 'serif'],
-                        'eb-garamond': ['EB Garamond', 'serif'],
-                        'oswald': ['Oswald', 'sans-serif'],
-                        'raleway': ['Raleway', 'sans-serif'],
-                        'lato': ['Lato', 'sans-serif'],
-                        'roboto': ['Roboto', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="./dist/output.css" rel="stylesheet">
     <style>
         /* Base Animations */
         @keyframes fade-in-up {
@@ -271,73 +240,136 @@
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        // --- MEDIA PRELOAD ---
+        // --- SMART MEDIA PRELOAD (YouTube-style) ---
+        // Only preloads essential content for fast start
+        // Remaining content lazy-loads on demand
         async function preloadMedia(config) {
             const loadingBar = document.getElementById('loading-bar');
             const loadingText = document.getElementById('loading-text');
             const loadingTitle = document.getElementById('loading-title');
             const startBtn = document.getElementById('start-btn');
 
-            // Collect all media URLs
-            const mediaItems = [];
+            // Resource Collection
+            const resources = [];
 
-            if (config.heroImage) mediaItems.push({ url: config.heroImage, type: 'image' });
-            if (config.video) mediaItems.push({ url: config.video, type: 'video' });
+            // 1. Hero Image (High Priority)
+            if (config.heroImage) {
+                resources.push({ url: config.heroImage, type: 'image', weight: 20 });
+            }
+
+            // 2. Gallery Images (Medium Priority)
             if (config.gallery && Array.isArray(config.gallery)) {
-                config.gallery.forEach(url => {
-                    if (url) mediaItems.push({ url, type: 'image' });
+                // Determine how many to preload based on device capability/network
+                // For a "premium" feel, we want at least the first few to be instant
+                const PRELOAD_COUNT = 5;
+                config.gallery.slice(0, PRELOAD_COUNT).forEach(url => {
+                    if (url) resources.push({ url, type: 'image', weight: 10 });
                 });
             }
 
-            if (mediaItems.length === 0) {
-                // No media to load, enable button immediately
+            // 3. Video (High Priority - Metadata Only)
+            // ensuring fast start (YouTube Style)
+            if (config.video) {
+                // Check if it's a proxy URL or direct URL
+                let videoUrl = config.video;
+
+                // R2 Video: Use Worker Proxy?
+                if (config.workerUrl && !videoUrl.includes('/proxy?key=') && !videoUrl.includes('youtube.com') && !videoUrl.includes('youtu.be')) {
+                    try {
+                        const urlObj = new URL(videoUrl);
+                        const key = urlObj.pathname.substring(1);
+                        videoUrl = `${config.workerUrl}/proxy?key=${encodeURIComponent(key)}`;
+                    } catch (e) {
+                        console.warn("Failed to construct proxy URL, using original:", e);
+                    }
+                }
+
+                if (!getYoutubeId(videoUrl)) {
+                    resources.push({ url: videoUrl, type: 'video-metadata', weight: 30 });
+                }
+            }
+
+            if (resources.length === 0) {
+                updateProgress(100);
                 enableStartButton();
                 return;
             }
 
-            let loaded = 0;
-            const total = mediaItems.length;
+            // Calculate total weight
+            const totalWeight = resources.reduce((sum, res) => sum + res.weight, 0);
+            let currentProgress = 0;
 
-            for (const item of mediaItems) {
+            // Progress Tracker Helper
+            const updateProgress = (programs) => {
+                const percent = Math.min(100, Math.round(programs));
+                loadingBar.style.width = `${percent}%`;
+                loadingText.textContent = `${percent}%`;
+            };
+
+            // Load Item Function
+            const loadItem = async (item) => {
                 try {
-                    if (item.type === 'video') {
-                        // Preload video metadata
+                    if (item.type === 'video-metadata') {
+                        // METADATA ONLY PRELOAD (YouTube Style)
+                        // We create a temp video element to fetch metadata (duration, dims)
+                        // This is fast and ensures the video exists/is reachable
                         const video = document.createElement('video');
                         video.src = item.url;
                         video.preload = 'metadata';
+
                         await new Promise((resolve) => {
-                            video.onloadedmetadata = resolve;
-                            video.onerror = resolve; // Continue even if error
-                            setTimeout(resolve, 3000); // Timeout after 3 seconds
+                            // Timeout fallback (if metadata takes > 5s, just proceed)
+                            const timeout = setTimeout(() => {
+                                console.warn("Video metadata timeout, proceeding...");
+                                resolve();
+                            }, 5000);
+
+                            video.onloadedmetadata = () => {
+                                clearTimeout(timeout);
+                                resolve();
+                            };
+                            video.onerror = () => {
+                                clearTimeout(timeout);
+                                console.warn("Video metadata failed to load");
+                                resolve(); // Proceed anyway
+                            };
                         });
+
+                        currentProgress += item.weight;
+                        updateProgress((currentProgress / totalWeight) * 100);
+
                     } else {
-                        // Preload image
-                        const img = new Image();
-                        img.src = item.url;
-                        await new Promise((resolve) => {
+                        // Image Loading
+                        await new Promise((resolve, reject) => {
+                            const img = new Image();
                             img.onload = resolve;
-                            img.onerror = resolve; // Continue even if error
-                            setTimeout(resolve, 3000); // Timeout after 3 seconds
+                            img.onerror = resolve; // Continue even if fails
+                            img.src = item.url;
                         });
+                        currentProgress += item.weight;
+                        updateProgress((currentProgress / totalWeight) * 100);
                     }
                 } catch (e) {
-                    console.warn('Preload failed for:', item.url, e);
+                    console.error("Preload Item Failed:", item.url, e);
+                    // Add weight anyway to ensure we reach 100%
+                    currentProgress += item.weight;
+                    updateProgress((currentProgress / totalWeight) * 100);
                 }
+            };
 
-                loaded++;
-                const percent = Math.round((loaded / total) * 100);
-                loadingBar.style.width = `${percent}%`;
-                loadingText.textContent = `${percent}%`;
-            }
+            // Execute Downloads (Parallel-ish)
+            await Promise.all(resources.map(loadItem));
 
-            // All media loaded - enable start button
+            // Final consistency check
+            updateProgress(100);
+
             enableStartButton();
 
             function enableStartButton() {
                 loadingTitle.querySelector('span').textContent = 'Ready to Begin!';
 
                 // --- START BUTTON CUSTOMIZATION ---
-                const startBtnText = config.visuals?.startBtnText || "Start Experience";
+                const startBtnText = (config.visuals?.startBtnText !== undefined) ? config.visuals.startBtnText : "Start Experience";
                 const startBtnStyle = config.visuals?.startBtnStyle || "gold";
 
                 startBtn.textContent = startBtnText;
@@ -750,17 +782,20 @@
                 else if (section === 'gallery') {
                     html += renderGallery(client);
                 }
-                else if (section === 'message' && client.messageEnabled !== false && (client.messageBody || client.message)) {
-                    const body = client.messageBody || client.message;
+                else if (section === 'message' && client.messageEnabled !== false && (client.messageBody !== undefined || client.message)) {
+                    const body = client.messageBody !== undefined ? client.messageBody : (client.message || "");
+                    const title = client.messageTitle !== undefined ? client.messageTitle : 'A Message';
+                    const signOff = client.messageSignOff !== undefined ? client.messageSignOff : '';
+
                     html += `
                         <section id="message-section" class="py-24 px-6 bg-white text-center relative z-10 scroll-mt-20 opacity-0 reveal-on-scroll">
                             <div class="max-w-2xl mx-auto px-4">
-                                <h3 class="${messageTitleFontClass} text-4xl mb-8 text-gold-600 break-words">${client.messageTitle || 'A Message'}</h3>
+                                <h3 class="${messageTitleFontClass} text-4xl mb-8 text-gold-600 break-words">${title}</h3>
                                 <p class="${messageFontClass} text-xl leading-relaxed italic text-zinc-600 mb-12 whitespace-pre-wrap break-words">
                                     "${body}"
                                 </p>
                                  <p class="font-sans text-xs uppercase tracking-widest text-zinc-400">
-                                    ${client.messageSignOff || ''}
+                                    ${signOff}
                                 </p>
                             </div>
                         </section>
@@ -785,11 +820,23 @@
                             </section>
                         `;
                     } else {
+                        // R2 Video: Use Worker Proxy for Range/Streaming Support
+                        let videoSrc = client.video;
+                        if (client.workerUrl && !videoSrc.includes('/proxy?key=')) {
+                            try {
+                                const urlObj = new URL(videoSrc);
+                                const key = urlObj.pathname.substring(1); // Remove leading slash
+                                videoSrc = `${client.workerUrl}/proxy?key=${encodeURIComponent(key)}`;
+                            } catch (e) {
+                                console.warn("Failed to construct proxy URL, using original:", e);
+                            }
+                        }
+
                         html += `
                             <section id="video-section" class="py-12 px-6 bg-black flex justify-center scroll-mt-20">
                                 <div class="max-w-4xl w-full border border-white/20 rounded-2xl overflow-hidden shadow-2xl">
-                                    <video controls class="w-full" playsinline>
-                                        <source src="${client.video}" type="video/mp4">
+                                    <video controls class="w-full" playsinline preload="metadata">
+                                        <source src="${videoSrc}" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>
                                 </div>

@@ -2,32 +2,28 @@
 <html lang="en">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZF1TH0JJG3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-ZF1TH0JJG3');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Memory Frame - Eternalize Your Moments</title>
-    <link rel="icon"
+    <meta name="google-site-verification" content="l7xhno4kDPMSJwxHhpmAgF36PRqBU_8oHIPyHlmiEP4" />
+    <meta name="description"
+        content="Create beautiful, digital memory frames with QR codes. Upload photos, add voice messages, and share your cherished moments forever.">
+    <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
     <!-- Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        gold: { 500: '#C5A059', 600: '#B08D55' }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="./dist/output.css" rel="stylesheet">
     <style>
         .no-scrollbar::-webkit-scrollbar {
             display: none;
@@ -212,7 +208,7 @@
 
             if (user) {
                 // User is logged in:
-                console.log("User logged in:", user.email);
+                // console.log("User logged in:", user.email);
 
                 // 1. Change Nav Button
                 if (navLoginBtn) {
@@ -226,7 +222,7 @@
 
             } else {
                 // User is logged out
-                console.log("User logged out");
+                // console.log("User logged out");
 
                 if (navLoginBtn) {
                     navLoginBtn.textContent = "Login / Sign Up";

@@ -37,19 +37,60 @@ export default {
         }
 
         // --- PUBLIC PROXY (GET) ---
-        // Allows viewing images with CORS (for canvas/editor)
+        // Allows viewing images/videos with CORS (for canvas/editor)
+        // CRITICAL: Supports Range requests for smooth video streaming
         if (url.pathname === '/proxy' && request.method === 'GET') {
             if (!key) return new Response("Missing key", { status: 400, headers: corsHeaders });
             try {
-                const object = await env.BUCKET.get(key);
-                if (!object) return new Response("Not Found", { status: 404, headers: corsHeaders });
+                // Check for Range header (video streaming)
+                const rangeHeader = request.headers.get('Range');
+                let object;
+                let status = 200;
+                const responseHeaders = new Headers();
 
-                const headers = new Headers(object.httpMetadata);
-                headers.set('etag', object.httpEtag);
-                headers.set('Cache-Control', 'public, max-age=31536000');
-                headers.set('Access-Control-Allow-Origin', '*'); // Force CORS
+                if (rangeHeader) {
+                    // Parse Range header: "bytes=start-end" or "bytes=start-"
+                    const match = rangeHeader.match(/bytes=(\d+)-(\d*)/);
+                    if (match) {
+                        const start = parseInt(match[1], 10);
+                        const end = match[2] ? parseInt(match[2], 10) : undefined;
 
-                return new Response(object.body, { headers });
+                        // Fetch with range
+                        object = await env.BUCKET.get(key, {
+                            range: { offset: start, length: end ? (end - start + 1) : undefined }
+                        });
+
+                        if (!object) return new Response("Not Found", { status: 404, headers: corsHeaders });
+
+                        // Get total file size from object properties
+                        const size = object.size; // Total size of the entire object
+                        const contentLength = object.range?.length || (size - start);
+                        const actualEnd = start + contentLength - 1;
+
+                        status = 206; // Partial Content
+                        responseHeaders.set('Content-Range', `bytes ${start}-${actualEnd}/${size}`);
+                        responseHeaders.set('Content-Length', contentLength.toString());
+                        responseHeaders.set('Accept-Ranges', 'bytes');
+                    }
+                }
+
+                if (!object) {
+                    // No Range or failed parse - fetch full file
+                    object = await env.BUCKET.get(key);
+                    if (!object) return new Response("Not Found", { status: 404, headers: corsHeaders });
+                    responseHeaders.set('Accept-Ranges', 'bytes');
+                    responseHeaders.set('Content-Length', object.size.toString());
+                }
+
+                // Copy original metadata
+                if (object.httpMetadata?.contentType) {
+                    responseHeaders.set('Content-Type', object.httpMetadata.contentType);
+                }
+                responseHeaders.set('etag', object.httpEtag);
+                responseHeaders.set('Cache-Control', 'public, max-age=31536000');
+                responseHeaders.set('Access-Control-Allow-Origin', '*'); // Force CORS
+
+                return new Response(object.body, { status, headers: responseHeaders });
             } catch (e) {
                 return new Response(e.message, { status: 500, headers: corsHeaders });
             }
@@ -160,7 +201,7 @@ export default {
                 deletedCount += keys.length;
 
                 if (keys.length > 0) {
-                    await Promise.all(keys.map(k => env.BUCKET.delete(k)));
+                    await env.BUCKET.delete(keys);
                 }
 
                 if (!list.truncated) break;
@@ -189,6 +230,56 @@ export default {
             }
 
             return new Response(JSON.stringify({ success: true, totalSize, fileCount, prefix }), { status: 200, headers: corsHeaders });
+        }
+
+        // --- CLEANUP ORPHANS (POST) ---
+        if (url.pathname === '/cleanup' && request.method === 'POST') {
+            try {
+                const body = await request.json();
+                const { prefix, keepKeys } = body; // keepKeys = array of full keys (paths) to KEEP
+
+                if (!prefix || !Array.isArray(keepKeys)) {
+                    return new Response(JSON.stringify({ error: 'Missing prefix or keepKeys array' }), { status: 400, headers: corsHeaders });
+                }
+
+                // Normalizing keepKeys for easy lookup (Set for O(1))
+                const keepSet = new Set(keepKeys);
+
+                let list = await env.BUCKET.list({ prefix });
+                let deletedCount = 0;
+                let reclaimedBytes = 0;
+                let processedCount = 0;
+
+                while (true) {
+                    const toDelete = [];
+                    list.objects.forEach(obj => {
+                        processedCount++;
+                        // If object key is NOT in keepSet, it's an orphan -> Delete it
+                        if (!keepSet.has(obj.key)) {
+                            toDelete.push(obj.key);
+                            reclaimedBytes += obj.size;
+                        }
+                    });
+
+                    if (toDelete.length > 0) {
+                        await env.BUCKET.delete(toDelete); // Batch delete
+                        deletedCount += toDelete.length;
+                    }
+
+                    if (!list.truncated) break;
+                    list = await env.BUCKET.list({ prefix, cursor: list.cursor });
+                }
+
+                return new Response(JSON.stringify({
+                    success: true,
+                    processed: processedCount,
+                    deleted: deletedCount,
+                    reclaimedBytes
+                }), { status: 200, headers: corsHeaders });
+
+            } catch (e) {
+                return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders });
+            }
         }
 
         return new Response("Not Found", { status: 404, headers: corsHeaders });
